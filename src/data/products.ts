@@ -25,6 +25,7 @@ export interface Product {
   kind: string;
   blurb: string;
   price: number;
+  oldPrice?: number;
   rating: number;
   reviews: number;
   downloads: number;
@@ -61,6 +62,7 @@ export const products: Product[] = [
     kind: 'Printable set',
     blurb: 'A 32-piece lathe-turned chess set with interlocking bases and a folding board.',
     price: 19,
+    oldPrice: 25,
     rating: 4.8,
     reviews: 187,
     downloads: 5310,
@@ -109,6 +111,7 @@ export const products: Product[] = [
     kind: 'Game-ready asset',
     blurb: 'Modular sci-fi helmet with 4K PBR textures, 3 LODs and a clean quad topology.',
     price: 24,
+    oldPrice: 32,
     rating: 4.9,
     reviews: 268,
     downloads: 6120,
@@ -189,6 +192,7 @@ export const products: Product[] = [
     kind: 'Blender add-on',
     blurb: 'One-click clean quad topology with edge-flow guides and symmetry locks.',
     price: 29,
+    oldPrice: 39,
     rating: 4.8,
     reviews: 233,
     downloads: 7340,

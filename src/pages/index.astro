@@ -1,10 +1,23 @@
 ---
 import { href } from '../data/products';
 
-const mockups = [
-  { n: 1, title: 'Mockup 1', note: 'Slicer: a loud print-shop look where the hero is printed layer by layer.' },
-  { n: 2, title: 'Mockup 2', note: 'Viewport: a dark 3D-editor interface made of wireframes and axis colors.' },
-  { n: 3, title: 'Mockup 3', note: 'Clay: a warm, tactile studio with soft materials and products on shelves.' },
+const groups = [
+  {
+    name: 'Round 1: concepts',
+    items: [
+      { n: 1, title: 'Mockup 1', note: 'Slicer: a loud print-shop look where the hero is printed layer by layer.' },
+      { n: 2, title: 'Mockup 2', note: 'Viewport: a dark 3D-editor interface made of wireframes and axis colors.' },
+      { n: 3, title: 'Mockup 3', note: 'Clay: a warm, tactile studio with soft materials and products on shelves.' },
+    ],
+  },
+  {
+    name: 'Round 2: dark, marketplace-style',
+    items: [
+      { n: 4, title: 'Mockup 4', note: 'Catalog: sidebar-free classic with mega menu, banner slider and quick-add cards.' },
+      { n: 5, title: 'Mockup 5', note: 'Storefront: big product showcase, live category filter and a slide-out cart.' },
+      { n: 6, title: 'Mockup 6', note: 'Browse: filter sidebar plus Trending / New / Free tabs and card previews.' },
+    ],
+  },
 ];
 ---
 
@@ -24,18 +37,23 @@ const mockups = [
       <p class="lead">
         3D models and tools for modelers. Three homepage directions, same data, nothing in common but the content.
       </p>
-      <ul>
-        {
-          mockups.map((m) => (
-            <li>
-              <a href={href(`mockup-${m.n}/`)}>
-                <span class="title">{m.title}</span>
-                <span class="note">{m.note}</span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      {
+        groups.map((g) => (
+          <section>
+            <h2>{g.name}</h2>
+            <ul>
+              {g.items.map((m) => (
+                <li>
+                  <a href={href(`mockup-${m.n}/`)}>
+                    <span class="title">{m.title}</span>
+                    <span class="note">{m.note}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
     </main>
   </body>
 </html>
@@ -91,6 +109,14 @@ const mockups = [
     margin: 0 0 2.5rem;
     color: var(--muted);
     font-size: 1.125rem;
+  }
+  h2 {
+    margin: 2rem 0 0.75rem;
+    color: var(--muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
   ul {
     display: grid;

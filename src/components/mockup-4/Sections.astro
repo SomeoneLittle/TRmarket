@@ -1,0 +1,350 @@
+---
+import {
+  categories,
+  categoryName,
+  formatAdded,
+  formatPrice,
+  freeProducts,
+  freshProducts,
+  products,
+} from '../../data/products';
+import Art from './Art.astro';
+import Card from './Card.astro';
+import Icon from './Icon.astro';
+
+const trust = [
+  { icon: 'download', title: 'Instant download', text: 'Files in your account right after payment' },
+  { icon: 'shield', title: 'Commercial licence', text: 'Use models in client and store projects' },
+  { icon: 'refresh', title: 'Free updates', text: 'Every new version, for life' },
+  { icon: 'support', title: 'Author support', text: 'Direct replies within one business day' },
+] as const;
+
+const popular = [...products].sort((a, b) => b.downloads - a.downloads).filter((p) => p.price > 0).slice(0, 8);
+const catSample = {
+  print: products.find((p) => p.id === 'aeon-vase-collection')!,
+  game: products.find((p) => p.id === 'sentinel-helmet-kit')!,
+  tool: products.find((p) => p.id === 'claystroke-brush-set')!,
+};
+---
+
+<ul class="trust wrap" data-reveal>
+  {
+    trust.map((t) => (
+      <li>
+        <Icon name={t.icon} size={26} />
+        <span><b>{t.title}</b><small>{t.text}</small></span>
+      </li>
+    ))
+  }
+</ul>
+
+<section class="sec wrap" id="free" aria-labelledby="m4-free" data-reveal>
+  <div class="sec-head">
+    <h2 class="t" id="m4-free">Free models &amp; tools</h2>
+    <a class="more" href="#">See all free <Icon name="arrow" size={16} /></a>
+  </div>
+  <ul class="freegrid">
+    {
+      freeProducts.map((p) => (
+        <li>
+          <a class="free zoom" href="#">
+            <span class="fthumb"><Art product={p} /></span>
+            <span class="finfo">
+              <b>{p.title}</b>
+              <small>{categoryName(p.category)} · {p.formats.join(', ')}</small>
+              <span class="fget"><Icon name="download" size={15} /> Free download</span>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<section class="sec wrap" aria-labelledby="m4-cats" data-reveal>
+  <div class="sec-head">
+    <h2 class="t" id="m4-cats">Shop by category</h2>
+  </div>
+  <ul class="cats">
+    {
+      categories.map((c) => (
+        <li>
+          <a class="cat zoom" href="#">
+            <span class="cart" aria-hidden="true"><Art product={catSample[c.id]} /></span>
+            <span class="ctext">
+              <b>{c.name}</b>
+              <small>{c.count} products · {c.blurb}</small>
+              <span class="go">Browse <Icon name="arrow" size={16} /></span>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<section class="sec wrap" aria-labelledby="m4-pop">
+  <div class="sec-head" data-reveal>
+    <h2 class="t" id="m4-pop">Popular products</h2>
+    <a class="more" href="#">View all <Icon name="arrow" size={16} /></a>
+  </div>
+  <ul class="grid">
+    {
+      popular.map((p, i) => (
+        <li data-reveal style={`transition-delay:${(i % 4) * 70}ms`}>
+          <Card product={p} />
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<section class="sec wrap" aria-labelledby="m4-new" data-reveal>
+  <div class="sec-head">
+    <h2 class="t" id="m4-new"><span class="live" aria-hidden="true"></span>Added today</h2>
+    <a class="more" href="#">All new arrivals <Icon name="arrow" size={16} /></a>
+  </div>
+  <ul class="rows">
+    {
+      freshProducts.map((p) => (
+        <li>
+          <a class="row zoom" href="#">
+            <span class="rthumb"><Art product={p} /></span>
+            <span class="rinfo">
+              <b>{p.title}</b>
+              <small>{categoryName(p.category)} · {formatAdded(p.addedHours)}</small>
+            </span>
+            <span class="rprice">{formatPrice(p.price)}</span>
+            <span class="rgo" aria-hidden="true"><Icon name="chevron-right" size={18} /></span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .trust {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    margin-top: 16px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--line);
+    list-style: none;
+    overflow: hidden;
+  }
+  .trust li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--s1);
+    color: var(--acc-h);
+  }
+  .trust span {
+    display: grid;
+    color: var(--text);
+  }
+  .trust small {
+    display: none;
+    color: var(--mut);
+  }
+  .freegrid,
+  .cats,
+  .grid,
+  .rows {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .free {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--s1);
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.2s, background 0.2s, transform 0.25s;
+  }
+  .free:hover {
+    border-color: #444a53;
+    background: var(--s2);
+    transform: translateX(3px);
+  }
+  .fthumb,
+  .rthumb {
+    flex: none;
+    width: 92px;
+    height: 80px;
+    border-radius: 8px;
+    background: radial-gradient(ellipse at 50% 40%, #343942, #16181b 80%);
+    overflow: hidden;
+  }
+  .finfo,
+  .rinfo,
+  .ctext {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+  .finfo b,
+  .rinfo b {
+    font-weight: 600;
+  }
+  small {
+    color: var(--mut);
+  }
+  .fget {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+    color: var(--ok);
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .cat {
+    position: relative;
+    display: block;
+    min-height: 220px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: radial-gradient(ellipse 70% 80% at 72% 40%, #30353c, #15171a 75%);
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .cat:hover {
+    border-color: var(--acc);
+  }
+  .cart {
+    position: absolute;
+    inset: 8px 4% 8px auto;
+    width: 46%;
+  }
+  .ctext {
+    position: relative;
+    z-index: 1;
+    max-width: 52%;
+    padding: 22px;
+  }
+  .ctext b {
+    font-size: 1.2rem;
+    line-height: 1.2;
+  }
+  .go {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    color: var(--acc-h);
+    font-weight: 650;
+    transform: translateX(-8px);
+    opacity: 0.6;
+    transition: transform 0.25s, opacity 0.25s;
+  }
+  .cat:hover .go {
+    transform: none;
+    opacity: 1;
+  }
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .live {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: var(--ok);
+    animation: pulse 1.8s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgb(53 208 127 / 0.6);
+    }
+    100% {
+      box-shadow: 0 0 0 10px rgb(53 208 127 / 0);
+    }
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px 10px 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--s1);
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .row:hover {
+    border-color: #444a53;
+    background: var(--s2);
+  }
+  .rinfo {
+    flex: 1;
+  }
+  .rprice {
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+  .rgo {
+    color: var(--mut);
+    transition: transform 0.2s, color 0.2s;
+  }
+  .row:hover .rgo {
+    color: var(--acc-h);
+    transform: translateX(4px);
+  }
+  @media (min-width: 640px) {
+    .trust {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .trust small {
+      display: block;
+      font-size: 0.78rem;
+    }
+    .freegrid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .rows {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .cats {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .cat {
+      min-height: 260px;
+    }
+    .ctext {
+      max-width: 100%;
+      padding: 20px;
+    }
+    .cart {
+      inset: auto 0 0 auto;
+      width: 70%;
+      height: 62%;
+    }
+    .grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1000px) {
+    .grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .rows {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

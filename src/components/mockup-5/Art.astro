@@ -1,0 +1,83 @@
+---
+import { lathe, seeded, shade } from '../../data/lathe';
+import type { Product } from '../../data/products';
+
+interface Props {
+  product: Product;
+  label?: string;
+}
+const { product: p, label = '' } = Astro.props;
+
+const tones = ['#a8b0bd', '#d08358', '#5da89a', '#d2ad3a'];
+const base = tones[p.tone];
+const isTool = p.category === 'tool';
+const model = isTool ? null : lathe(p.profile, { height: 156, radius: 86 });
+const rnd = seeded(p.id);
+const sliders = Array.from({ length: 4 }, () => 0.25 + rnd() * 0.65);
+const wave = Array.from({ length: 10 }, (_, i) => `${i === 0 ? 'M' : 'L'}${(42 + i * 17.6).toFixed(1)} ${(172 - rnd() * 24).toFixed(1)}`).join('');
+---
+
+<svg
+  viewBox="0 0 240 240"
+  class="art"
+  role={label ? 'img' : undefined}
+  aria-label={label || undefined}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  {
+    model ? (
+      <>
+        <ellipse class="shadow" cx="120" cy={model.base.cy + 7} rx={model.base.rx * 1.3} ry={model.base.ry * 1.6} fill="#000" opacity="0.55" />
+        <g class="body">
+          {model.bands.map((b) => <path class="band" d={b.d} fill={shade(base, b.light)} />)}
+          {model.bands.map((b) => <path class="gl" d={b.d} fill="url(#m5-cyl)" />)}
+          {model.top && <ellipse class="cap" cx="120" cy={model.top.cy} rx={model.top.rx} ry={model.top.ry} fill={shade(base, 0.95)} />}
+        </g>
+      </>
+    ) : (
+      <g>
+        <rect x="28" y="44" width="184" height="152" rx="9" fill="#17171a" stroke="#34343a" />
+        <rect x="28" y="44" width="184" height="24" rx="9" fill="#212125" />
+        <circle cx="43" cy="56" r="3" fill="#ff5f56" />
+        <circle cx="54" cy="56" r="3" fill="#ffbd2e" />
+        <circle cx="65" cy="56" r="3" fill="#27c93f" />
+        {sliders.map((s, i) => (
+          <>
+            <rect x="42" y={82 + i * 16} width="32" height="5" rx="2.5" fill="#4a4a52" />
+            <rect x="84" y={82 + i * 16} width="112" height="5" rx="2.5" fill="#2e2e34" />
+            <rect x="84" y={82 + i * 16} width={112 * s} height="5" rx="2.5" fill={base} />
+            <circle cx={84 + 112 * s} cy={84.5 + i * 16} r="5" fill="#f4f4f5" />
+          </>
+        ))}
+        <path d={wave} fill="none" stroke={base} stroke-width="2" stroke-linejoin="round" />
+      </g>
+    )
+  }
+</svg>
+
+<style>
+  .art {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  :global([data-view='clay']) .body {
+    filter: grayscale(1) brightness(1.12);
+  }
+  :global([data-view='wire']) .band {
+    fill: #0c0c0e;
+    stroke: var(--acc);
+    stroke-width: 0.6;
+  }
+  :global([data-view='wire']) .gl,
+  :global([data-view='wire']) .cap {
+    opacity: 0;
+  }
+  .body {
+    transition: filter 0.4s;
+  }
+  .band {
+    transition: fill 0.35s, stroke 0.35s;
+  }
+</style>

@@ -1,0 +1,42 @@
+---
+interface Props {
+  name:
+    | 'search' | 'heart' | 'cart' | 'user' | 'arrow' | 'download' | 'star' | 'grid' | 'list'
+    | 'filter' | 'chevron' | 'trend' | 'clock' | 'gift' | 'award';
+  size?: number;
+}
+const { name, size = 20 } = Astro.props;
+
+const paths: Record<string, string> = {
+  search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4',
+  heart: 'M12 20.5 4 12.6a4.9 4.9 0 0 1 7-6.9l1 1 1-1a4.9 4.9 0 0 1 7 6.9z',
+  cart: 'M3 4h2.5l2 10.5h10.5L20 7.5H6.3M9.5 19.5h.01M17 19.5h.01',
+  user: 'M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM5 20v-1.5A4.5 4.5 0 0 1 9.5 14h5a4.5 4.5 0 0 1 4.5 4.5V20',
+  arrow: 'M5 12h14M13 6l6 6-6 6',
+  download: 'M12 4v11M7 11l5 5 5-5M5 20h14',
+  star: 'm12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.4 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z',
+  grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  list: 'M4 6h16M4 12h16M4 18h16',
+  filter: 'M4 6h16M7 12h10M10 18h4',
+  chevron: 'm6 9 6 6 6-6',
+  trend: 'M3 17l6-6 4 4 8-8M15 7h6v6',
+  clock: 'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 8v4l3 2',
+  gift: 'M4 9h16v4H4zM6 13h12v7H6zM12 9v11M12 9S10 4 8 5s0 4 4 4zm0 0s2-5 4-4 0 4-4 4z',
+  award: 'M12 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM8.5 12.5 7 21l5-3 5 3-1.5-8.5',
+};
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d={paths[name]}></path>
+</svg>

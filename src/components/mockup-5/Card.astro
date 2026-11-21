@@ -1,0 +1,196 @@
+---
+import { categoryName, formatCount, formatPrice, type Product } from '../../data/products';
+import Art from './Art.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  product: Product;
+}
+const { product: p } = Astro.props;
+const free = p.price === 0;
+const off = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+const filters = [p.category, free ? 'free' : '', off ? 'sale' : ''].filter(Boolean).join(' ');
+---
+
+<article class="card" data-tags={filters}>
+  <div class="thumb">
+    <Art product={p} label={`Preview of ${p.title}`} />
+    {off > 0 && <span class="tag sale">−{off}%</span>}
+    {free && <span class="tag free">Free</span>}
+    <div class="side">
+      <button class="r" type="button" data-fav aria-pressed="false" aria-label={`Add ${p.title} to favorites`}><Icon name="heart" size={18} /></button>
+      <button class="r a" type="button" data-add data-title={p.title} data-price={p.price} data-kind={`${p.kind} · ${p.formats.join(', ')}`} aria-label={free ? `Get ${p.title}` : `Add ${p.title} to cart`}>
+        <Icon name={free ? 'download' : 'plus'} size={18} />
+      </button>
+    </div>
+  </div>
+  <div class="meta">
+    <h3><a href="#">{p.title}</a></h3>
+    <p class="price">
+      {p.oldPrice && <s>${p.oldPrice}</s>}
+      <b>{formatPrice(p.price)}</b>
+    </p>
+    <p class="sub">{categoryName(p.category)} · {p.formats.join(', ')}</p>
+    <p class="stat"><Icon name="star" size={13} /> {p.rating.toFixed(1)} <span>({p.reviews})</span> · {formatCount(p.downloads)} downloads</p>
+  </div>
+</article>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const fav = (e.target as HTMLElement).closest<HTMLElement>('[data-fav]');
+    if (fav) fav.setAttribute('aria-pressed', String(fav.getAttribute('aria-pressed') !== 'true'));
+  });
+</script>
+
+<style>
+  .card {
+    transition: opacity 0.25s, transform 0.3s var(--ease);
+  }
+  .card.out {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  .thumb {
+    position: relative;
+    aspect-ratio: 1 / 0.9;
+    overflow: hidden;
+    border-radius: 16px;
+    background: radial-gradient(ellipse 85% 75% at 50% 40%, #2c2c31, #121214 78%);
+    transition: box-shadow 0.25s;
+  }
+  .card:hover .thumb {
+    box-shadow: 0 0 0 1px #3d3d45, 0 18px 40px -18px rgb(0 0 0 / 0.9);
+  }
+  .thumb :global(.art) {
+    padding: 6%;
+    transition: transform 0.5s var(--ease);
+  }
+  .card:hover .thumb :global(.art) {
+    transform: scale(1.06) translateY(-2px);
+  }
+  .tag {
+    position: absolute;
+    inset: 12px auto auto 12px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+  .sale {
+    background: var(--sale);
+    color: #2b0606;
+  }
+  .free {
+    background: var(--acc);
+    color: #04210f;
+  }
+  .side {
+    position: absolute;
+    inset: 12px 12px auto auto;
+    display: grid;
+    gap: 8px;
+    transform: translateX(56px);
+    opacity: 0;
+    transition: transform 0.3s var(--ease), opacity 0.2s;
+  }
+  .card:hover .side,
+  .card:focus-within .side {
+    transform: none;
+    opacity: 1;
+  }
+  .r {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(244 244 245 / 0.94);
+    color: #111;
+    cursor: pointer;
+    transition: transform 0.2s var(--ease), background 0.15s;
+  }
+  .r:hover {
+    transform: scale(1.1);
+  }
+  .r:active {
+    transform: scale(0.92);
+  }
+  .r.a {
+    background: var(--acc);
+    color: #04210f;
+  }
+  .r[aria-pressed='true'] {
+    background: var(--sale);
+    color: #fff;
+  }
+  .r[aria-pressed='true'] :global(path) {
+    fill: currentColor;
+  }
+  @media (hover: none) {
+    .side {
+      transform: none;
+      opacity: 1;
+    }
+  }
+  .meta {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 12px;
+    padding: 12px 4px 0;
+  }
+  h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 650;
+    line-height: 1.3;
+  }
+  h3 a {
+    text-decoration: none;
+  }
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .card {
+    position: relative;
+  }
+  .side {
+    z-index: 1;
+  }
+  h3 a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .price {
+    margin: 0;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .price b {
+    font-size: 1.1rem;
+  }
+  .price s {
+    margin-right: 6px;
+    color: var(--mut);
+    font-size: 0.85rem;
+  }
+  .sub,
+  .stat {
+    margin: 0;
+    color: var(--mut);
+    font-size: 0.85rem;
+  }
+  .stat {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .stat :global(svg) {
+    color: #ffc247;
+    fill: #ffc247;
+  }
+</style>
