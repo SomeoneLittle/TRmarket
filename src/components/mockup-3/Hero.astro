@@ -48,6 +48,7 @@ const mats = [
     </div>
 
     <figure class="show">
+      {mats.map((m, i) => <input class="radio" type="radio" name="m3-mat" id={`m3-r-${m.id}`} checked={i === 0} />)}
       <div class="sculpt-wrap">
         <svg viewBox="0 0 300 350" role="img" aria-label="A vase sculpture rendered in the selected material" focusable="false">
           <ellipse class="contact" cx={CX} cy={BASE + 8} rx="110" ry="14" fill="#2a1a24" opacity="0.2"></ellipse>
@@ -64,9 +65,8 @@ const mats = [
       <fieldset class="picker">
         <legend>Try a material</legend>
         {
-          mats.map((m, i) => (
-            <label>
-              <input type="radio" name="m3-mat" value={m.id} checked={i === 0} />
+          mats.map((m) => (
+            <label for={`m3-r-${m.id}`}>
               <span class={`sw ${m.id}`} aria-hidden="true"></span>
               <span>{m.label}</span>
             </label>
@@ -179,10 +179,10 @@ const mats = [
     opacity: 0;
     transition: opacity 0.45s;
   }
-  .show:has(input[value='clay']:checked) .mat.clay,
-  .show:has(input[value='jade']:checked) .mat.jade,
-  .show:has(input[value='chrome']:checked) .mat.chrome,
-  .show:has(input[value='wax']:checked) .mat.wax {
+  #m3-r-clay:checked ~ .sculpt-wrap .mat.clay,
+  #m3-r-jade:checked ~ .sculpt-wrap .mat.jade,
+  #m3-r-chrome:checked ~ .sculpt-wrap .mat.chrome,
+  #m3-r-wax:checked ~ .sculpt-wrap .mat.wax {
     opacity: 1;
   }
   .chip {
@@ -229,7 +229,6 @@ const mats = [
     clip-path: inset(50%);
   }
   label {
-    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -248,19 +247,25 @@ const mats = [
   label:active {
     transform: scale(0.95);
   }
-  label:has(input:checked) {
+  #m3-r-clay:checked ~ .picker label[for='m3-r-clay'],
+  #m3-r-jade:checked ~ .picker label[for='m3-r-jade'],
+  #m3-r-chrome:checked ~ .picker label[for='m3-r-chrome'],
+  #m3-r-wax:checked ~ .picker label[for='m3-r-wax'] {
     background: var(--plum);
     color: var(--cream);
   }
-  label:has(input:focus-visible) {
+  #m3-r-clay:focus-visible ~ .picker label[for='m3-r-clay'],
+  #m3-r-jade:focus-visible ~ .picker label[for='m3-r-jade'],
+  #m3-r-chrome:focus-visible ~ .picker label[for='m3-r-chrome'],
+  #m3-r-wax:focus-visible ~ .picker label[for='m3-r-wax'] {
     outline: 3px solid var(--clay);
     outline-offset: 2px;
   }
-  input {
+  .radio {
     position: absolute;
+    width: 1px;
+    height: 1px;
     opacity: 0;
-    inset: 0;
-    cursor: pointer;
   }
   .sw {
     width: 28px;
