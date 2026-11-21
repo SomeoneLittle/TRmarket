@@ -1,0 +1,314 @@
+---
+import { PROFILES, products } from '../../data/products';
+import Icon from './Icon.astro';
+
+const hero = products[0];
+const LAYERS = 36;
+const R = 190;
+const prof = PROFILES.vase;
+const radiusAt = (t: number) => {
+  const x = t * (prof.length - 1);
+  const i = Math.floor(x);
+  return prof[i] * (1 - (x - i)) + prof[Math.min(i + 1, prof.length - 1)] * (x - i);
+};
+const layers = Array.from({ length: LAYERS }, (_, i) => {
+  const rx = radiusAt(i / (LAYERS - 1)) * R;
+  return { rx, ry: rx * 0.5, cy: 338 - i * 6.4, accent: i % 9 === 8 };
+});
+
+// Isometric build plate: a rhombus with a grid.
+const cx = 260;
+const cy = 350;
+const hw = 235;
+const hh = 117;
+const gridLines = Array.from({ length: 9 }, (_, k) => {
+  const t = (k + 1) / 10;
+  const a = [cx - hw + hw * t, cy - hh * t];
+  const b = [cx + hw * t, cy + hh - hh * t];
+  const c = [cx - hw + hw * t, cy + hh * t];
+  const d = [cx + hw * t, cy - hh + hh * t];
+  return { a, b, c, d };
+});
+
+const strip = ['Commercial licence included', 'Lifetime updates', 'Instant download', 'Tested on real printers'];
+---
+
+<section class="hero" aria-labelledby="m1-h1">
+  <div class="wrap grid">
+    <div class="copy">
+      <p class="mono kicker"><span>●</span> One maker · three kinds of files</p>
+      <h1 id="m1-h1">
+        <span class="l1">Print it.</span>
+        <span class="l2">Play it.</span>
+        <span class="l3">Sculpt it.</span>
+      </h1>
+      <p class="lead">
+        A one-person shop for printable models, game-ready assets and sculpting tools. Every file is tested on a real
+        printer or in a real engine before it ships.
+      </p>
+      <div class="cta">
+        <a class="btn" href="#catalog">Browse the catalog <Icon name="arrow" size={20} /></a>
+        <a class="btn alt" href="#free">Grab something free</a>
+      </div>
+    </div>
+
+    <div class="stage" aria-hidden="true">
+      <svg class="plate" viewBox="0 0 520 460" focusable="false">
+        <polygon points={`${cx - hw},${cy + 18} ${cx},${cy + hh + 18} ${cx + hw},${cy + 18} ${cx + hw},${cy} ${cx - hw},${cy}`} fill="#0e0e0e"></polygon>
+        <polygon points={`${cx - hw},${cy} ${cx},${cy - hh} ${cx + hw},${cy} ${cx},${cy + hh}`} fill="#fffdf4" stroke="#0e0e0e" stroke-width="3"></polygon>
+        {
+          gridLines.map((g) => (
+            <>
+              <line x1={g.a[0]} y1={g.a[1]} x2={g.b[0]} y2={g.b[1]} stroke="#0e0e0e" stroke-opacity="0.22" stroke-width="1.5" />
+              <line x1={g.c[0]} y1={g.c[1]} x2={g.d[0]} y2={g.d[1]} stroke="#0e0e0e" stroke-opacity="0.22" stroke-width="1.5" />
+            </>
+          ))
+        }
+        <ellipse cx={cx + 14} cy="350" rx={layers[0].rx} ry={layers[0].ry} fill="#0e0e0e" opacity="0.9"></ellipse>
+      </svg>
+
+      <div class="print">
+        <svg class="obj" viewBox="0 0 520 460" focusable="false">
+          {
+            layers.map((l) => (
+              <ellipse
+                cx={cx}
+                cy={l.cy + 12}
+                rx={l.rx}
+                ry={l.ry}
+                fill={l.accent ? 'var(--orange)' : 'var(--yellow)'}
+                stroke="#0e0e0e"
+                stroke-width="2.4"
+              />
+            ))
+          }
+        </svg>
+      </div>
+      <div class="nozzle"><span class="mono">Layer <b class="count"></b> / 240</span></div>
+
+      <p class="tag t1 mono">Nozzle 215°C</p>
+      <p class="tag t2 mono">Bed 60°C</p>
+      <a class="sticker" href="#" tabindex="-1">
+        <span class="mono">Featured print</span>
+        <b>{hero.title}</b>
+        <span>from $14</span>
+      </a>
+    </div>
+  </div>
+
+  <ul class="strip wrap">
+    {strip.map((s) => <li class="mono">{s}</li>)}
+  </ul>
+</section>
+
+<style>
+  @property --layer {
+    syntax: '<integer>';
+    inherits: true;
+    initial-value: 240;
+  }
+  .hero {
+    padding-top: clamp(1.5rem, 4vw, 3.5rem);
+    overflow: clip;
+  }
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+  }
+  .kicker span {
+    color: var(--orange);
+  }
+  h1 {
+    display: grid;
+    margin: 0;
+    font-size: clamp(3.4rem, 13vw, 9.5rem);
+    font-weight: 700;
+    line-height: 0.88;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+  }
+  h1 span {
+    width: max-content;
+    max-width: 100%;
+  }
+  .l1 {
+    padding-inline: 0.08em;
+    background: var(--yellow);
+    box-shadow: 0.06em 0.06em 0 var(--ink);
+  }
+  .l2 {
+    color: transparent;
+    -webkit-text-stroke: 3px var(--ink);
+  }
+  .l3 {
+    color: transparent;
+    background: repeating-linear-gradient(0deg, var(--ink) 0 0.045em, transparent 0.045em 0.075em);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  .lead {
+    max-width: 34rem;
+    margin: 1.5rem 0;
+    font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+    line-height: 1.45;
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.25rem;
+  }
+
+  .stage {
+    position: relative;
+    width: min(100%, 620px);
+    justify-self: center;
+    aspect-ratio: 520 / 460;
+    --layer: 240;
+  }
+  .stage svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .print {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0);
+    animation: print 10s steps(36, end) infinite;
+  }
+  .nozzle {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 22%;
+    height: 0;
+    border-top: 2px dashed var(--ink);
+    animation: nozzle 10s steps(36, end) infinite;
+  }
+  .nozzle span {
+    position: absolute;
+    right: 0;
+    bottom: 0.3rem;
+    padding: 0.15rem 0.45rem;
+    background: var(--ink);
+    color: var(--yellow);
+  }
+  .count::after {
+    counter-reset: n var(--layer);
+    content: counter(n);
+  }
+  @keyframes print {
+    0% {
+      clip-path: inset(100% 0 0 0);
+    }
+    82%,
+    100% {
+      clip-path: inset(0);
+    }
+  }
+  @keyframes nozzle {
+    0% {
+      top: 76%;
+      --layer: 0;
+    }
+    82%,
+    100% {
+      top: 22%;
+      --layer: 240;
+    }
+  }
+  .tag {
+    position: absolute;
+    margin: 0;
+    padding: 0.25rem 0.55rem;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+  }
+  .t1 {
+    inset: 8% auto auto 2%;
+    transform: rotate(-4deg);
+  }
+  .t2 {
+    inset: auto 2% 8% auto;
+    background: var(--blue);
+    color: #fff;
+    transform: rotate(3deg);
+  }
+  .sticker {
+    position: absolute;
+    inset: auto auto 4% 0;
+    display: grid;
+    gap: 0.1rem;
+    max-width: 11rem;
+    padding: 0.6rem 0.8rem;
+    border: var(--bw) solid var(--ink);
+    background: var(--yellow);
+    box-shadow: 4px 4px 0 var(--ink);
+    text-decoration: none;
+    transform: rotate(-3deg);
+  }
+  .sticker b {
+    font-size: 1.05rem;
+    line-height: 1.15;
+  }
+
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: clamp(2rem, 5vw, 4rem) auto 0;
+    padding: 0;
+    border: var(--bw) solid var(--ink);
+    list-style: none;
+    background: var(--paper-2);
+  }
+  .strip li {
+    padding: 0.9rem 1rem;
+    border-top: var(--bw) solid var(--ink);
+    border-left: var(--bw) solid var(--ink);
+    text-align: center;
+  }
+  .strip li:nth-child(-n + 2) {
+    border-top: 0;
+  }
+  .strip li:nth-child(odd) {
+    border-left: 0;
+  }
+  @media (min-width: 960px) {
+    .grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 2rem;
+    }
+    .strip {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .strip li {
+      border-top: 0;
+    }
+    .strip li:nth-child(odd) {
+      border-left: var(--bw) solid var(--ink);
+    }
+    .strip li:first-child {
+      border-left: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .print,
+    .nozzle {
+      animation: none;
+    }
+    .print {
+      clip-path: none;
+    }
+    .nozzle {
+      top: 22%;
+    }
+  }
+</style>

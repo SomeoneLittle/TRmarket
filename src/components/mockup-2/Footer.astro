@@ -1,0 +1,151 @@
+---
+const columns = [
+  { title: '// shop', links: ['Catalog', '3D models for print', '3D models for games', 'Tools & add-ons', 'Free assets'] },
+  { title: '// read', links: ['Blog', 'Changelog', 'Printing guide'] },
+  { title: '// legal', links: ['Privacy policy', 'Terms of sale (offer)', 'Licences', 'Refunds & returns'] },
+  { title: '// help', links: ['Contacts', 'My downloads', 'Report a problem'] },
+];
+const socials = ['YouTube', 'Discord', 'Instagram', 'X'];
+---
+
+<footer class="ft">
+  <div class="wrap">
+    <div class="cols">
+      <div class="brand">
+        <p class="logo">TR<b>market</b></p>
+        <p class="about">
+          One author, one catalog: 3D models and modeling tools, tested before they ship.
+        </p>
+        <ul class="soc" aria-label="Social networks">
+          {
+            socials.map((s) => (
+              <li>
+                <a class="mono" href="#">{s}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      {
+        columns.map((c) => (
+          <nav aria-label={c.title.replace('// ', '')}>
+            <h2 class="mono">{c.title}</h2>
+            <ul>
+              {c.links.map((l) => (
+                <li>
+                  <a href="#">{l}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+  </div>
+  <div class="status">
+    <div class="wrap bar mono">
+      <span>TRmarket v0.1 · mockup build</span>
+      <span>Sole proprietor Full Name · Reg. No. 000 000 000 · Tax ID 0000000000</span>
+      <span>00 Placeholder St., City · hello@example.com</span>
+      <span>© 2026</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ft {
+    margin-top: clamp(5rem, 10vw, 8rem);
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid var(--line-2);
+    background: linear-gradient(180deg, var(--panel), var(--bg));
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem 1.5rem;
+    padding-bottom: 2.5rem;
+  }
+  .brand {
+    grid-column: 1 / -1;
+  }
+  .logo {
+    margin: 0;
+    color: var(--text);
+    font: 500 1.6rem var(--mono);
+    letter-spacing: -0.02em;
+  }
+  .logo b {
+    color: var(--cyan);
+  }
+  .about {
+    max-width: 22rem;
+    margin: 0.5rem 0 1rem;
+    color: var(--dim);
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .soc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .soc a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    border: 1px solid var(--line-2);
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .soc a:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+  .soc a:active {
+    background: rgb(77 228 255 / 0.16);
+  }
+  h2 {
+    margin: 0 0 0.75rem;
+    color: var(--cyan);
+  }
+  nav a {
+    display: inline-block;
+    padding: 0.35rem 0;
+    color: var(--dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  nav a:hover {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--cyan);
+    text-underline-offset: 4px;
+  }
+  nav a:active {
+    color: var(--lime);
+  }
+  .status {
+    padding: 0.8rem 0 5rem;
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+  }
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.75rem;
+    color: var(--dim);
+    font-size: 0.7rem;
+  }
+  @media (min-width: 860px) {
+    .cols {
+      grid-template-columns: 1.6fr repeat(4, 1fr);
+    }
+    .brand {
+      grid-column: auto;
+    }
+  }
+</style>

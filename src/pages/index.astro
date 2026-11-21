@@ -1,16 +1,141 @@
 ---
+import { href } from '../data/products';
+
+const mockups = [
+  { n: 1, title: 'Mockup 1', note: 'Slicer: a loud print-shop look where the hero is printed layer by layer.' },
+  { n: 2, title: 'Mockup 2', note: 'Viewport: a dark 3D-editor interface made of wireframes and axis colors.' },
+  { n: 3, title: 'Mockup 3', note: 'Clay: a warm, tactile studio with soft materials and products on shelves.' },
+];
 ---
 
+<!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="TRmarket homepage mockups: pick one of three design directions." />
+    <title>TRmarket — homepage mockups</title>
+    <link rel="icon" type="image/svg+xml" href={href('favicon.svg')} />
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Design review</p>
+      <h1>TRmarket</h1>
+      <p class="lead">
+        3D models and tools for modelers. Three homepage directions, same data, nothing in common but the content.
+      </p>
+      <ul>
+        {
+          mockups.map((m) => (
+            <li>
+              <a href={href(`mockup-${m.n}/`)}>
+                <span class="title">{m.title}</span>
+                <span class="note">{m.note}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </main>
+  </body>
 </html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f6f4;
+    --fg: #1a1a1a;
+    --muted: #5a5a5a;
+    --card: #fff;
+    --line: #d8d8d4;
+    --accent: #1a1a1a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141414;
+      --fg: #f2f2f0;
+      --muted: #a6a6a2;
+      --card: #1e1e1e;
+      --line: #333;
+      --accent: #f2f2f0;
+    }
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+  }
+  main {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 4rem 1.25rem 3rem;
+  }
+  .eyebrow {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin: 0.25rem 0 0.75rem;
+    font-size: clamp(2.5rem, 9vw, 4rem);
+    line-height: 1.05;
+  }
+  .lead {
+    margin: 0 0 2.5rem;
+    color: var(--muted);
+    font-size: 1.125rem;
+  }
+  ul {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  a {
+    display: block;
+    padding: 1.5rem 1.5rem 1.25rem;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--card);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  a:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  a:active {
+    transform: translateY(0);
+  }
+  a:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .title {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+  }
+  .note {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--muted);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    a {
+      transition: none;
+    }
+    a:hover {
+      transform: none;
+    }
+  }
+</style>

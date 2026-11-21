@@ -1,0 +1,172 @@
+---
+import '@fontsource-variable/space-grotesk';
+import '@fontsource/space-mono/400.css';
+import '@fontsource/space-mono/700.css';
+import { href } from '../../data/products';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#efebdd" />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href={href('favicon.svg')} />
+  </head>
+  <body class="m1">
+    <a class="skip" href="#main">Skip to content</a>
+    <slot />
+    <a class="back" href={href()} lang="ru">← к выбору макетов</a>
+  </body>
+</html>
+
+<style is:global>
+  .m1 {
+    --paper: #efebdd;
+    --paper-2: #e3ddc9;
+    --ink: #0e0e0e;
+    --yellow: #ffd400;
+    --orange: #ff5a26;
+    --blue: #2b50ff;
+    --mint: #8fe3c0;
+    --muted: #4a463c;
+    --bw: 3px;
+    --font: 'Space Grotesk Variable', system-ui, sans-serif;
+    --mono: 'Space Mono', ui-monospace, monospace;
+    --wrap: min(1360px, 100% - clamp(32px, 8vw, 80px));
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  .m1 {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 1rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .m1 *,
+  .m1 *::before,
+  .m1 *::after {
+    box-sizing: border-box;
+  }
+  .m1 a {
+    color: inherit;
+  }
+  .m1 :focus-visible {
+    outline: 4px solid var(--blue);
+    outline-offset: 3px;
+  }
+  .m1 .dark :focus-visible {
+    outline-color: var(--yellow);
+  }
+  .m1 .wrap {
+    width: var(--wrap);
+    margin-inline: auto;
+  }
+  .m1 .mono {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .m1 .skip {
+    position: fixed;
+    inset: 8px auto auto 8px;
+    z-index: 100;
+    padding: 0.75rem 1rem;
+    background: var(--yellow);
+    border: var(--bw) solid var(--ink);
+    font-weight: 700;
+    transform: translateY(-200%);
+  }
+  .m1 .skip:focus {
+    transform: none;
+  }
+  .m1 .back {
+    position: fixed;
+    inset: auto auto 14px 14px;
+    z-index: 90;
+    padding: 0.5rem 0.75rem;
+    background: var(--ink);
+    color: var(--paper);
+    border: 2px solid var(--paper);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    text-decoration: none;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .m1 .back:hover {
+    background: var(--yellow);
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .m1 .back:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+  .m1 .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .m1 .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 48px;
+    padding: 0.7rem 1.25rem;
+    border: var(--bw) solid var(--ink);
+    background: var(--yellow);
+    color: var(--ink);
+    font: 700 1rem/1 var(--font);
+    text-decoration: none;
+    box-shadow: 5px 5px 0 var(--ink);
+    cursor: pointer;
+    transition: transform 0.08s steps(2), box-shadow 0.08s steps(2), background 0.08s steps(2);
+  }
+  .m1 .btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--ink);
+  }
+  .m1 .btn:active {
+    transform: translate(5px, 5px);
+    box-shadow: 0 0 0 var(--ink);
+  }
+  .m1 .btn.alt {
+    background: var(--paper);
+  }
+  .m1 .btn.alt:hover {
+    background: #fff;
+  }
+  .m1 .section-title {
+    margin: 0;
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    .m1 .btn,
+    .m1 .back {
+      transition: none;
+    }
+  }
+</style>

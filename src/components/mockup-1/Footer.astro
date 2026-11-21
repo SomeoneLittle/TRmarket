@@ -1,0 +1,133 @@
+---
+const columns = [
+  { title: 'Shop', links: ['Catalog', '3D models for print', '3D models for games', 'Tools & add-ons', 'Free stuff'] },
+  { title: 'Read', links: ['Blog', 'Changelog', 'How to print my files'] },
+  { title: 'Legal', links: ['Privacy policy', 'Terms of sale (offer)', 'Licences', 'Refunds & returns'] },
+  { title: 'Help', links: ['Contacts', 'My downloads', 'Report a problem'] },
+];
+const socials = ['YouTube', 'Discord', 'Instagram', 'X'];
+---
+
+<footer class="ft dark">
+  <div class="wrap">
+    <p class="big" aria-hidden="true">TRMARKET</p>
+    <div class="cols">
+      {
+        columns.map((c) => (
+          <nav aria-label={c.title}>
+            <h2 class="mono">{c.title}</h2>
+            <ul>
+              {c.links.map((l) => (
+                <li>
+                  <a href="#">{l}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+    <ul class="soc" aria-label="Social networks">
+      {
+        socials.map((s) => (
+          <li>
+            <a class="mono" href="#">{s}</a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="legal mono">
+      TRmarket · Sole proprietor Full Name · Reg. No. 000 000 000 · Tax ID 0000000000 · 00 Placeholder St., City, Country
+      · hello@example.com
+    </p>
+    <p class="legal mono">© 2026 TRmarket. All 3D models are digital goods; licence terms apply.</p>
+  </div>
+</footer>
+
+<style>
+  .ft {
+    margin-top: clamp(4rem, 10vw, 8rem);
+    padding: clamp(2rem, 5vw, 4rem) 0 5rem;
+    background: var(--ink);
+    color: var(--paper);
+    border-top: var(--bw) solid var(--ink);
+    overflow: clip;
+  }
+  .big {
+    margin: 0 0 2rem;
+    font-size: clamp(3rem, 17.5vw, 17rem);
+    font-weight: 700;
+    line-height: 0.8;
+    letter-spacing: -0.06em;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--yellow);
+    white-space: nowrap;
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem 1.5rem;
+  }
+  h2 {
+    margin: 0 0 0.75rem;
+    color: var(--yellow);
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cols a {
+    display: inline-block;
+    padding: 0.35rem 0;
+    min-height: 32px;
+    text-decoration: none;
+  }
+  .cols a:hover {
+    background: var(--yellow);
+    color: var(--ink);
+    box-shadow: 0 0 0 4px var(--yellow);
+  }
+  .cols a:active {
+    background: var(--orange);
+    box-shadow: 0 0 0 4px var(--orange);
+  }
+  .soc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 2.5rem 0 0;
+  }
+  .soc a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1rem;
+    border: 2px solid var(--paper);
+    text-decoration: none;
+  }
+  .soc a:hover {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .soc a:active {
+    background: var(--yellow);
+    color: var(--ink);
+  }
+  .legal {
+    max-width: 60rem;
+    margin: 1.5rem 0 0;
+    color: #c9c4b2;
+    font-size: 0.7rem;
+    line-height: 1.7;
+    text-transform: none;
+  }
+  .legal + .legal {
+    margin-top: 0.5rem;
+  }
+  @media (min-width: 760px) {
+    .cols {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

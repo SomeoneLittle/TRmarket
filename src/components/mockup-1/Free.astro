@@ -1,0 +1,188 @@
+---
+import { freeProducts, formatCount } from '../../data/products';
+import Art from './Art.astro';
+import Icon from './Icon.astro';
+---
+
+<section class="free" id="free" aria-labelledby="m1-free">
+  <div class="wrap">
+    <header class="head">
+      <h2 id="m1-free" class="section-title">Free<br />stuff</h2>
+      <p>Models and tools I give away. No account tricks, no email walls. Use them in anything, including commercial work.</p>
+    </header>
+    <ul class="list">
+      {
+        freeProducts.map((p, i) => (
+          <li>
+            <a class="ticket" href="#">
+              <span class="stub mono" aria-hidden="true">Free №{String(i + 1).padStart(2, '0')}</span>
+              <span class="pic">
+                <Art profile={p.profile} tone={p.tone} label="" />
+              </span>
+              <span class="info">
+                <span class="name">{p.title}</span>
+                <span class="mono sub">{p.kind}</span>
+                <span class="dl">
+                  <Icon name="download" size={16} /> {formatCount(p.downloads)} downloads
+                </span>
+              </span>
+              <span class="go" aria-hidden="true"><Icon name="arrow" size={20} /></span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .free {
+    --notch: 12px;
+    margin-top: clamp(3rem, 8vw, 6rem);
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    background: var(--yellow);
+    border-block: var(--bw) solid var(--ink);
+    position: relative;
+  }
+  .free::before,
+  .free::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 14px;
+    background: radial-gradient(circle at 12px 0, var(--paper) 0 8px, transparent 8.5px) 0 0 / 24px 14px repeat-x;
+  }
+  .free::before {
+    top: 0;
+  }
+  .free::after {
+    bottom: 0;
+    transform: scaleY(-1);
+  }
+  .head {
+    display: grid;
+    gap: 1rem;
+    align-items: end;
+    margin-bottom: 2rem;
+  }
+  .head p {
+    max-width: 30rem;
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  .list {
+    display: grid;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ticket {
+    display: grid;
+    grid-template-columns: auto 96px 1fr auto;
+    align-items: center;
+    gap: 0.9rem;
+    min-height: 120px;
+    padding: 0.75rem 1rem 0.75rem 0;
+    border: var(--bw) solid var(--ink);
+    background: var(--paper);
+    box-shadow: 6px 6px 0 var(--ink);
+    text-decoration: none;
+    transition: transform 0.1s steps(2), box-shadow 0.1s steps(2);
+  }
+  .ticket:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--ink);
+  }
+  .ticket:active {
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .stub {
+    align-self: stretch;
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    border-right: var(--bw) dashed var(--ink);
+    background: var(--ink);
+    color: var(--yellow);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 0.7rem;
+  }
+  .pic {
+    display: block;
+    width: 96px;
+    height: 96px;
+  }
+  .info {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+  .dl {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 600;
+  }
+  .go {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--ink);
+    background: var(--yellow);
+  }
+  .ticket:hover .go {
+    background: var(--ink);
+    color: var(--yellow);
+  }
+  @media (min-width: 760px) {
+    .list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1180px) {
+    .list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .ticket {
+      grid-template-columns: auto 96px 1fr;
+    }
+    .go {
+      display: none;
+    }
+  }
+  @media (min-width: 1000px) {
+    .head {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 420px) {
+    .ticket {
+      grid-template-columns: auto 72px 1fr;
+    }
+    .pic {
+      width: 72px;
+      height: 72px;
+    }
+    .go {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ticket {
+      transition: none;
+    }
+  }
+</style>

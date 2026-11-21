@@ -1,0 +1,289 @@
+---
+import { PROFILES } from '../../data/products';
+import Icon from './Icon.astro';
+
+const prof = PROFILES.vase;
+const CX = 150;
+const BASE = 330;
+const HT = 270;
+const R = 128;
+const right = prof.map((r, i) => [CX + r * R, BASE - (i * HT) / (prof.length - 1)]);
+const left = right.map(([x, y]) => [2 * CX - x, y]).reverse();
+const smooth = (pts: number[][]) => {
+  let d = '';
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(i - 1, 0)];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[Math.min(i + 2, pts.length - 1)];
+    d += `C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d;
+};
+const d = `M${right[0][0].toFixed(1)} ${right[0][1]}${smooth(right)}L${left[0][0].toFixed(1)} ${left[0][1].toFixed(1)}${smooth(left)}Z`;
+const mats = [
+  { id: 'clay', label: 'Clay' },
+  { id: 'jade', label: 'Jade' },
+  { id: 'chrome', label: 'Chrome' },
+  { id: 'wax', label: 'Wax' },
+];
+---
+
+<section class="hero" aria-labelledby="m3-h1">
+  <i class="blob b1" aria-hidden="true"></i>
+  <i class="blob b2" aria-hidden="true"></i>
+  <i class="blob b3" aria-hidden="true"></i>
+
+  <div class="wrap grid">
+    <div class="copy">
+      <p class="eyebrow"><Icon name="spark" size={16} /> New drops every week</p>
+      <h1 id="m3-h1">Shape<br />something<br /><em>real.</em></h1>
+      <p class="lead">
+        Hand-finished 3D models for printing and games, and the brushes, add-ons and scripts I use to sculpt them.
+      </p>
+      <div class="cta">
+        <a class="btn" href="#shelf">Explore the shop <Icon name="arrow" size={18} /></a>
+        <a class="btn soft" href="#free">Free downloads</a>
+      </div>
+    </div>
+
+    <figure class="show">
+      <div class="sculpt-wrap">
+        <svg viewBox="0 0 300 350" role="img" aria-label="A vase sculpture rendered in the selected material" focusable="false">
+          <ellipse class="contact" cx={CX} cy={BASE + 8} rx="110" ry="14" fill="#2a1a24" opacity="0.2"></ellipse>
+          <g class="obj">
+            {mats.map((m) => <path class={`mat ${m.id}`} {d} fill={`url(#mat-${m.id})`}></path>)}
+            <path {d} fill="url(#m3-shade)"></path>
+          </g>
+        </svg>
+        <span class="chip c1">STL · 3MF</span>
+        <span class="chip c2">Sculpt brushes</span>
+        <span class="chip c3">Game-ready</span>
+      </div>
+
+      <fieldset class="picker">
+        <legend>Try a material</legend>
+        {
+          mats.map((m, i) => (
+            <label>
+              <input type="radio" name="m3-mat" value={m.id} checked={i === 0} />
+              <span class={`sw ${m.id}`} aria-hidden="true"></span>
+              <span>{m.label}</span>
+            </label>
+          ))
+        }
+      </fieldset>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-block: clamp(2rem, 5vw, 4rem) 1rem;
+    overflow: clip;
+  }
+  .blob {
+    position: absolute;
+    z-index: 0;
+    animation: float 14s ease-in-out infinite;
+  }
+  .b1 {
+    inset: 8% auto auto -8%;
+    width: 36vw;
+    max-width: 480px;
+    aspect-ratio: 1;
+    border-radius: 58% 42% 55% 45% / 50% 55% 45% 50%;
+    background: var(--clay-soft);
+    opacity: 0.55;
+  }
+  .b2 {
+    inset: 38% -6% auto auto;
+    width: 30vw;
+    max-width: 420px;
+    aspect-ratio: 1;
+    border-radius: 45% 55% 40% 60% / 60% 45% 55% 40%;
+    background: #cfe0c9;
+    opacity: 0.7;
+    animation-delay: -5s;
+  }
+  .b3 {
+    inset: 4% 28% auto auto;
+    width: 12vw;
+    max-width: 160px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--butter);
+    opacity: 0.8;
+    animation-delay: -9s;
+  }
+  @keyframes float {
+    50% {
+      transform: translate(18px, -22px) rotate(8deg) scale(1.04);
+    }
+  }
+  .grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 1rem;
+    align-items: center;
+  }
+  h1 {
+    margin: 0;
+    font: 600 clamp(3.6rem, 11.5vw, 9rem)/0.92 var(--serif);
+    letter-spacing: -0.04em;
+  }
+  h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--clay);
+  }
+  .lead {
+    max-width: 30rem;
+    margin: 1.5rem 0;
+    color: var(--muted);
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+  }
+  .show {
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+    margin: 0;
+  }
+  .sculpt-wrap {
+    position: relative;
+    width: min(100%, 520px);
+  }
+  svg {
+    display: block;
+    width: 100%;
+    overflow: visible;
+  }
+  .obj {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: breathe 6s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    50% {
+      transform: scale(1.025, 0.975);
+    }
+  }
+  .mat {
+    opacity: 0;
+    transition: opacity 0.45s;
+  }
+  .show:has(input[value='clay']:checked) .mat.clay,
+  .show:has(input[value='jade']:checked) .mat.jade,
+  .show:has(input[value='chrome']:checked) .mat.chrome,
+  .show:has(input[value='wax']:checked) .mat.wax {
+    opacity: 1;
+  }
+  .chip {
+    position: absolute;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: var(--soft);
+    font-size: 0.85rem;
+    font-weight: 600;
+    animation: float 9s ease-in-out infinite;
+  }
+  .c1 {
+    inset: 14% auto auto -2%;
+    transform: rotate(-6deg);
+  }
+  .c2 {
+    inset: 46% -4% auto auto;
+    background: var(--butter);
+    animation-delay: -3s;
+  }
+  .c3 {
+    inset: auto auto 18% 0;
+    background: var(--sage);
+    animation-delay: -6s;
+  }
+  .picker {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.5rem;
+    border: 0;
+    border-radius: 999px;
+    background: #fbf6ee;
+    box-shadow: var(--soft);
+  }
+  legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0 1rem 0 0.5rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.35s var(--spring);
+  }
+  label:hover {
+    background: var(--cream-2);
+    transform: translateY(-2px);
+  }
+  label:active {
+    transform: scale(0.95);
+  }
+  label:has(input:checked) {
+    background: var(--plum);
+    color: var(--cream);
+  }
+  label:has(input:focus-visible) {
+    outline: 3px solid var(--clay);
+    outline-offset: 2px;
+  }
+  input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+  }
+  .sw {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    box-shadow: inset 0 -3px 6px rgb(0 0 0 / 0.25), 0 2px 5px rgb(0 0 0 / 0.2);
+  }
+  .sw.clay {
+    background: radial-gradient(circle at 35% 30%, #f6b8a0, #d4694b 45%, #8e3320);
+  }
+  .sw.jade {
+    background: radial-gradient(circle at 35% 30%, #d9f1e4, #86c4a7 45%, #2c6652);
+  }
+  .sw.chrome {
+    background: radial-gradient(circle at 35% 30%, #fff, #cfd6df 25%, #586374 50%, #e6ebf1 62%, #262d39);
+  }
+  .sw.wax {
+    background: radial-gradient(circle at 35% 30%, #fff4d1, #f4cb70 45%, #9a6a1c);
+  }
+  @media (min-width: 980px) {
+    .grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 2rem;
+    }
+  }
+</style>

@@ -1,0 +1,178 @@
+---
+import { categoryName, formatCount, formatPrice, type Product } from '../../data/products';
+import Art from './Art.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  product: Product;
+  rank?: number;
+}
+const { product: p, rank } = Astro.props;
+const free = p.price === 0;
+const bg = ['#fff3a8', '#ffd2bf', '#cfd8ff', '#d3f4e5'][p.tone];
+---
+
+<article class="card" style={`--bg:${bg}`}>
+  <div class="art-box">
+    <Art profile={p.profile} tone={p.tone} label={`Layered preview of ${p.title}`} />
+    <span class="cat mono">{categoryName(p.category)}</span>
+    {rank && <span class="rank" aria-label={`Rank ${rank}`}>#{rank}</span>}
+    <span class:list={['price', { free }]}>{formatPrice(p.price)}</span>
+  </div>
+  <div class="body">
+    <h3><a href="#" class="stretch">{p.title}</a></h3>
+    <p class="meta mono">{p.kind} · {p.spec}</p>
+    <p class="stats">
+      <span class="stat"><Icon name="star" size={16} /> {p.rating.toFixed(1)}</span>
+      <span class="stat"><Icon name="download" size={16} /> {formatCount(p.downloads)}</span>
+    </p>
+    <div class="actions">
+      <a class="add" href="#">
+        <Icon name={free ? 'download' : 'cart'} size={18} />
+        {free ? 'Get it' : 'Add to cart'}
+      </a>
+      <a class="fav" href="#" aria-label={`Save ${p.title} to favorites`}><Icon name="heart" size={18} /></a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: var(--bw) solid var(--ink);
+    background: var(--paper);
+    box-shadow: 6px 6px 0 var(--ink);
+    transition: transform 0.1s steps(2), box-shadow 0.1s steps(2);
+  }
+  .card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--ink);
+  }
+  .card:active {
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .card:focus-within {
+    outline: 4px solid var(--blue);
+    outline-offset: 3px;
+  }
+  .art-box {
+    position: relative;
+    aspect-ratio: 1 / 0.88;
+    border-bottom: var(--bw) solid var(--ink);
+    background:
+      repeating-linear-gradient(0deg, transparent 0 15px, rgb(0 0 0 / 0.12) 15px 16px),
+      var(--bg);
+    padding: 0.5rem;
+  }
+  .cat {
+    position: absolute;
+    inset: 0.6rem auto auto 0.6rem;
+    padding: 0.2rem 0.45rem;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .rank {
+    position: absolute;
+    inset: auto auto 0.5rem 0.6rem;
+    font: 700 1.75rem/1 var(--font);
+    -webkit-text-stroke: 2px var(--ink);
+    color: transparent;
+  }
+  .price {
+    position: absolute;
+    inset: 0.6rem 0.6rem auto auto;
+    padding: 0.25rem 0.6rem;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    font: 700 1.125rem/1.2 var(--font);
+    transform: rotate(3deg);
+  }
+  .price.free {
+    background: var(--yellow);
+  }
+  .body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.9rem 1rem 1rem;
+  }
+  h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .stretch {
+    text-decoration: none;
+  }
+  .stretch::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .meta {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+  .stats {
+    display: flex;
+    gap: 1rem;
+    margin: 0.1rem 0 0;
+    font-weight: 600;
+  }
+  .stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.6rem;
+  }
+  .add,
+  .fav {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.08s steps(2);
+  }
+  .add {
+    flex: 1;
+  }
+  .fav {
+    width: 44px;
+  }
+  .add:hover {
+    background: var(--yellow);
+  }
+  .fav:hover {
+    background: var(--orange);
+  }
+  .add:active,
+  .fav:active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .add,
+    .fav {
+      transition: none;
+    }
+  }
+</style>

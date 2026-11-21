@@ -1,0 +1,210 @@
+---
+import Icon from './Icon.astro';
+
+const nav = [
+  { label: 'Home', current: true },
+  { label: 'Marketplace', current: false },
+  { label: 'Blog', current: false },
+];
+---
+
+<header class="hd">
+  <div class="wrap">
+    <div class="cap">
+      <a class="logo" href="#" aria-label="TRmarket, home">
+        <span class="blob" aria-hidden="true">TR</span>
+        <span class="word">market</span>
+      </a>
+
+      <nav aria-label="Main">
+        <ul>
+          {
+            nav.map((n) => (
+              <li>
+                <a href="#" aria-current={n.current ? 'page' : undefined}>{n.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <form class="search" role="search" action="#" onsubmit="return false">
+        <label class="sr" for="m3-search">Search models and tools</label>
+        <Icon name="search" size={18} />
+        <input id="m3-search" type="search" placeholder="What are you making today?" autocomplete="off" />
+      </form>
+
+      <div class="icons">
+        <a href="#" aria-label="Favorites"><Icon name="heart" /></a>
+        <a href="#" aria-label="Cart, 2 items"><Icon name="cart" /><span class="n" aria-hidden="true">2</span></a>
+        <a href="#" aria-label="Account"><Icon name="user" /></a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hd {
+    position: relative;
+    z-index: 50;
+    padding-top: 12px;
+    pointer-events: none;
+  }
+  .cap {
+    pointer-events: auto;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'logo icons' 'nav nav' 'search search';
+    gap: 0.4rem 0.75rem;
+    align-items: center;
+    padding: 0.55rem 0.7rem 0.7rem 1rem;
+    border-radius: 32px;
+    background: rgb(251 246 238 / 0.92);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--soft);
+  }
+  .logo {
+    grid-area: logo;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: max-content;
+    text-decoration: none;
+  }
+  .blob {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 40px;
+    border-radius: 55% 45% 50% 50% / 50% 55% 45% 50%;
+    background: radial-gradient(circle at 35% 30%, #f6b8a0, var(--clay) 60%, #8e3320);
+    color: #fff;
+    font: 700 1rem var(--serif);
+    box-shadow: 0 6px 12px -6px rgb(185 71 47 / 0.9);
+    transition: border-radius 0.6s var(--spring), transform 0.5s var(--spring);
+  }
+  .logo:hover .blob {
+    border-radius: 45% 55% 40% 60% / 60% 45% 55% 40%;
+    transform: rotate(-8deg) scale(1.06);
+  }
+  .word {
+    font: 600 1.45rem var(--serif);
+    font-style: italic;
+    letter-spacing: -0.02em;
+  }
+  nav {
+    grid-area: nav;
+    overflow-x: auto;
+  }
+  ul {
+    display: flex;
+    gap: 0.2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: background 0.25s, transform 0.35s var(--spring);
+  }
+  nav a:hover {
+    background: var(--cream-2);
+    transform: translateY(-1px);
+  }
+  nav a:active {
+    background: var(--sand);
+    transform: scale(0.96);
+  }
+  nav a[aria-current] {
+    background: var(--plum);
+    color: var(--cream);
+  }
+  .search {
+    grid-area: search;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    background: var(--cream-2);
+    box-shadow: inset 0 3px 7px rgb(120 60 30 / 0.14);
+    color: var(--muted);
+    transition: box-shadow 0.25s;
+  }
+  .search:focus-within {
+    box-shadow: inset 0 3px 7px rgb(120 60 30 / 0.14), 0 0 0 3px var(--plum);
+  }
+  .search input {
+    flex: 1;
+    min-width: 0;
+    min-height: 46px;
+    border: 0;
+    background: transparent;
+    color: var(--plum);
+    font: 500 1rem var(--sans);
+  }
+  .search input:focus {
+    outline: none;
+  }
+  .search input::placeholder {
+    color: var(--muted);
+  }
+  .icons {
+    grid-area: icons;
+    display: flex;
+    gap: 0.25rem;
+    justify-self: end;
+  }
+  .icons a {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    transition: background 0.25s, transform 0.4s var(--spring);
+  }
+  .icons a:hover {
+    background: var(--cream-2);
+    transform: translateY(-2px) scale(1.06);
+  }
+  .icons a:active {
+    background: var(--sand);
+    transform: scale(0.92);
+  }
+  .n {
+    position: absolute;
+    inset: 2px 0 auto auto;
+    display: grid;
+    place-items: center;
+    min-width: 19px;
+    height: 19px;
+    border-radius: 10px;
+    background: var(--clay);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+  @media (min-width: 980px) {
+    .hd {
+      position: sticky;
+      top: 0;
+    }
+    .cap {
+      grid-template-columns: auto auto minmax(220px, 1fr) auto;
+      grid-template-areas: 'logo nav search icons';
+      gap: 1.25rem;
+      padding: 0.5rem 0.7rem 0.5rem 1rem;
+    }
+    nav {
+      overflow: visible;
+    }
+  }
+</style>

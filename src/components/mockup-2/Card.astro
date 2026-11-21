@@ -1,0 +1,182 @@
+---
+import { formatCount, formatPrice, type Product } from '../../data/products';
+import Art from './Art.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  product: Product;
+}
+const { product: p } = Astro.props;
+const axis = { print: 'X', game: 'Y', tool: 'Z' }[p.category];
+const color = { print: 'var(--x)', game: 'var(--y)', tool: 'var(--z)' }[p.category];
+const free = p.price === 0;
+---
+
+<article class="pcard brk" style={`--bc:${color};--ax:${color}`}>
+  <div class="view">
+    <span class="axis mono" aria-hidden="true">{axis}</span>
+    <span class:list={['price mono', { free }]}>{formatPrice(p.price)}</span>
+    <Art profile={p.profile} category={p.category} label={`Wireframe preview of ${p.title}`} />
+  </div>
+  <div class="info">
+    <h3><a class="stretch" href="#">{p.title}</a></h3>
+    <p class="kind mono">{p.kind}</p>
+    <dl class="spec mono">
+      <div><dt>Spec</dt><dd>{p.spec}</dd></div>
+      <div><dt>Format</dt><dd>{p.formats.join(' · ')}</dd></div>
+      <div>
+        <dt>Rating</dt>
+        <dd><Icon name="star" size={12} /> {p.rating.toFixed(1)} <span class="dim">({p.reviews})</span></dd>
+      </div>
+      <div>
+        <dt>Pulls</dt>
+        <dd><Icon name="download" size={12} /> {formatCount(p.downloads)}</dd>
+      </div>
+    </dl>
+    <div class="actions">
+      <a class="add mono" href="#"><Icon name={free ? 'download' : 'cart'} size={16} /> {free ? 'Download' : 'Add to cart'}</a>
+      <a class="fav" href="#" aria-label={`Save ${p.title} to favorites`}><Icon name="heart" size={16} /></a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .pcard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .pcard:hover,
+  .pcard:focus-within {
+    border-color: var(--ax);
+  }
+  .pcard:hover::after {
+    inset: 5px;
+  }
+  .view {
+    position: relative;
+    aspect-ratio: 240 / 200;
+    margin: 0.6rem 0.6rem 0;
+    padding: 0.5rem 1rem 0;
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 100% 20px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 20px 100%,
+      var(--bg);
+    background-blend-mode: normal;
+  }
+  .axis {
+    position: absolute;
+    inset: 0.5rem auto auto 0.5rem;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--ax);
+    border-radius: 50%;
+    color: var(--ax);
+    font-weight: 700;
+  }
+  .price {
+    position: absolute;
+    inset: 0.5rem 0.5rem auto auto;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--line-2);
+    background: var(--panel);
+    color: var(--text);
+    font-weight: 700;
+  }
+  .price.free {
+    border-color: var(--lime);
+    color: var(--lime);
+  }
+  .info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.9rem 1rem 1rem;
+  }
+  h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .stretch {
+    text-decoration: none;
+  }
+  .stretch::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .kind {
+    margin: -0.25rem 0 0;
+    color: var(--ax);
+    text-transform: uppercase;
+    font-size: 0.68rem;
+  }
+  .spec {
+    display: grid;
+    gap: 0.2rem;
+    margin: 0.2rem 0 0.4rem;
+    font-size: 0.72rem;
+  }
+  .spec div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.2rem;
+    border-bottom: 1px dashed var(--line);
+  }
+  dt {
+    color: var(--dim);
+  }
+  dd {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0;
+    text-align: right;
+  }
+  .dim {
+    color: var(--dim);
+  }
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+  }
+  .add,
+  .fav {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    border: 1px solid var(--line-2);
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .add {
+    flex: 1;
+    font-weight: 600;
+  }
+  .fav {
+    width: 44px;
+  }
+  .add:hover,
+  .fav:hover {
+    border-color: var(--lime);
+    color: var(--lime);
+  }
+  .add:active,
+  .fav:active {
+    background: var(--lime);
+    color: #000;
+  }
+</style>

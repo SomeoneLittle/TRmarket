@@ -1,0 +1,195 @@
+---
+import { categoryName, formatCount, formatPrice, type Product } from '../../data/products';
+import Art from './Art.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  product: Product;
+  feature?: boolean;
+}
+const { product: p, feature = false } = Astro.props;
+const free = p.price === 0;
+---
+
+<article class:list={['card', 'pebble', { feature }]}>
+  <div class="stage">
+    <span class="badge">{categoryName(p.category)}</span>
+    <div class="art">
+      <Art profile={p.profile} tone={p.tone} label={`Soft-shaded render of ${p.title}`} />
+    </div>
+    <i class="plank" aria-hidden="true"></i>
+  </div>
+  <div class="body">
+    <h3><a class="stretch" href="#">{p.title}</a></h3>
+    <p class="kind">{p.kind} · {p.spec}</p>
+    {feature && <p class="blurb">{p.blurb}</p>}
+    <p class="meta">
+      <span class:list={['price', { free }]}>{formatPrice(p.price)}</span>
+      <span class="rate"><Icon name="star" size={15} /> {p.rating.toFixed(1)} <span class="dim">· {formatCount(p.downloads)} downloads</span></span>
+    </p>
+    <div class="actions">
+      <a class="add" href="#"><Icon name={free ? 'download' : 'cart'} size={18} /> {free ? 'Get it free' : 'Add to cart'}</a>
+      <a class="fav" href="#" aria-label={`Save ${p.title} to favorites`}><Icon name="heart" size={18} /></a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 34px 40px 30px 38px;
+    background: #fbf6ee;
+    box-shadow: var(--soft);
+    transition: transform 0.45s var(--spring), box-shadow 0.3s;
+  }
+  .card:hover {
+    transform: translateY(-6px) rotate(-0.4deg);
+  }
+  .card:active {
+    transform: translateY(-1px) scale(0.985);
+  }
+  .card:focus-within {
+    outline: 3px solid var(--plum);
+    outline-offset: 4px;
+  }
+  .stage {
+    position: relative;
+    display: grid;
+    place-items: end center;
+    aspect-ratio: 1 / 0.86;
+    margin: 0.6rem 0.6rem 0;
+    border-radius: 28px 32px 22px 30px;
+    background: radial-gradient(ellipse at 50% 30%, #fff6e8, var(--cream-2));
+    overflow: hidden;
+  }
+  .feature .stage {
+    flex: 1;
+    min-height: 340px;
+  }
+  .feature .art {
+    width: min(70%, 340px);
+  }
+  .art {
+    width: 72%;
+    margin-bottom: 11%;
+  }
+  .plank {
+    position: absolute;
+    inset: auto 0 0;
+    height: 12%;
+    background: linear-gradient(#d9b98f, #c29a6b);
+    box-shadow: inset 0 3px 0 rgb(255 255 255 / 0.35), 0 -8px 16px rgb(42 26 36 / 0.08);
+  }
+  .badge {
+    position: absolute;
+    inset: 0.75rem auto auto 0.75rem;
+    z-index: 1;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 4px 10px -4px rgb(42 26 36 / 0.35);
+  }
+  .body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1rem 1.25rem 1.25rem;
+  }
+  h3 {
+    margin: 0;
+    font: 600 1.35rem/1.15 var(--serif);
+    letter-spacing: -0.01em;
+  }
+  .stretch {
+    text-decoration: none;
+  }
+  .stretch::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .kind,
+  .blurb {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .blurb {
+    max-width: 30rem;
+    font-size: 1rem;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem 1rem;
+    margin: 0.3rem 0 0;
+  }
+  .price {
+    font: 700 1.5rem/1 var(--serif);
+  }
+  .price.free {
+    color: var(--clay);
+  }
+  .rate {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .dim {
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.7rem;
+  }
+  .add,
+  .fav {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 46px;
+    border-radius: 999px;
+    background: var(--cream-2);
+    box-shadow: var(--soft);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: transform 0.35s var(--spring), background 0.2s, color 0.2s;
+  }
+  .add {
+    flex: 1;
+  }
+  .fav {
+    width: 46px;
+  }
+  .add:hover {
+    background: var(--clay);
+    color: #fff;
+    transform: scale(1.03);
+  }
+  .fav:hover {
+    background: var(--clay-soft);
+    transform: scale(1.1);
+  }
+  .add:active,
+  .fav:active {
+    transform: scale(0.94);
+  }
+</style>

@@ -1,0 +1,154 @@
+---
+import { categoryName, formatAdded, formatPrice, freshProducts } from '../../data/products';
+import Art from './Art.astro';
+import Icon from './Icon.astro';
+---
+
+<section class="queue dark" aria-labelledby="m1-queue">
+  <div class="wrap">
+    <header class="head">
+      <h2 id="m1-queue" class="section-title">Print<br />queue</h2>
+      <p class="mono">Added in the last 30 hours · newest first</p>
+    </header>
+    <ol class="rows">
+      {
+        freshProducts.map((p, i) => (
+          <li style={`--p:${Math.max(8, 100 - p.addedHours * 3)}%`}>
+            <a class="row" href="#">
+              <span class="job mono">Job #{4021 - i}</span>
+              <span class="pic" aria-hidden="true">
+                <Art profile={p.profile} tone={p.tone} label="" />
+              </span>
+              <span class="what">
+                <span class="name">{p.title}</span>
+                <span class="mono sub">
+                  {categoryName(p.category)} · {formatAdded(p.addedHours)}
+                </span>
+              </span>
+              <span class="bar" aria-hidden="true"><i></i></span>
+              <span class="price">{formatPrice(p.price)}</span>
+              <span class="open"><span class="sr">View {p.title}</span><Icon name="arrow" size={20} /></span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .queue {
+    margin-top: clamp(4rem, 10vw, 8rem);
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .head .section-title {
+    color: var(--yellow);
+  }
+  .head p {
+    margin: 0;
+    color: #c9c4b2;
+  }
+  .rows {
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 2px solid var(--paper);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    grid-template-areas: 'pic what open' 'bar bar price';
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding: 1rem 0.5rem;
+    border-bottom: 2px solid var(--paper);
+    text-decoration: none;
+    transition: background 0.1s steps(2), color 0.1s steps(2);
+  }
+  .row:hover {
+    background: var(--yellow);
+    color: var(--ink);
+  }
+  .row:active {
+    background: var(--orange);
+  }
+  .job {
+    display: none;
+  }
+  .pic {
+    grid-area: pic;
+    width: 64px;
+    height: 64px;
+  }
+  .what {
+    grid-area: what;
+    display: grid;
+    gap: 0.1rem;
+  }
+  .name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+  .sub {
+    font-size: 0.7rem;
+    opacity: 0.85;
+  }
+  .bar {
+    grid-area: bar;
+    height: 12px;
+    border: 2px solid currentColor;
+  }
+  .bar i {
+    display: block;
+    width: var(--p);
+    height: 100%;
+    background: repeating-linear-gradient(90deg, var(--yellow) 0 6px, transparent 6px 9px);
+  }
+  .row:hover .bar i {
+    background: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 9px);
+  }
+  .price {
+    grid-area: price;
+    justify-self: end;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  .open {
+    grid-area: open;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 2px solid currentColor;
+  }
+  @media (min-width: 900px) {
+    .row {
+      grid-template-columns: 7rem 72px minmax(0, 1.2fr) minmax(120px, 1fr) 5rem 44px;
+      grid-template-areas: 'job pic what bar price open';
+      gap: 1.25rem;
+    }
+    .job {
+      display: block;
+      grid-area: job;
+    }
+    .pic {
+      width: 72px;
+      height: 72px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .row {
+      transition: none;
+    }
+  }
+</style>

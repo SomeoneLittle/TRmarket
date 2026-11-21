@@ -1,0 +1,205 @@
+---
+import Icon from './Icon.astro';
+
+const nav = [
+  { label: 'Home', current: true },
+  { label: 'Marketplace', current: false },
+  { label: 'Blog', current: false },
+];
+---
+
+<header class="hd">
+  <div class="wrap hd-in">
+    <a class="logo" href="#" aria-label="TRmarket, home">
+      <span class="mark" aria-hidden="true">TR</span><span class="word">market</span>
+    </a>
+
+    <nav aria-label="Main">
+      <ul>
+        {
+          nav.map((n) => (
+            <li>
+              <a href="#" aria-current={n.current ? 'page' : undefined}>
+                {n.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <form class="search" role="search" action="#" onsubmit="return false">
+      <label class="sr" for="m1-search">Search models and tools</label>
+      <input id="m1-search" type="search" placeholder="Search models, brushes, add-ons…" autocomplete="off" />
+      <button type="submit" aria-label="Search"><Icon name="search" size={20} /></button>
+    </form>
+
+    <div class="icons">
+      <a href="#" aria-label="Favorites"><Icon name="heart" /></a>
+      <a href="#" aria-label="Cart, 2 items"><Icon name="cart" /><span class="count" aria-hidden="true">2</span></a>
+      <a href="#" aria-label="Account"><Icon name="user" /></a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hd {
+    position: relative;
+    z-index: 50;
+    background: var(--paper);
+    border-bottom: var(--bw) solid var(--ink);
+  }
+  .hd-in {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: 'logo icons' 'nav nav' 'search search';
+    gap: 0.5rem 1rem;
+    align-items: center;
+    padding-block: 0.6rem;
+  }
+  .logo {
+    grid-area: logo;
+    display: inline-flex;
+    align-items: stretch;
+    font-weight: 700;
+    font-size: 1.4rem;
+    text-decoration: none;
+    width: max-content;
+  }
+  .mark {
+    display: grid;
+    place-items: center;
+    padding: 0.1rem 0.5rem;
+    background: var(--ink);
+    color: var(--yellow);
+    letter-spacing: -0.04em;
+  }
+  .word {
+    padding: 0.1rem 0.5rem;
+    border: var(--bw) solid var(--ink);
+    border-left: 0;
+    letter-spacing: -0.03em;
+  }
+  .logo:hover .mark {
+    background: var(--orange);
+    color: var(--ink);
+  }
+  nav {
+    grid-area: nav;
+  }
+  ul {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    font: 700 0.8rem/1 var(--mono);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 2px solid transparent;
+  }
+  nav a:hover {
+    border-color: var(--ink);
+    background: #fff;
+  }
+  nav a:active {
+    background: var(--yellow);
+  }
+  nav a[aria-current] {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .search {
+    grid-area: search;
+    display: flex;
+    border: var(--bw) solid var(--ink);
+    background: #fff;
+  }
+  .search:focus-within {
+    outline: 4px solid var(--blue);
+    outline-offset: 2px;
+  }
+  .search input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 0.8rem;
+    border: 0;
+    background: transparent;
+    font: 500 1rem var(--font);
+    color: var(--ink);
+  }
+  .search input:focus {
+    outline: none;
+  }
+  .search input::placeholder {
+    color: #55514a;
+  }
+  .search button {
+    width: 48px;
+    border: 0;
+    border-left: var(--bw) solid var(--ink);
+    background: var(--yellow);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .search button:hover {
+    background: var(--orange);
+  }
+  .search button:active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .icons {
+    grid-area: icons;
+    display: flex;
+    gap: 0.35rem;
+    justify-self: end;
+  }
+  .icons a {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+  }
+  .icons a:hover {
+    background: var(--yellow);
+  }
+  .icons a:active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .count {
+    position: absolute;
+    inset: -9px -8px auto auto;
+    display: grid;
+    place-items: center;
+    min-width: 22px;
+    height: 22px;
+    background: var(--orange);
+    border: 2px solid var(--ink);
+    font: 700 0.7rem var(--mono);
+    color: var(--ink);
+  }
+  @media (min-width: 900px) {
+    .hd {
+      position: sticky;
+      top: 0;
+    }
+    .hd-in {
+      grid-template-columns: auto auto minmax(180px, 1fr) auto;
+      grid-template-areas: 'logo nav search icons';
+      gap: 1.25rem;
+    }
+  }
+</style>

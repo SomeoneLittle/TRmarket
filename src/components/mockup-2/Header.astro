@@ -1,0 +1,211 @@
+---
+import Icon from './Icon.astro';
+
+const nav = [
+  { label: 'Home', current: true },
+  { label: 'Marketplace', current: false },
+  { label: 'Blog', current: false },
+];
+---
+
+<header class="hd">
+  <div class="wrap hd-in">
+    <a class="logo" href="#" aria-label="TRmarket, home">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+        <path d="M16 3 27 9.5v13L16 29 5 22.5v-13zM5 9.5l11 6.5 11-6.5M16 16v13"></path>
+      </svg>
+      <span>TR<b>market</b></span>
+    </a>
+
+    <nav aria-label="Main">
+      <ul>
+        {
+          nav.map((n, i) => (
+            <li>
+              <a href="#" aria-current={n.current ? 'page' : undefined}>
+                <span class="idx" aria-hidden="true">0{i + 1}</span>
+                {n.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <form class="search" role="search" action="#" onsubmit="return false">
+      <label class="sr" for="m2-search">Search models and tools</label>
+      <Icon name="search" size={18} />
+      <input id="m2-search" type="search" placeholder="Search assets, brushes, add-ons" autocomplete="off" />
+      <kbd class="mono" aria-hidden="true">/</kbd>
+    </form>
+
+    <div class="icons">
+      <a href="#" aria-label="Favorites"><Icon name="heart" /></a>
+      <a href="#" aria-label="Cart, 2 items"><Icon name="cart" /><span class="dot mono" aria-hidden="true">2</span></a>
+      <a href="#" aria-label="Account"><Icon name="user" /></a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .hd {
+    position: relative;
+    z-index: 50;
+    border-bottom: 1px solid var(--line);
+    background: rgb(6 8 12 / 0.86);
+    backdrop-filter: blur(10px);
+  }
+  .hd-in {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'logo icons' 'nav nav' 'search search';
+    gap: 0.4rem 1rem;
+    align-items: center;
+    padding-block: 0.6rem;
+  }
+  .logo {
+    grid-area: logo;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: max-content;
+    color: var(--cyan);
+    font: 500 1.15rem var(--mono);
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+  .logo span {
+    color: var(--text);
+  }
+  .logo b {
+    font-weight: 700;
+    color: var(--cyan);
+  }
+  .logo:hover svg {
+    filter: drop-shadow(0 0 6px var(--cyan));
+  }
+  nav {
+    grid-area: nav;
+    overflow-x: auto;
+  }
+  ul {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    border-bottom: 2px solid transparent;
+    color: var(--dim);
+    font: 500 0.85rem var(--mono);
+    text-decoration: none;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+  }
+  .idx {
+    color: var(--cyan);
+    opacity: 0.7;
+    font-size: 0.7rem;
+  }
+  nav a:hover {
+    color: var(--text);
+    background: rgb(77 228 255 / 0.06);
+  }
+  nav a:active {
+    background: rgb(77 228 255 / 0.16);
+  }
+  nav a[aria-current] {
+    color: var(--text);
+    border-bottom-color: var(--cyan);
+  }
+  .search {
+    grid-area: search;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0 0.8rem;
+    border: 1px solid var(--line-2);
+    background: var(--panel);
+    color: var(--dim);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search:focus-within {
+    border-color: var(--lime);
+    box-shadow: 0 0 0 3px rgb(198 255 63 / 0.15);
+  }
+  .search input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font: 400 0.95rem var(--sans);
+  }
+  .search input:focus {
+    outline: none;
+  }
+  .search input::placeholder {
+    color: var(--dim);
+  }
+  kbd {
+    padding: 0.05rem 0.45rem;
+    border: 1px solid var(--line-2);
+    color: var(--dim);
+  }
+  .icons {
+    grid-area: icons;
+    display: flex;
+    gap: 0.25rem;
+    justify-self: end;
+  }
+  .icons a {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid transparent;
+    color: var(--text);
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .icons a:hover {
+    border-color: var(--line-2);
+    color: var(--cyan);
+  }
+  .icons a:active {
+    background: rgb(77 228 255 / 0.16);
+  }
+  .dot {
+    position: absolute;
+    inset: 4px 2px auto auto;
+    display: grid;
+    place-items: center;
+    min-width: 17px;
+    height: 17px;
+    background: var(--lime);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border-radius: 9px;
+  }
+  @media (min-width: 960px) {
+    .hd {
+      position: sticky;
+      top: 0;
+    }
+    .hd-in {
+      grid-template-columns: auto auto minmax(220px, 1fr) auto;
+      grid-template-areas: 'logo nav search icons';
+      gap: 1.5rem;
+    }
+    nav {
+      overflow: visible;
+    }
+  }
+</style>
