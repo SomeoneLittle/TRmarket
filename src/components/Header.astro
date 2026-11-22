@@ -69,13 +69,22 @@ const mega = [
             </li>
           ))
         }
-        <li><a class="deal" href={marketHref({ sale: '1' })}><Icon name="tag" size={16} /> Deals</a></li>
       </ul>
+      <form class="search" id="site-search" role="search" action={href('marketplace/')} method="get" aria-hidden="true">
+        <div class="field">
+          <Icon name="search" size={20} />
+          <label class="sr" for="site-q">Search the catalog</label>
+          <input id="site-q" name="q" type="search" placeholder="Search 3D models, brushes, add-ons…" autocomplete="off" tabindex="-1" />
+          <button class="go" type="submit" tabindex="-1">Search</button>
+          <button class="close" type="button" data-search-close aria-label="Close search" tabindex="-1"><Icon name="close" size={20} /></button>
+        </div>
+        <ul id="suggest" class="suggest" hidden></ul>
+      </form>
     </nav>
 
     <div class="acts">
-      <button class="sbtn" type="button" data-search-toggle aria-expanded="false" aria-controls="site-search">
-        <Icon name="search" size={22} /><span>Search</span>
+      <button class="sbtn" type="button" data-search-toggle aria-expanded="false" aria-controls="site-search" aria-label="Search">
+        <Icon name="search" size={22} />
       </button>
       <a href={href('account/favorites/')}>
         <Icon name="heart" size={22} /><span>Favorites</span>
@@ -90,18 +99,6 @@ const mega = [
     </div>
   </div>
 
-  <form class="search" id="site-search" role="search" action={href('marketplace/')} method="get" aria-hidden="true">
-    <div class="wrap s-in">
-      <div class="field">
-        <Icon name="search" size={20} />
-        <label class="sr" for="site-q">Search the catalog</label>
-        <input id="site-q" name="q" type="search" placeholder="Search 3D models, brushes, add-ons…" autocomplete="off" tabindex="-1" />
-        <button class="go" type="submit" tabindex="-1">Search</button>
-        <button class="close" type="button" data-search-close aria-label="Close search" tabindex="-1"><Icon name="close" size={20} /></button>
-      </div>
-      <ul id="suggest" class="suggest" hidden></ul>
-    </div>
-  </form>
 </header>
 
 <style>
@@ -284,13 +281,18 @@ const mega = [
   }
   .links {
     display: flex;
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+    align-items: stretch;
     gap: 2px;
     margin: 0;
     padding: 0;
     list-style: none;
     overflow-x: auto;
     scrollbar-width: none;
+  }
+  .links li {
+    display: flex;
   }
   .links a {
     display: inline-flex;
@@ -311,9 +313,6 @@ const mega = [
   .links a[aria-current] {
     color: #fff;
     box-shadow: inset 0 -2px 0 var(--acc);
-  }
-  .links .deal {
-    color: var(--sale);
   }
 
   /* Header actions */
@@ -370,33 +369,52 @@ const mega = [
     font-size: 0.7rem;
   }
 
-  /* Collapsed search: slides down under the header */
+  /* Search: an orange icon button opens a field that fills the free space of the header row */
+  .acts .sbtn {
+    min-width: 46px;
+    min-height: 46px;
+    margin-right: 6px;
+    background: var(--acc);
+    color: #111;
+  }
+  .acts .sbtn:hover {
+    background: var(--acc-h);
+    color: #111;
+  }
+  .acts .sbtn[aria-expanded='true'] {
+    background: #d9650f;
+    color: #111;
+  }
+  .nav {
+    position: relative;
+  }
   .search {
     position: absolute;
-    inset: 100% 0 auto;
-    z-index: 65;
-    padding: 12px 0 14px;
-    border-bottom: 1px solid var(--line);
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    padding: 6px 0 6px 6px;
     background: var(--s1);
-    box-shadow: 0 24px 40px -16px rgb(0 0 0 / 0.8);
+    pointer-events: none;
     visibility: hidden;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.2s, transform 0.28s var(--ease), visibility 0s 0.28s;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.32s var(--ease), visibility 0s 0.32s;
   }
   .search.open {
+    pointer-events: auto;
     visibility: visible;
-    opacity: 1;
-    transform: none;
+    clip-path: inset(0 -400px -600px 0);
     transition-delay: 0s;
-  }
-  .s-in {
-    position: relative;
   }
   .field {
     display: flex;
+    flex: 1;
     align-items: center;
     gap: 10px;
+    min-width: 0;
+    height: 100%;
+    min-height: 46px;
     padding: 0 6px 0 14px;
     border: 1px solid #3a3f47;
     border-radius: 10px;
@@ -411,7 +429,7 @@ const mega = [
   .field input {
     flex: 1;
     min-width: 0;
-    min-height: 50px;
+    min-height: 40px;
     border: 0;
     background: none;
     color: var(--text);
@@ -424,8 +442,9 @@ const mega = [
     color: #8b929c;
   }
   .go {
-    min-height: 38px;
-    padding: 0 18px;
+    display: none;
+    min-height: 34px;
+    padding: 0 16px;
     border: 0;
     border-radius: 7px;
     background: var(--acc);
@@ -439,9 +458,10 @@ const mega = [
   }
   .close {
     display: grid;
+    flex: none;
     place-items: center;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border: 0;
     border-radius: 7px;
     background: none;
@@ -454,7 +474,7 @@ const mega = [
   }
   .suggest {
     position: absolute;
-    inset: calc(100% + 6px) 0 auto;
+    inset: calc(100% + 2px) 0 auto 6px;
     z-index: 80;
     margin: 0;
     padding: 6px;
@@ -523,7 +543,20 @@ const mega = [
       clip-path: none;
     }
     .links {
+      flex: none;
       overflow: visible;
+    }
+    .search {
+      position: relative;
+      inset: auto;
+      flex: 1;
+      min-width: 0;
+      padding: 6px 8px 6px 10px;
+      background: none;
+    }
+    .suggest {
+      inset: 100% auto auto 10px;
+      width: max(100% - 10px, 420px);
     }
   }
 </style>
