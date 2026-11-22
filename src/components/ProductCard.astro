@@ -37,29 +37,35 @@ const fresh = p.addedHours <= 30;
     <button class="fav" type="button" data-fav data-id={p.id} aria-pressed="false" aria-label={`Add ${p.title} to favorites`}>
       <Icon name="heart" size={18} />
     </button>
-    <div class="quick">
-      <button class="q ghost" type="button" data-quick data-id={p.id}><Icon name="eye" size={16} /> Quick view</button>
-      <button class="q add" type="button" data-add data-id={p.id}>
-        <Icon name={free ? 'download' : 'cart'} size={16} />
-        {free ? 'Get' : 'Add'}
-      </button>
-    </div>
+    <button class="quick" type="button" data-quick data-id={p.id}>
+      <Icon name="eye" size={16} /> Quick view<span class="sr">: {p.title}</span>
+    </button>
   </div>
+
   <div class="info">
     <p class="cat">{categoryName(p.category)} · {p.formats.join(', ')}</p>
     <h3><a href={link}>{p.title}</a></h3>
     <p class="desc">{p.blurb}</p>
-    <p class="rate"><Stars rating={p.rating} label={`${p.rating.toFixed(1)} (${p.reviews})`} /></p>
-    <p class="row">
-      <span class="price">{formatPrice(p.price)}</span>
-      {p.oldPrice && <s class="old">${p.oldPrice}</s>}
+    <div class="rate">
+      <Stars rating={p.rating} label={`${p.rating.toFixed(1)} (${p.reviews})`} />
       <span class="dl"><Icon name="download" size={14} /> {formatCount(p.downloads)}</span>
-    </p>
+    </div>
+    <div class="buy">
+      <p class="price">
+        <b>{formatPrice(p.price)}</b>
+        {p.oldPrice && <s>${p.oldPrice}</s>}
+      </p>
+      <button class="add" type="button" data-add data-id={p.id}>
+        <Icon name={free ? 'download' : 'cart'} size={16} />
+        <span class="long">{free ? 'Get free' : 'Add to cart'}</span><span class="short" aria-hidden="true">{free ? 'Get' : 'Add'}</span><span class="sr">: {p.title}</span>
+      </button>
+    </div>
   </div>
 </article>
 
 <style>
   .card {
+    container-type: inline-size;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -67,7 +73,7 @@ const fresh = p.addedHours <= 30;
     border-radius: 10px;
     background: var(--s1);
     overflow: hidden;
-    transition: border-color 0.2s, transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.25s;
+    transition: border-color 0.2s, transform 0.25s var(--ease), box-shadow 0.25s;
   }
   .card:hover,
   .card:focus-within {
@@ -75,9 +81,12 @@ const fresh = p.addedHours <= 30;
     transform: translateY(-3px);
     box-shadow: 0 14px 30px -14px rgb(0 0 0 / 0.8);
   }
+
+  /* Image */
   .thumb {
     position: relative;
-    aspect-ratio: 4 / 3.3;
+    flex: none;
+    aspect-ratio: 4 / 3.2;
     overflow: hidden;
     background:
       linear-gradient(180deg, transparent 62%, rgb(0 0 0 / 0.35)),
@@ -95,12 +104,14 @@ const fresh = p.addedHours <= 30;
     inset: 10px auto auto 10px;
     display: flex;
     gap: 6px;
+    pointer-events: none;
   }
   .b {
     padding: 2px 7px;
     border-radius: 4px;
     font-size: 0.72rem;
     font-weight: 700;
+    line-height: 1.5;
   }
   .new {
     background: var(--ok);
@@ -121,22 +132,26 @@ const fresh = p.addedHours <= 30;
     place-items: center;
     width: 36px;
     height: 36px;
+    padding: 0;
     border: 0;
     border-radius: 50%;
     background: rgb(14 15 17 / 0.72);
-    cursor: pointer;
-    transform: scale(0.8);
+    color: var(--text);
     opacity: 0;
-    transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1), background 0.15s;
+    cursor: pointer;
+    transition: opacity 0.2s, background 0.15s, color 0.15s, transform 0.2s var(--ease);
   }
   .card:hover .fav,
   .card:focus-within .fav,
   .fav[aria-pressed='true'] {
     opacity: 1;
-    transform: none;
   }
   .fav:hover {
     background: var(--s3);
+    transform: scale(1.08);
+  }
+  .fav:active {
+    transform: scale(0.94);
   }
   .fav[aria-pressed='true'] {
     color: var(--sale);
@@ -144,68 +159,56 @@ const fresh = p.addedHours <= 30;
   .fav[aria-pressed='true'] :global(path) {
     fill: currentColor;
   }
+
+  /* Quick view: a pill centred at the bottom of the image, shown on hover */
   .quick {
     position: absolute;
-    inset: auto 0 0;
-    display: flex;
-    gap: 8px;
-    padding: 10px;
-    background: linear-gradient(transparent, rgb(0 0 0 / 0.75));
-    transform: translateY(100%);
-    transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
+    left: 50%;
+    bottom: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 38px;
+    padding: 0 16px;
+    border: 1px solid rgb(255 255 255 / 0.16);
+    border-radius: 99px;
+    background: rgb(14 15 17 / 0.82);
+    backdrop-filter: blur(6px);
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    opacity: 0;
+    transform: translate(-50%, 10px);
+    transition: opacity 0.2s, transform 0.28s var(--ease), background 0.15s;
   }
   .card:hover .quick,
   .card:focus-within .quick {
-    transform: none;
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
-  .q {
-    flex: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    min-height: 40px;
-    border: 0;
-    border-radius: 7px;
-    font-size: 0.85rem;
-    font-weight: 650;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.15s;
+  .quick:hover {
+    background: var(--s3);
   }
-  .q.ghost {
-    background: rgb(236 238 241 / 0.14);
-    backdrop-filter: blur(6px);
-  }
-  .q.ghost:hover {
-    background: rgb(236 238 241 / 0.26);
-  }
-  .q.add {
-    background: var(--acc);
-    color: #111;
-  }
-  .q.add:hover {
-    background: var(--acc-h);
-  }
-  .q:active {
-    transform: scale(0.96);
+  .quick:active {
+    transform: translate(-50%, 0) scale(0.96);
   }
   @media (hover: none) {
-    .quick {
-      transform: none;
-      position: static;
-      background: none;
-      padding: 0;
-    }
     .fav {
       opacity: 1;
-      transform: none;
+    }
+    .quick {
+      display: none;
     }
   }
+
+  /* Text */
   .info {
     display: flex;
+    flex: 1;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
     padding: 12px 14px 14px;
   }
   .cat {
@@ -233,39 +236,77 @@ const fresh = p.addedHours <= 30;
   .rate {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin: 2px 0 0;
-    color: var(--mut);
-    font-size: 0.8rem;
-  }
-  .stars {
-    background: linear-gradient(90deg, #ffb020 var(--p), #474c54 var(--p));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-  }
-  .row {
-    display: flex;
-    align-items: baseline;
+    justify-content: space-between;
     gap: 8px;
-    margin: 6px 0 0;
-  }
-  .price {
-    font-size: 1.15rem;
-    font-weight: 700;
-  }
-  .old {
-    color: var(--mut);
-    font-size: 0.85rem;
   }
   .dl {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    margin-left: auto;
     color: var(--mut);
     font-size: 0.8rem;
+  }
+
+  /* Price and the add-to-cart button: always visible, aligned across cards */
+  .buy {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 10px;
+  }
+  .price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 0;
+  }
+  .price b {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .price s {
+    color: var(--mut);
+    font-size: 0.85rem;
+  }
+  .add {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--acc);
+    color: #111;
+    font-size: 0.88rem;
+    font-weight: 650;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s, box-shadow 0.2s;
+  }
+  .add:hover {
+    background: var(--acc-h);
+    box-shadow: 0 6px 16px -6px rgb(255 122 26 / 0.6);
+  }
+  .add:active {
+    transform: scale(0.96);
+  }
+  .short {
+    display: none;
+  }
+  @container (max-width: 235px) {
+    .long {
+      display: none;
+    }
+    .short {
+      display: inline;
+    }
+    .add {
+      padding: 0 12px;
+    }
   }
 </style>

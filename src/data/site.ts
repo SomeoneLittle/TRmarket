@@ -1,11 +1,8 @@
 import { href, marketHref } from './products';
 
 export const mainNav = [
-  { label: 'Home', href: href(), id: 'home' },
   { label: 'Marketplace', href: href('marketplace/'), id: 'marketplace' },
   { label: 'Blog', href: href('blog/'), id: 'blog' },
-  { label: 'Free', href: marketHref({ price: 'free' }), id: 'free' },
-  { label: 'New', href: marketHref({ sort: 'new' }), id: 'new' },
 ];
 
 export const footerColumns = [

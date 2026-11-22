@@ -27,7 +27,7 @@ const mega = [
 </div>
 
 <header class="hd">
-  <div class="wrap main">
+  <div class="wrap in">
     <a class="logo" href={href()} aria-label="TRmarket, home">
       <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
         <path d="M16 3 27 9.5v13L16 29 5 22.5v-13z" fill="#ff7a1a"></path>
@@ -36,38 +36,9 @@ const mega = [
       TR<span>market</span>
     </a>
 
-    <form class="search" role="search" action={href('marketplace/')} method="get">
-      <label class="sr" for="site-cat">Category</label>
-      <select id="site-cat" name="cat">
-        <option value="">All categories</option>
-        <option value="print">3D models for printing</option>
-        <option value="game">3D models for games</option>
-        <option value="tool">Tools</option>
-      </select>
-      <label class="sr" for="site-q">Search</label>
-      <input id="site-q" name="q" type="search" placeholder="Search 3D models, brushes, add-ons…" autocomplete="off" />
-      <button type="submit" aria-label="Search"><Icon name="search" size={20} /></button>
-      <ul id="suggest" class="suggest" hidden></ul>
-    </form>
-
-    <div class="acts">
-      <a href={href('account/favorites/')}>
-        <Icon name="heart" size={22} /><span>Favorites</span>
-        <b data-fav-count hidden>0</b>
-      </a>
-      <a href={href('account/')}><Icon name="user" size={22} /><span data-user-name>Account</span></a>
-      <a href={href('cart/')} class="cart">
-        <Icon name="cart" size={22} />
-        <span>Cart</span>
-        <b data-cart-count hidden>0</b>
-      </a>
-    </div>
-  </div>
-
-  <nav class="bar" aria-label="Main">
-    <div class="wrap bar-in">
+    <nav class="nav" aria-label="Main">
       <div class="catwrap">
-        <button class="catbtn" type="button" aria-haspopup="true"><Icon name="menu" size={18} /> All categories <Icon name="chevron-down" size={16} /></button>
+        <a class="catbtn" href={href('marketplace/')} aria-haspopup="true"><Icon name="menu" size={18} /> All categories <Icon name="chevron-down" size={16} /></a>
         <div class="mega">
           {
             mega.map((c) => (
@@ -98,10 +69,39 @@ const mega = [
             </li>
           ))
         }
+        <li><a class="deal" href={marketHref({ sale: '1' })}><Icon name="tag" size={16} /> Deals</a></li>
       </ul>
-      <a class="deal" href={marketHref({ sale: '1' })}><Icon name="tag" size={16} /> Weekly deals</a>
+    </nav>
+
+    <div class="acts">
+      <button class="sbtn" type="button" data-search-toggle aria-expanded="false" aria-controls="site-search">
+        <Icon name="search" size={22} /><span>Search</span>
+      </button>
+      <a href={href('account/favorites/')}>
+        <Icon name="heart" size={22} /><span>Favorites</span>
+        <b data-fav-count hidden>0</b>
+      </a>
+      <a href={href('account/')}><Icon name="user" size={22} /><span data-user-name>Account</span></a>
+      <a href={href('cart/')} class="cart">
+        <Icon name="cart" size={22} />
+        <span>Cart</span>
+        <b data-cart-count hidden>0</b>
+      </a>
     </div>
-  </nav>
+  </div>
+
+  <form class="search" id="site-search" role="search" action={href('marketplace/')} method="get" aria-hidden="true">
+    <div class="wrap s-in">
+      <div class="field">
+        <Icon name="search" size={20} />
+        <label class="sr" for="site-q">Search the catalog</label>
+        <input id="site-q" name="q" type="search" placeholder="Search 3D models, brushes, add-ons…" autocomplete="off" tabindex="-1" />
+        <button class="go" type="submit" tabindex="-1">Search</button>
+        <button class="close" type="button" data-search-close aria-label="Close search" tabindex="-1"><Icon name="close" size={20} /></button>
+      </div>
+      <ul id="suggest" class="suggest" hidden></ul>
+    </div>
+  </form>
 </header>
 
 <style>
@@ -133,19 +133,20 @@ const mega = [
   .u-in a:hover {
     color: var(--text);
   }
+
   .hd {
     position: relative;
     z-index: 60;
     background: var(--s1);
     border-bottom: 1px solid var(--line);
   }
-  .main {
+  .in {
+    position: relative;
     display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-areas: 'logo acts' 'search search';
-    gap: 12px 12px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'logo acts' 'nav nav';
     align-items: center;
-    padding-block: 14px;
+    gap: 0 12px;
   }
   .logo {
     grid-area: logo;
@@ -153,6 +154,7 @@ const mega = [
     align-items: center;
     gap: 8px;
     width: max-content;
+    padding-block: 12px;
     font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -0.03em;
@@ -162,160 +164,36 @@ const mega = [
     font-weight: 500;
     color: var(--mut);
   }
-  .search {
-    position: relative;
-    grid-area: search;
+
+  /* Navigation: categories button, mega menu and links */
+  .nav {
+    grid-area: nav;
     display: flex;
-    min-width: 0;
-    border: 1px solid #3a3f47;
-    border-radius: 10px;
-    background: var(--bg);
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .search:focus-within {
-    border-color: var(--acc);
-    box-shadow: 0 0 0 3px rgb(255 122 26 / 0.2);
-  }
-  select {
-    display: none;
-    border-radius: 9px 0 0 9px;
-    max-width: 190px;
-    padding: 0 12px;
-    border: 0;
-    border-right: 1px solid #3a3f47;
-    background: var(--s2);
-    color: var(--text);
-    font: inherit;
-  }
-  input {
-    flex: 1;
-    min-width: 0;
-    min-height: 46px;
-    padding: 0 14px;
-    border: 0;
-    background: transparent;
-    color: var(--text);
-    font: inherit;
-  }
-  input:focus,
-  select:focus {
-    outline: none;
-  }
-  input::placeholder {
-    color: #8b929c;
-  }
-  .search button {
-    width: 56px;
-    border-radius: 0 9px 9px 0;
-    border: 0;
-    background: var(--acc);
-    color: #111;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .search button:hover {
-    background: var(--acc-h);
-  }
-  .suggest {
-    position: absolute;
-    inset: calc(100% + 6px) 0 auto;
-    z-index: 80;
-    margin: 0;
-    padding: 6px;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    background: var(--s1);
-    box-shadow: 0 20px 40px -12px rgb(0 0 0 / 0.8);
-    list-style: none;
-  }
-  .suggest :global(a) {
-    display: grid;
-    gap: 1px;
-    padding: 9px 12px;
-    border-radius: 7px;
-    text-decoration: none;
-  }
-  .suggest :global(a:hover),
-  .suggest :global(a:focus-visible) {
-    background: var(--s3);
-  }
-  .suggest :global(span) {
-    color: var(--mut);
-    font-size: 0.82rem;
-  }
-  .suggest :global(a.all) {
-    color: var(--acc-h);
-    font-weight: 600;
-  }
-  .acts {
-    grid-area: acts;
-    display: flex;
+    align-items: stretch;
     gap: 4px;
-  }
-  .acts a {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    min-width: 46px;
-    min-height: 46px;
-    padding: 4px 8px;
-    border-radius: 8px;
-    font-size: 0.72rem;
-    color: var(--mut);
-    text-decoration: none;
-    transition: background 0.15s, color 0.15s;
-  }
-  .acts span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-  .acts a:hover {
-    background: var(--s3);
-    color: var(--text);
-  }
-  .acts b {
-    position: absolute;
-    inset: 0 2px auto auto;
-    display: grid;
-    place-items: center;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 4px;
-    border-radius: 9px;
-    background: var(--acc);
-    color: #111;
-    font-size: 0.7rem;
-  }
-  .bar {
+    min-width: 0;
     border-top: 1px solid var(--line);
-    background: var(--s2);
-  }
-  .bar-in {
-    display: flex;
-    align-items: center;
-    gap: 6px;
   }
   .catwrap {
-    position: relative;
+    flex: none;
   }
   .catbtn {
     display: flex;
     align-items: center;
     gap: 8px;
+    height: 100%;
     min-height: 46px;
     padding: 0 16px;
-    border: 0;
+    border-radius: 0;
     background: var(--acc);
     color: #111;
     font-weight: 650;
-    cursor: pointer;
+    text-decoration: none;
     white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .catbtn:hover {
+    background: var(--acc-h);
   }
   .catbtn :global(svg:last-child) {
     transition: transform 0.2s;
@@ -326,10 +204,10 @@ const mega = [
   }
   .mega {
     position: absolute;
-    inset: 100% auto auto 0;
+    inset: 100% 0 auto 0;
     z-index: 70;
     display: grid;
-    grid-template-columns: repeat(3, 190px) 240px;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) 260px;
     gap: 28px;
     padding: 24px 28px 26px;
     border: 1px solid var(--line);
@@ -340,7 +218,7 @@ const mega = [
     visibility: hidden;
     opacity: 0;
     transform: translateY(-8px);
-    transition: opacity 0.2s, transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1), visibility 0s 0.25s;
+    transition: opacity 0.2s, transform 0.25s var(--ease), visibility 0s 0.25s;
   }
   .catwrap:hover .mega,
   .catwrap:focus-within .mega {
@@ -353,21 +231,27 @@ const mega = [
     margin: 0 0 10px;
     font-size: 0.85rem;
     font-weight: 650;
+  }
+  .col h2 a {
     color: var(--acc-h);
+    text-decoration: none;
+  }
+  .col h2 a:hover {
+    text-decoration: underline;
   }
   .col ul {
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  .col a {
+  .col li a {
     display: block;
     padding: 5px 0;
     color: #d0d4da;
     text-decoration: none;
     transition: color 0.15s, transform 0.2s;
   }
-  .col a:hover {
+  .col li a:hover {
     color: #fff;
     transform: translateX(4px);
   }
@@ -377,9 +261,9 @@ const mega = [
     justify-content: flex-end;
     gap: 4px;
     padding: 18px;
+    border: 1px solid #5a3a1e;
     border-radius: 10px;
     background: linear-gradient(160deg, #3a2412, #1d1209);
-    border: 1px solid #5a3a1e;
     text-decoration: none;
   }
   .promo b {
@@ -408,8 +292,7 @@ const mega = [
     overflow-x: auto;
     scrollbar-width: none;
   }
-  .links a,
-  .deal {
+  .links a {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -421,8 +304,7 @@ const mega = [
     white-space: nowrap;
     transition: color 0.15s, background 0.15s;
   }
-  .links a:hover,
-  .deal:hover {
+  .links a:hover {
     background: var(--s3);
     color: #fff;
   }
@@ -430,9 +312,190 @@ const mega = [
     color: #fff;
     box-shadow: inset 0 -2px 0 var(--acc);
   }
-  .deal {
-    display: none;
+  .links .deal {
     color: var(--sale);
+  }
+
+  /* Header actions */
+  .acts {
+    grid-area: acts;
+    display: flex;
+    gap: 2px;
+    justify-self: end;
+  }
+  .acts a,
+  .acts button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 4px 8px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--mut);
+    font-size: 0.72rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .acts span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .acts a:hover,
+  .acts button:hover,
+  .acts button[aria-expanded='true'] {
+    background: var(--s3);
+    color: var(--text);
+  }
+  .acts b {
+    position: absolute;
+    inset: 2px 4px auto auto;
+    display: grid;
+    place-items: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    background: var(--acc);
+    color: #111;
+    font-size: 0.7rem;
+  }
+
+  /* Collapsed search: slides down under the header */
+  .search {
+    position: absolute;
+    inset: 100% 0 auto;
+    z-index: 65;
+    padding: 12px 0 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--s1);
+    box-shadow: 0 24px 40px -16px rgb(0 0 0 / 0.8);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s, transform 0.28s var(--ease), visibility 0s 0.28s;
+  }
+  .search.open {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
+  }
+  .s-in {
+    position: relative;
+  }
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 6px 0 14px;
+    border: 1px solid #3a3f47;
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--mut);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field:focus-within {
+    border-color: var(--acc);
+    box-shadow: 0 0 0 3px rgb(255 122 26 / 0.2);
+  }
+  .field input {
+    flex: 1;
+    min-width: 0;
+    min-height: 50px;
+    border: 0;
+    background: none;
+    color: var(--text);
+    font-size: 1rem;
+  }
+  .field input:focus {
+    outline: none;
+  }
+  .field input::placeholder {
+    color: #8b929c;
+  }
+  .go {
+    min-height: 38px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 7px;
+    background: var(--acc);
+    color: #111;
+    font-weight: 650;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .go:hover {
+    background: var(--acc-h);
+  }
+  .close {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 7px;
+    background: none;
+    color: var(--mut);
+    cursor: pointer;
+  }
+  .close:hover {
+    background: var(--s3);
+    color: var(--text);
+  }
+  .suggest {
+    position: absolute;
+    inset: calc(100% + 6px) 0 auto;
+    z-index: 80;
+    margin: 0;
+    padding: 6px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--s2);
+    box-shadow: 0 20px 40px -12px rgb(0 0 0 / 0.8);
+    list-style: none;
+  }
+  .suggest :global(a) {
+    display: grid;
+    gap: 1px;
+    padding: 9px 12px;
+    border-radius: 7px;
+    text-decoration: none;
+  }
+  .suggest :global(a:hover),
+  .suggest :global(a:focus-visible) {
+    background: var(--s3);
+  }
+  .suggest :global(span) {
+    color: var(--mut);
+    font-size: 0.82rem;
+  }
+  .suggest :global(a.all) {
+    color: var(--acc-h);
+    font-weight: 600;
+  }
+
+  @media (max-width: 420px) {
+    .logo {
+      font-size: 1.35rem;
+    }
+    .logo span {
+      display: none;
+    }
+    .acts a,
+    .acts button {
+      min-width: 44px;
+      padding-inline: 6px;
+    }
   }
   @media (max-width: 899px) {
     .mega {
@@ -443,13 +506,14 @@ const mega = [
     .u-in ul {
       display: flex;
     }
-    .main {
-      grid-template-columns: auto minmax(300px, 1fr) auto;
-      grid-template-areas: 'logo search acts';
-      gap: 28px;
+    .in {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-areas: 'logo nav acts';
+      gap: 0 28px;
     }
-    select {
-      display: block;
+    .nav {
+      align-self: stretch;
+      border-top: 0;
     }
     .acts span {
       position: static;
@@ -458,8 +522,40 @@ const mega = [
       overflow: visible;
       clip-path: none;
     }
-    .deal {
-      display: inline-flex;
+    .links {
+      overflow: visible;
     }
   }
 </style>
+
+<script>
+  // Collapsed search: the icon opens a bar under the header.
+  const form = document.getElementById('site-search') as HTMLFormElement;
+  const toggle = document.querySelector<HTMLButtonElement>('[data-search-toggle]')!;
+  const input = form.querySelector<HTMLInputElement>('input[name="q"]')!;
+  const focusables = form.querySelectorAll<HTMLElement>('input, button');
+
+  const set = (open: boolean) => {
+    form.classList.toggle('open', open);
+    form.setAttribute('aria-hidden', String(!open));
+    toggle.setAttribute('aria-expanded', String(open));
+    focusables.forEach((el) => (el.tabIndex = open ? 0 : -1));
+    if (open) input.focus();
+    else document.getElementById('suggest')!.hidden = true;
+  };
+  toggle.addEventListener('click', () => set(!form.classList.contains('open')));
+  form.querySelector('[data-search-close]')!.addEventListener('click', () => {
+    set(false);
+    toggle.focus();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && form.classList.contains('open')) {
+      set(false);
+      toggle.focus();
+    }
+  });
+  document.addEventListener('click', (e) => {
+    const t = e.target as Node;
+    if (form.classList.contains('open') && !form.contains(t) && !toggle.contains(t)) set(false);
+  });
+</script>
