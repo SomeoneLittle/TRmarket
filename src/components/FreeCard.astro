@@ -1,0 +1,85 @@
+---
+import { categoryName, productHref, type Product } from '../data/products';
+import Art from './Art.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  product: Product;
+}
+const { product: p } = Astro.props;
+---
+
+<article class="free zoom">
+  <a class="fthumb" href={productHref(p)} tabindex="-1" aria-hidden="true"><Art product={p} /></a>
+  <div class="finfo">
+    <h3><a href={productHref(p)}>{p.title}</a></h3>
+    <small>{categoryName(p.category)} · {p.formats.join(', ')}</small>
+    <button class="fget" type="button" data-add data-id={p.id}><Icon name="download" size={15} /> Free download</button>
+  </div>
+</article>
+
+<style>
+  .free {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    height: 100%;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--s1);
+    overflow: hidden;
+    transition: border-color 0.2s, background 0.2s, transform 0.25s;
+  }
+  .free:hover {
+    border-color: #444a53;
+    background: var(--s2);
+    transform: translateX(3px);
+  }
+  .fthumb {
+    flex: none;
+    width: 92px;
+    height: 80px;
+    border-radius: 8px;
+    background: radial-gradient(ellipse at 50% 40%, #343942, #16181b 80%);
+    overflow: hidden;
+  }
+  .finfo {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  h3 a {
+    text-decoration: none;
+  }
+  h3 a:hover {
+    color: var(--acc-h);
+  }
+  small {
+    color: var(--mut);
+  }
+  .fget {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    justify-self: start;
+    min-height: 36px;
+    margin-top: 2px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ok);
+    font-weight: 650;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+  .fget:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

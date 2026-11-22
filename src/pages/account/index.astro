@@ -1,0 +1,278 @@
+---
+import AccountLayout from '../../components/AccountLayout.astro';
+import ProductRow from '../../components/ProductRow.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import Icon from '../../components/Icon.astro';
+import { href, products } from '../../data/products';
+
+const picks = [...products].sort((a, b) => b.downloads - a.downloads).filter((p) => p.price > 0).slice(0, 3);
+---
+
+<AccountLayout title="My account" active="overview" gate={false} guestNav={false}>
+  <!-- Signed out: sign in or create an account -->
+  <section class="guest" data-guest hidden aria-labelledby="auth-title">
+    <div class="auth panel">
+      <h2 id="auth-title" class="sr">Sign in or create an account</h2>
+      <div class="tabs" role="tablist" aria-label="Account access">
+        <button type="button" role="tab" id="t-in" aria-controls="p-in" aria-selected="true" data-auth-tab="in">Sign in</button>
+        <button type="button" role="tab" id="t-up" aria-controls="p-up" aria-selected="false" data-auth-tab="up">Create account</button>
+      </div>
+
+      <form id="p-in" role="tabpanel" aria-labelledby="t-in" data-auth="in" novalidate>
+        <div class="field"><label for="in-email">Email</label><input id="in-email" name="email" type="email" autocomplete="email" required /></div>
+        <div class="field"><label for="in-pass">Password</label><input id="in-pass" name="password" type="password" autocomplete="current-password" required minlength="6" /></div>
+        <button class="btn block" type="submit">Sign in</button>
+        <p class="alt"><a href={href('help/')}>Forgot your password?</a></p>
+      </form>
+
+      <form id="p-up" role="tabpanel" aria-labelledby="t-up" data-auth="up" hidden novalidate>
+        <div class="field"><label for="up-name">Name</label><input id="up-name" name="name" autocomplete="name" required minlength="2" /></div>
+        <div class="field"><label for="up-email">Email</label><input id="up-email" name="email" type="email" autocomplete="email" required /></div>
+        <div class="field"><label for="up-pass">Password</label><input id="up-pass" name="password" type="password" autocomplete="new-password" required minlength="6" /><span class="hint">At least 6 characters.</span></div>
+        <label class="check"><input type="checkbox" name="terms" required /> <span>I agree to the <a href={href('terms/')}>terms</a> and <a href={href('privacy/')}>privacy policy</a>.</span></label>
+        <button class="btn block" type="submit">Create account</button>
+      </form>
+      <p class="demo"><Icon name="info" size={15} /> Demo: any email and password work. Nothing is sent anywhere.</p>
+    </div>
+
+    <ul class="why">
+      <li><Icon name="package" size={22} /><span><b>Your library</b>Re-download every file you bought, any time.</span></li>
+      <li><Icon name="heart" size={22} /><span><b>Favorites</b>Save models and tools for later.</span></li>
+      <li><Icon name="refresh" size={22} /><span><b>Updates</b>Get new versions of products you own.</span></li>
+    </ul>
+  </section>
+
+  <!-- Signed in: overview -->
+  <section class="member" data-member hidden aria-labelledby="hello">
+    <h2 id="hello" class="hello">Welcome back, <span data-hello-name></span></h2>
+    <ul class="stats">
+      <li><a href={href('account/purchases/')}><b data-stat="owned">0</b><span>Purchases</span></a></li>
+      <li><a href={href('account/favorites/')}><b data-stat="fav">0</b><span>Favorites</span></a></li>
+      <li><a href={href('cart/')}><b data-stat="cart">0</b><span>In your cart</span></a></li>
+    </ul>
+
+    <div class="block">
+      <SectionHead title="Recent purchases" href={href('account/purchases/')} label="All purchases" />
+      <ul class="rows" data-recent>
+        {products.map((p) => <li data-id={p.id} hidden><ProductRow product={p} meta="In your library" /></li>)}
+      </ul>
+      <p class="muted" data-no-recent hidden>You have not bought anything yet. <a href={href('marketplace/')}>Browse the marketplace</a>.</p>
+    </div>
+
+    <div class="block">
+      <SectionHead title="Recommended for you" href={href('marketplace/')} label="Browse all" />
+      <ul class="grid4 three">
+        {picks.map((p) => <li><ProductCard product={p} /></li>)}
+      </ul>
+    </div>
+  </section>
+</AccountLayout>
+
+<style>
+  .guest {
+    display: grid;
+    gap: 24px;
+    max-width: 920px;
+    margin: 8px auto 0;
+  }
+  .auth {
+    padding: 24px;
+  }
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 20px;
+    padding: 4px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+  }
+  .tabs button {
+    min-height: 42px;
+    border: 0;
+    border-radius: 7px;
+    background: none;
+    color: var(--mut);
+    font-weight: 650;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .tabs button[aria-selected='true'] {
+    background: var(--s3);
+    color: var(--text);
+  }
+  form[role='tabpanel']:not([hidden]) {
+    animation: in 0.3s var(--ease);
+  }
+  @keyframes in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .alt {
+    margin: 12px 0 0;
+    text-align: center;
+  }
+  .alt a,
+  .check a {
+    color: var(--acc-h);
+  }
+  .check {
+    margin-bottom: 14px;
+  }
+  .demo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 18px 0 0;
+    color: var(--mut);
+    font-size: 0.85rem;
+  }
+  .why {
+    display: grid;
+    align-content: center;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .why li {
+    display: flex;
+    gap: 14px;
+    color: var(--acc-h);
+  }
+  .why span {
+    display: grid;
+    color: var(--mut);
+  }
+  .why b {
+    color: var(--text);
+  }
+  .hello {
+    margin: 0 0 16px;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 0 0 8px;
+    padding: 0;
+    list-style: none;
+  }
+  .stats a {
+    display: grid;
+    gap: 2px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--s1);
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.25s var(--ease);
+  }
+  .stats a:hover {
+    border-color: var(--acc);
+    transform: translateY(-2px);
+  }
+  .stats b {
+    font-size: 1.9rem;
+    line-height: 1;
+  }
+  .stats span {
+    color: var(--mut);
+  }
+  .block {
+    margin-top: 32px;
+  }
+  .rows {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .muted {
+    color: var(--mut);
+  }
+  .muted a {
+    color: var(--acc-h);
+  }
+  .three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (min-width: 800px) {
+    .guest {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+    }
+    .three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .rows {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<script>
+  import { getCart, getFav, getOwned, getUser, login, url } from '../../scripts/store';
+  import { toast } from '../../scripts/ui';
+
+  const guest = document.querySelector<HTMLElement>('[data-guest]')!;
+  const member = document.querySelector<HTMLElement>('[data-member]')!;
+
+  function paint() {
+    const user = getUser();
+    guest.hidden = !!user;
+    member.hidden = !user;
+    document.querySelector('.shell')!.classList.toggle('guest', !user);
+    if (!user) return;
+    document.querySelector('[data-hello-name]')!.textContent = user.name.split(' ')[0];
+    const owned = getOwned();
+    document.querySelector('[data-stat="owned"]')!.textContent = String(owned.length);
+    document.querySelector('[data-stat="fav"]')!.textContent = String(getFav().length);
+    document.querySelector('[data-stat="cart"]')!.textContent = String(getCart().length);
+    const recent = owned.slice(0, 4).map((o) => o.id);
+    document.querySelectorAll<HTMLElement>('[data-recent] li').forEach((li) => {
+      const idx = recent.indexOf(li.dataset.id!);
+      li.hidden = idx === -1;
+      li.style.order = String(idx);
+    });
+    document.querySelector<HTMLElement>('[data-no-recent]')!.hidden = owned.length > 0;
+  }
+
+  // Tabs
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('[data-auth-tab]')];
+  const setTab = (name: string) => {
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.authTab === name)));
+    document.querySelectorAll<HTMLElement>('[data-auth]').forEach((f) => (f.hidden = f.dataset.auth !== name));
+  };
+  tabs.forEach((t) => t.addEventListener('click', () => setTab(t.dataset.authTab!)));
+  if (location.hash === '#register') setTab('up');
+
+  // Forms (demo: any valid input signs you in)
+  document.querySelectorAll<HTMLFormElement>('[data-auth]').forEach((form) =>
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const data = new FormData(form);
+      const email = String(data.get('email'));
+      const name = String(data.get('name') || email.split('@')[0].replace(/[._-]+/g, ' '));
+      login({ name: name.replace(/\b\w/g, (c) => c.toUpperCase()), email });
+      toast(form.dataset.auth === 'up' ? 'Account created. Welcome!' : 'Signed in. Welcome back!');
+      const next = new URLSearchParams(location.search).get('next');
+      if (next && next.startsWith('/')) location.href = next;
+      else paint();
+    }),
+  );
+
+  window.addEventListener('trm:change', paint);
+  paint();
+</script>

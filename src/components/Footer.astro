@@ -1,0 +1,188 @@
+---
+import { company, footerColumns, socials } from '../data/site';
+import { href } from '../data/products';
+import Icon from './Icon.astro';
+---
+
+<footer class="ft">
+  <div class="sub">
+    <div class="wrap sub-in">
+      <div>
+        <h2>Get new models in your inbox</h2>
+        <p>One short email a week. Free drops and discounts first.</p>
+      </div>
+      <form action="#" data-newsletter novalidate>
+        <label class="sr" for="ft-mail">Email address</label>
+        <input id="ft-mail" type="email" placeholder="you@example.com" autocomplete="email" required />
+        <button class="btn" type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+  <div class="wrap cols">
+    <div class="brand">
+      <p class="logo">TR<span>market</span></p>
+      <p class="about">3D models for printing and games, and tools for modelers and sculptors. All by one author.</p>
+      <ul class="soc" aria-label="Social networks">
+        {socials.map((s) => <li><a href={s.href}>{s.label}</a></li>)}
+      </ul>
+    </div>
+    {
+      footerColumns.map((c) => (
+        <nav aria-label={c.title}>
+          <h2>{c.title}</h2>
+          <ul>
+            {c.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          </ul>
+        </nav>
+      ))
+    }
+  </div>
+  <div class="legal">
+    <div class="wrap l-in">
+      <p>© 2026 TRmarket · {company.legal} · {company.reg} · {company.tax} · {company.address} · <a href={`mailto:${company.email}`}>{company.email}</a></p>
+      <p class="pay"><Icon name="shield" size={16} /> Secure payment: cards · bank transfer · crypto (demo)</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ft {
+    margin-top: clamp(3rem, 6vw, 5rem);
+    border-top: 1px solid var(--line);
+    background: var(--s1);
+  }
+  .sub {
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(90deg, #2a1a0d, #17130f 70%);
+  }
+  .sub-in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    align-items: center;
+    padding-block: 28px;
+  }
+  .sub h2 {
+    margin: 0;
+    font-size: 1.35rem;
+  }
+  .sub p {
+    margin: 4px 0 0;
+    color: #cdb8a3;
+  }
+  form {
+    display: flex;
+    gap: 8px;
+  }
+  input {
+    flex: 1;
+    min-width: 0;
+    min-height: 46px;
+    padding: 0 14px;
+    border: 1px solid #4a4038;
+    border-radius: 8px;
+    background: rgb(0 0 0 / 0.35);
+    color: var(--text);
+    font: inherit;
+  }
+  input:focus {
+    outline: 2px solid var(--acc-h);
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 16px;
+    padding-block: 36px;
+  }
+  .brand {
+    grid-column: 1 / -1;
+  }
+  .logo {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  .logo span {
+    font-weight: 500;
+    color: var(--mut);
+  }
+  .about {
+    max-width: 24rem;
+    color: var(--mut);
+  }
+  h2 {
+    font-size: 0.95rem;
+  }
+  nav h2 {
+    margin: 0 0 8px;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  nav a {
+    display: inline-block;
+    padding: 4px 0;
+    color: var(--mut);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  nav a:hover {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .soc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .soc a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid #3a3f47;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .soc a:hover {
+    background: var(--s3);
+    border-color: var(--acc);
+  }
+  .legal a { text-decoration: underline; text-underline-offset: 3px; }
+  .legal {
+    border-top: 1px solid var(--line);
+    color: var(--mut);
+    font-size: 0.82rem;
+  }
+  .l-in {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-block: 16px 72px;
+  }
+  .l-in p {
+    margin: 0;
+  }
+  .pay {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  @media (min-width: 800px) {
+    .sub-in {
+      grid-template-columns: 1fr minmax(320px, 440px);
+    }
+    .cols {
+      grid-template-columns: 1.6fr repeat(4, 1fr);
+    }
+    .brand {
+      grid-column: auto;
+    }
+  }
+</style>

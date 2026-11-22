@@ -1,0 +1,64 @@
+---
+export type IconName =
+  | 'search' | 'heart' | 'cart' | 'user' | 'arrow' | 'download' | 'star' | 'chevron-down'
+  | 'chevron-left' | 'chevron-right' | 'shield' | 'refresh' | 'support' | 'eye' | 'menu' | 'tag'
+  | 'close' | 'check' | 'plus' | 'trash' | 'lock' | 'mail' | 'grid' | 'list' | 'filter'
+  | 'file' | 'share' | 'clock' | 'key' | 'logout' | 'settings' | 'package' | 'info';
+
+interface Props {
+  name: IconName;
+  size?: number;
+}
+const { name, size = 20 } = Astro.props;
+
+const paths: Record<IconName, string> = {
+  search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4',
+  heart: 'M12 20.5 4 12.6a4.9 4.9 0 0 1 7-6.9l1 1 1-1a4.9 4.9 0 0 1 7 6.9z',
+  cart: 'M3 4h2.5l2 10.5h10.5L20 7.5H6.3M9.5 19.5h.01M17 19.5h.01',
+  user: 'M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM5 20v-1.5A4.5 4.5 0 0 1 9.5 14h5a4.5 4.5 0 0 1 4.5 4.5V20',
+  arrow: 'M5 12h14M13 6l6 6-6 6',
+  download: 'M12 4v11M7 11l5 5 5-5M5 20h14',
+  star: 'm12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.4 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z',
+  'chevron-down': 'm6 9 6 6 6-6',
+  'chevron-left': 'm15 6-6 6 6 6',
+  'chevron-right': 'm9 6 6 6-6 6',
+  shield: 'M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6zM9 12l2 2 4-4',
+  refresh: 'M20 11a8 8 0 0 0-14-4L4 9M4 4v5h5M4 13a8 8 0 0 0 14 4l2-2M20 20v-5h-5',
+  support: 'M4 14v-2a8 8 0 0 1 16 0v2M4 14h3v5H5a1 1 0 0 1-1-1zM20 14h-3v5h2a1 1 0 0 0 1-1z',
+  eye: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  menu: 'M4 6h16M4 12h16M4 18h16',
+  tag: 'M3 12V4h8l10 10-8 8zM7.5 8.5h.01',
+  close: 'M6 6l12 12M18 6 6 18',
+  check: 'm5 12 5 5 9-10',
+  plus: 'M12 5v14M5 12h14',
+  trash: 'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
+  lock: 'M6 11h12v9H6zM8 11V8a4 4 0 0 1 8 0v3',
+  mail: 'M3 6h18v12H3zM3 7l9 7 9-7',
+  grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  list: 'M4 6h16M4 12h16M4 18h16',
+  filter: 'M4 6h16M7 12h10M10 18h4',
+  file: 'M7 3h7l5 5v13H7zM14 3v5h5',
+  share: 'M8 12a3 3 0 1 0 0-.01M16 6a3 3 0 1 0 0-.01M16 18a3 3 0 1 0 0-.01M10.6 10.7l3-3.4M10.6 13.3l3 3.4',
+  clock: 'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 8v4l3 2',
+  key: 'M14 9a4 4 0 1 0-3.9 4L4 19v2h3v-2h2v-2h2l1.9-2A4 4 0 0 0 14 9z',
+  logout: 'M10 4H5v16h5M14 8l4 4-4 4M18 12H9',
+  settings: 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM19 12l2-1-2-4-2 1a7 7 0 0 0-2-1l-.3-2h-4L10 7a7 7 0 0 0-2 1L6 7 4 11l2 1a7 7 0 0 0 0 2l-2 1 2 4 2-1a7 7 0 0 0 2 1l.3 2h4l.3-2a7 7 0 0 0 2-1l2 1 2-4-2-1a7 7 0 0 0 0-2z',
+  package: 'M12 3 4 7.5v9L12 21l8-4.5v-9zM4 7.5l8 4.5 8-4.5M12 12v9',
+  info: 'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 11v5M12 8h.01',
+};
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d={paths[name]}></path>
+</svg>

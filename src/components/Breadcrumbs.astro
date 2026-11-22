@@ -1,0 +1,21 @@
+---
+import { href as base } from '../data/products';
+
+interface Props {
+  items: { label: string; href?: string }[];
+}
+const { items } = Astro.props;
+const all = [{ label: 'Home', href: base() }, ...items];
+---
+
+<nav aria-label="Breadcrumb">
+  <ol class="crumbs">
+    {
+      all.map((c, i) => (
+        <li>
+          {c.href && i < all.length - 1 ? <a href={c.href}>{c.label}</a> : <span aria-current="page">{c.label}</span>}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

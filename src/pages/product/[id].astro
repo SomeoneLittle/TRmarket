@@ -1,0 +1,786 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Art from '../../components/Art.astro';
+import Icon from '../../components/Icon.astro';
+import Stars from '../../components/Stars.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import { getDetails } from '../../data/details';
+import { categoryName, formatCount, href, marketHref, productSub, products, subcategories, type Product } from '../../data/products';
+
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { id: product.id }, props: { product } }));
+}
+
+interface Props {
+  product: Product;
+}
+const { product: p } = Astro.props;
+const d = getDetails(p);
+const free = p.price === 0;
+const off = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+const model = p.category !== 'tool';
+const sub = subcategories[p.category].find((s) => s.id === productSub(p));
+const related = [...products.filter((x) => x.id !== p.id && x.category === p.category), ...products.filter((x) => x.id !== p.id && x.category !== p.category)].slice(0, 4);
+const views = [
+  { id: 'render', label: 'Render' },
+  { id: 'clay', label: 'Clay' },
+  { id: 'wire', label: 'Wireframe' },
+];
+const tabs = [
+  { id: 'description', label: 'Description' },
+  { id: 'files', label: 'Files' },
+  { id: 'reviews', label: `Reviews (${p.reviews})` },
+  { id: 'licence', label: 'Licence' },
+];
+const labels = ['5', '4', '3', '2', '1'];
+---
+
+<Layout title={p.title} current="marketplace" description={p.blurb}>
+  <div class="wrap">
+    <Breadcrumbs
+      items={[
+        { label: 'Marketplace', href: href('marketplace/') },
+        { label: categoryName(p.category), href: marketHref({ cat: p.category }) },
+        { label: p.title },
+      ]}
+    />
+
+    <div class="top" data-product={p.id}>
+      <div class="gallery">
+        <div class="stage" data-stage data-view="render">
+          <Art product={p} label={`${p.title} preview`} />
+          {off > 0 && <span class="badge sale">−{off}%</span>}
+          {free && <span class="badge free">Free</span>}
+        </div>
+        {
+          model ? (
+            <div class="seg" role="group" aria-label="Preview mode" style="--n:3">
+              <i class="knob" aria-hidden="true" />
+              {views.map((v, i) => <button type="button" data-v={v.id} aria-pressed={i === 0 ? 'true' : 'false'}>{v.label}</button>)}
+            </div>
+          ) : (
+            <p class="note"><Icon name="info" size={16} /> Interface preview. Works on the last two major Blender versions.</p>
+          )
+        }
+      </div>
+
+      <div class="info">
+        <p class="kind">
+          <a href={marketHref({ cat: p.category })}>{categoryName(p.category)}</a>
+          {sub && <> · <a href={marketHref({ cat: p.category, sub: sub.id })}>{sub.name}</a></>}
+        </p>
+        <h1>{p.title}</h1>
+        <p class="rate">
+          <Stars rating={p.rating} label={p.rating.toFixed(1)} size="1.05rem" />
+          <a href="#reviews" data-tab-link="reviews">{p.reviews} reviews</a>
+          <span>· {formatCount(p.downloads)} downloads</span>
+        </p>
+
+        <div class="buy" data-buy>
+          <p class="price">
+            <b data-price-out>{free ? 'Free' : `$${p.price}`}</b>
+            {p.oldPrice && <s data-old-out>${p.oldPrice}</s>}
+            {off > 0 && <em>−{off}%</em>}
+          </p>
+
+          {
+            free ? (
+              <p class="licnote"><Icon name="check" size={16} /> Free for personal and commercial use.</p>
+            ) : (
+              <fieldset class="lic">
+                <legend>Licence</legend>
+                <label>
+                  <input type="radio" name="lic" value="personal" data-price={p.price} data-old={p.oldPrice ?? ''} checked />
+                  <span class="opt"><b>Personal</b><small>Hobby and non-commercial</small><i>${p.price}</i></span>
+                </label>
+                <label>
+                  <input type="radio" name="lic" value="commercial" data-price={p.price * 2} data-old={p.oldPrice ? p.oldPrice * 2 : ''} />
+                  <span class="opt"><b>Commercial</b><small>Games, clients, stores</small><i>${p.price * 2}</i></span>
+                </label>
+              </fieldset>
+            )
+          }
+
+          <div class="cta">
+            <button class="btn" type="button" data-add data-id={p.id} data-main-add>
+              <Icon name={free ? 'download' : 'cart'} size={19} /> <span data-add-label>{free ? 'Get it free' : 'Add to cart'}</span>
+            </button>
+            <button class="btn ghost" type="button" data-add data-id={p.id} data-go="checkout/" data-buy-now>Buy now</button>
+          </div>
+          <div class="mini">
+            <button type="button" data-fav data-id={p.id} aria-pressed="false"><Icon name="heart" size={18} /> <span>Save to favorites</span></button>
+            <button type="button" data-copy><Icon name="share" size={18} /> Share</button>
+          </div>
+        </div>
+
+        <p class="owned" data-owned hidden>
+          <Icon name="check" size={18} />
+          <span>You own this product.</span>
+          <a class="btn sm" href={href('account/purchases/')}>Open in my purchases</a>
+        </p>
+
+        <dl class="facts">
+          <div><dt>Includes</dt><dd>{p.spec}</dd></div>
+          <div><dt>Formats</dt><dd>{p.formats.join(', ')}</dd></div>
+          <div><dt>Version</dt><dd>{d.version} · updated {d.updated}</dd></div>
+          <div><dt>Support</dt><dd>Replies within one business day</dd></div>
+        </dl>
+        <ul class="perks">
+          <li><Icon name="download" size={16} /> Instant download</li>
+          <li><Icon name="refresh" size={16} /> Free updates for life</li>
+          <li><Icon name="shield" size={16} /> 30-day refund</li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="tabs-wrap" aria-label="Product details">
+      <div class="tablist" role="tablist" aria-label="Product details">
+        {tabs.map((t, i) => <button type="button" role="tab" id={`tab-${t.id}`} aria-controls={`panel-${t.id}`} aria-selected={i === 0 ? 'true' : 'false'} data-tab={t.id}>{t.label}</button>)}
+      </div>
+
+      <div class="panels">
+        <div role="tabpanel" id="panel-description" aria-labelledby="tab-description" class="prose">
+          {d.long.map((t) => <p>{t}</p>)}
+          <h2>Highlights</h2>
+          <ul class="ticks">
+            {d.features.map((f) => <li><Icon name="check" size={17} /> {f}</li>)}
+          </ul>
+        </div>
+
+        <div role="tabpanel" id="panel-files" aria-labelledby="tab-files" hidden>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <caption class="sr">Files included in {p.title}</caption>
+              <thead><tr><th scope="col">File</th><th scope="col">Type</th><th scope="col">Size</th></tr></thead>
+              <tbody>
+                {d.files.map((f) => <tr><td><Icon name="file" size={15} /> {f.name}</td><td>{f.kind}</td><td>{f.size}</td></tr>)}
+              </tbody>
+            </table>
+          </div>
+          <p class="hint">Files are available in your account right after payment.</p>
+        </div>
+
+        <div role="tabpanel" id="panel-reviews" aria-labelledby="tab-reviews" hidden>
+          <div class="rev">
+            <div class="sum">
+              <p class="big">{p.rating.toFixed(1)}</p>
+              <Stars rating={p.rating} size="1.2rem" />
+              <p class="hint">{p.reviews} reviews</p>
+              <ul class="bars" aria-label="Rating breakdown">
+                {d.distribution.map((v, i) => (
+                  <li><span>{labels[i]}★</span><i style={`--w:${v}%`}></i><span>{v}%</span></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <ul class="reviews">
+                {
+                  d.reviews.map((r) => (
+                    <li>
+                      <div class="rh"><b>{r.name}</b><Stars rating={r.rating} /> <time>{r.date}</time></div>
+                      <p>{r.text}</p>
+                    </li>
+                  ))
+                }
+              </ul>
+              <form class="panel review-form" data-review-form novalidate>
+                <h2>Write a review</h2>
+                <div class="field"><label for="rv-rate">Rating</label>
+                  <select id="rv-rate" required><option value="">Select…</option><option>5 — Excellent</option><option>4 — Good</option><option>3 — OK</option><option>2 — Poor</option><option>1 — Bad</option></select>
+                </div>
+                <div class="field"><label for="rv-text">Your review</label><textarea id="rv-text" required minlength="10"></textarea></div>
+                <button class="btn" type="submit">Submit review</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div role="tabpanel" id="panel-licence" aria-labelledby="tab-licence" hidden class="prose">
+          <p><b>Personal licence.</b> Use the files for yourself: printing for home, learning, non-commercial projects. You may not redistribute or resell the files.</p>
+          <p><b>Commercial licence.</b> Use the files in client work, games and products you sell. You may modify them. You may not resell the original files on their own.</p>
+          <p>Read the <a href={href('licenses/')}>full licence terms</a> or the <a href={href('refunds/')}>refund policy</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="rel">
+      <SectionHead id="rel" title="You may also like" href={marketHref({ cat: p.category })} label={`More ${categoryName(p.category).toLowerCase()}`} />
+      <ul class="grid4">
+        {related.map((r) => <li><ProductCard product={r} /></li>)}
+      </ul>
+    </section>
+  </div>
+
+  <div class="sticky" data-sticky>
+    <div>
+      <b data-price-out-mobile>{free ? 'Free' : `$${p.price}`}</b>
+      <small>{p.title}</small>
+    </div>
+    <button class="btn" type="button" data-add data-id={p.id} data-main-add-mobile>{free ? 'Get it free' : 'Add to cart'}</button>
+  </div>
+</Layout>
+
+<style>
+  .top {
+    display: grid;
+    gap: 24px;
+    margin-top: 16px;
+  }
+  .stage {
+    position: relative;
+    aspect-ratio: 1 / 0.9;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 92%, rgb(255 255 255 / 0.06), transparent 70%),
+      radial-gradient(ellipse 85% 80% at 50% 38%, #343942, #121417 80%);
+    overflow: hidden;
+  }
+  .stage :global(.art) {
+    padding: 8%;
+    animation: float 7s ease-in-out infinite;
+  }
+  @keyframes float {
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  .badge {
+    position: absolute;
+    inset: 14px auto auto 14px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .sale {
+    background: var(--sale);
+    color: #1c0507;
+  }
+  .free {
+    background: #eceef1;
+    color: #111;
+  }
+  .seg {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--n), 1fr);
+    width: min(100%, 380px);
+    margin: 14px auto 0;
+    padding: 4px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--s1);
+  }
+  .knob {
+    position: absolute;
+    inset: 4px auto 4px 4px;
+    width: calc((100% - 8px) / var(--n));
+    border-radius: 7px;
+    background: var(--s3);
+    transform: translateX(calc(var(--i, 0) * 100%));
+    transition: transform 0.35s var(--ease);
+  }
+  .seg button {
+    position: relative;
+    min-height: 40px;
+    border: 0;
+    background: none;
+    color: var(--mut);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .seg button:hover,
+  .seg button[aria-pressed='true'] {
+    color: var(--text);
+  }
+  .note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 0 0;
+    color: var(--mut);
+  }
+  .kind {
+    margin: 0 0 6px;
+    color: var(--mut);
+  }
+  .kind a {
+    color: var(--acc-h);
+    text-decoration: none;
+  }
+  .kind a:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+    font-weight: 750;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .rate {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin: 10px 0 0;
+    color: var(--mut);
+  }
+  .rate a {
+    color: var(--text);
+    text-underline-offset: 3px;
+  }
+  .buy {
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--s1);
+  }
+  .price {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin: 0 0 14px;
+  }
+  .price b {
+    font-size: 2.2rem;
+    letter-spacing: -0.03em;
+  }
+  .price s {
+    color: var(--mut);
+    font-size: 1.1rem;
+  }
+  .price em {
+    padding: 2px 9px;
+    border-radius: 6px;
+    background: rgb(255 90 95 / 0.16);
+    color: var(--sale);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .licnote {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 14px;
+    color: var(--ok);
+  }
+  .lic {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 0 0 14px;
+    padding: 0;
+    border: 0;
+  }
+  legend {
+    margin-bottom: 8px;
+    padding: 0;
+    color: var(--mut);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .lic label {
+    position: relative;
+    cursor: pointer;
+  }
+  .lic input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+  .opt {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 8px;
+    height: 100%;
+    padding: 12px 14px;
+    border: 1px solid #3a3f47;
+    border-radius: 10px;
+    background: var(--bg);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .opt small {
+    grid-column: 1;
+    color: var(--mut);
+  }
+  .opt i {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    align-self: center;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .lic label:hover .opt {
+    border-color: #5a616c;
+  }
+  .lic input:checked + .opt {
+    border-color: var(--acc);
+    background: rgb(255 122 26 / 0.08);
+    box-shadow: 0 0 0 1px var(--acc);
+  }
+  .lic input:focus-visible + .opt {
+    outline: 2px solid var(--acc-h);
+    outline-offset: 2px;
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .cta .btn {
+    flex: 1 1 160px;
+  }
+  .mini {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin-top: 12px;
+  }
+  .mini button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--mut);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .mini button:hover,
+  .mini button[aria-pressed='true'] {
+    color: var(--text);
+  }
+  .mini [aria-pressed='true'] :global(svg) {
+    color: var(--sale);
+    fill: var(--sale);
+  }
+  .owned {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0 0;
+    padding: 14px 16px;
+    border: 1px solid rgb(53 208 127 / 0.4);
+    border-radius: 12px;
+    background: rgb(53 208 127 / 0.08);
+    color: var(--ok);
+  }
+  .owned span {
+    flex: 1;
+  }
+  .facts {
+    display: grid;
+    gap: 0;
+    margin: 18px 0 0;
+  }
+  .facts div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .facts dt {
+    color: var(--mut);
+  }
+  .facts dd {
+    margin: 0;
+    text-align: right;
+  }
+  .perks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin: 14px 0 0;
+    padding: 0;
+    color: var(--mut);
+    list-style: none;
+  }
+  .perks li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .perks :global(svg) {
+    color: var(--ok);
+  }
+  .tabs-wrap {
+    margin-top: clamp(2rem, 4vw, 3.5rem);
+  }
+  .tablist {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tablist button {
+    flex: none;
+    min-height: 48px;
+    padding: 0 18px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--mut);
+    font-weight: 650;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.2s, background 0.15s;
+  }
+  .tablist button:hover {
+    color: var(--text);
+    background: var(--s1);
+  }
+  .tablist button[aria-selected='true'] {
+    border-bottom-color: var(--acc);
+    color: var(--text);
+  }
+  .panels {
+    padding-top: 22px;
+  }
+  .panels [role='tabpanel']:not([hidden]) {
+    animation: fadein 0.35s var(--ease);
+  }
+  @keyframes fadein {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  .ticks {
+    padding: 0;
+    list-style: none;
+  }
+  .ticks li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ticks :global(svg) {
+    color: var(--ok);
+    flex: none;
+  }
+  .tbl td :global(svg) {
+    vertical-align: -3px;
+    margin-right: 6px;
+    color: var(--mut);
+  }
+  .hint {
+    color: var(--mut);
+    font-size: 0.88rem;
+  }
+  .rev {
+    display: grid;
+    gap: 24px;
+  }
+  .sum {
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--s1);
+    align-self: start;
+  }
+  .big {
+    margin: 0;
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .bars {
+    display: grid;
+    gap: 6px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.85rem;
+  }
+  .bars li {
+    display: grid;
+    grid-template-columns: 28px 1fr 36px;
+    align-items: center;
+    gap: 8px;
+    color: var(--mut);
+  }
+  .bars i {
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #ffb020 var(--w), #343a42 var(--w));
+  }
+  .reviews {
+    display: grid;
+    gap: 14px;
+    margin: 0 0 18px;
+    padding: 0;
+    list-style: none;
+  }
+  .reviews li {
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .rh {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+  }
+  .rh time {
+    color: var(--mut);
+    font-size: 0.85rem;
+  }
+  .reviews p {
+    margin: 6px 0 0;
+    color: #cdd2d9;
+  }
+  .review-form h2 {
+    margin: 0 0 12px;
+  }
+  .sticky {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 70;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--line);
+    background: rgb(22 24 27 / 0.96);
+    backdrop-filter: blur(10px);
+    transform: translateY(100%);
+    transition: transform 0.3s var(--ease);
+  }
+  .sticky.show {
+    transform: none;
+  }
+  .sticky div {
+    display: grid;
+    min-width: 0;
+  }
+  .sticky b {
+    font-size: 1.2rem;
+  }
+  .sticky small {
+    overflow: hidden;
+    color: var(--mut);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (min-width: 900px) {
+    .top {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+    }
+    .gallery {
+      position: sticky;
+      top: 86px;
+    }
+    .rev {
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 32px;
+    }
+    .sticky {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { getOwned, inCart, money } from '../../scripts/store';
+  import { toast } from '../../scripts/ui';
+
+  const root = document.querySelector<HTMLElement>('[data-product]')!;
+  const id = root.dataset.product!;
+
+  // Preview modes
+  const stage = document.querySelector<HTMLElement>('[data-stage]')!;
+  const seg = document.querySelector<HTMLElement>('.seg');
+  if (seg) {
+    const buttons = [...seg.querySelectorAll<HTMLButtonElement>('button')];
+    buttons.forEach((b, i) =>
+      b.addEventListener('click', () => {
+        stage.dataset.view = b.dataset.v;
+        seg.style.setProperty('--i', String(i));
+        buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      }),
+    );
+  }
+
+  // Licence selection updates the price and what gets added to the cart
+  const priceOut = document.querySelector<HTMLElement>('[data-price-out]')!;
+  const priceMobile = document.querySelector<HTMLElement>('[data-price-out-mobile]')!;
+  const oldOut = document.querySelector<HTMLElement>('[data-old-out]');
+  const addButtons = document.querySelectorAll<HTMLElement>('[data-add]');
+  document.querySelectorAll<HTMLInputElement>('input[name="lic"]').forEach((r) =>
+    r.addEventListener('change', () => {
+      const price = Number(r.dataset.price);
+      priceOut.textContent = money(price);
+      priceMobile.textContent = money(price);
+      if (oldOut) oldOut.textContent = r.dataset.old ? `$${r.dataset.old}` : '';
+      addButtons.forEach((b) => (b.dataset.lic = r.value));
+    }),
+  );
+
+  // Already in the cart / already owned
+  const label = document.querySelector<HTMLElement>('[data-add-label]');
+  if (inCart(id) && label) label.textContent = 'Update cart';
+  if (getOwned().some((o) => o.id === id)) {
+    document.querySelector<HTMLElement>('[data-owned]')!.hidden = false;
+    document.querySelector<HTMLElement>('[data-buy]')!.hidden = true;
+  }
+
+  // Tabs
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+  const show = (name: string, focus = false) => {
+    tabs.forEach((t) => {
+      const on = t.dataset.tab === name;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(`panel-${t.dataset.tab}`)!.hidden = !on;
+      if (on && focus) t.focus();
+    });
+  };
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => {
+      show(t.dataset.tab!);
+      history.replaceState(null, '', `#${t.dataset.tab}`);
+    });
+    t.addEventListener('keydown', (e) => {
+      const k = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (k) show(tabs[(i + k + tabs.length) % tabs.length].dataset.tab!, true);
+    });
+  });
+  document.querySelectorAll<HTMLElement>('[data-tab-link]').forEach((a) =>
+    a.addEventListener('click', () => show(a.dataset.tabLink!)),
+  );
+  const fromHash = location.hash.slice(1);
+  if (tabs.some((t) => t.dataset.tab === fromHash)) show(fromHash);
+
+  // Review form (demo)
+  document.querySelector<HTMLFormElement>('[data-review-form]')!.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = e.target as HTMLFormElement;
+    if (!f.checkValidity()) {
+      f.reportValidity();
+      return;
+    }
+    f.reset();
+    toast('Thanks! Your review will appear after moderation (demo)');
+  });
+
+  // Mobile buy bar appears once the main buttons scroll out of view
+  const bar = document.querySelector<HTMLElement>('[data-sticky]')!;
+  const main = document.querySelector<HTMLElement>('[data-main-add]')!;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([en]) => bar.classList.toggle('show', !en.isIntersecting && en.boundingClientRect.top < 0)).observe(main);
+  }
+</script>

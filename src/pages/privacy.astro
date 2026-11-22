@@ -1,0 +1,29 @@
+---
+import LegalLayout from '../components/LegalLayout.astro';
+import { href } from '../data/products';
+---
+
+<LegalLayout title="Privacy policy" current="privacy" lead="What data TRmarket collects, why, and how you can control it.">
+  <h2>What we collect</h2>
+  <p>We collect the minimum needed to sell digital products: your name and email address for the order, the licence you chose, and basic technical data such as the pages you open and your approximate country. We do not collect payment card numbers; payments are handled by the payment provider.</p>
+
+  <h2>How we use it</h2>
+  <ul>
+    <li>To deliver your files and send your receipt.</li>
+    <li>To provide your account, purchases, favorites and cart.</li>
+    <li>To send updates for products you own. Marketing email is sent only if you opt in.</li>
+    <li>To prevent fraud and keep the site secure.</li>
+  </ul>
+
+  <h2>Cookies and local storage</h2>
+  <p>The site stores your cart, favorites and sign-in state in your browser (local storage) so they persist between visits. We use no advertising cookies. You can clear this data at any time in the <a href={href('account/settings/')}>account settings</a>.</p>
+
+  <h2>Sharing your data</h2>
+  <p>We share data only with providers that help us operate the shop: payment processing, email delivery and hosting. They may use it only to provide those services.</p>
+
+  <h2>Your rights</h2>
+  <p>You can ask us to access, correct, export or delete your personal data. Write to us through the <a href={href('contacts/')}>contact form</a> and we will reply within 30 days.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this policy? Reach out via the <a href={href('contacts/')}>contacts page</a>.</p>
+</LegalLayout>

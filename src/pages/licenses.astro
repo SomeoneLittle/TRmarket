@@ -1,0 +1,76 @@
+---
+import LegalLayout from '../components/LegalLayout.astro';
+import Icon from '../components/Icon.astro';
+import { href } from '../data/products';
+
+const rows = [
+  { what: 'Print for yourself, gifts, hobby use', free: true, personal: true, commercial: true },
+  { what: 'Use in a free or non-commercial game or project', free: true, personal: true, commercial: true },
+  { what: 'Sell printed copies or physical products', free: true, personal: false, commercial: true },
+  { what: 'Use in a commercial game, app or film', free: true, personal: false, commercial: true },
+  { what: 'Use in client work', free: true, personal: false, commercial: true },
+  { what: 'Modify, remix and kitbash', free: true, personal: true, commercial: true },
+  { what: 'Resell or share the original files', free: false, personal: false, commercial: false },
+  { what: 'Free updates for life', free: true, personal: true, commercial: true },
+];
+---
+
+<LegalLayout title="Licences" current="licenses" lead="Three simple licences. Pick the one that matches how you will use the files.">
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <caption class="sr">What each licence allows</caption>
+      <thead>
+        <tr><th scope="col">You can…</th><th scope="col">Free</th><th scope="col">Personal</th><th scope="col">Commercial</th></tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((r) => (
+            <tr>
+              <th scope="row">{r.what}</th>
+              {[r.free, r.personal, r.commercial].map((ok) => (
+                <td class={ok ? 'yes' : 'no'}>{ok ? <Icon name="check" size={18} /> : <Icon name="close" size={18} />}<span class="sr">{ok ? 'Allowed' : 'Not allowed'}</span></td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Free licence</h2>
+  <p>Free products can be used in personal and commercial projects. No attribution is required, though it is always appreciated.</p>
+
+  <h2>Personal licence</h2>
+  <p>For hobbyists and learners. You can print, render and modify the files for your own use. You cannot sell the results or use them in anything that earns money.</p>
+
+  <h2>Commercial licence</h2>
+  <p>For professionals and studios. You can use and modify the files in client work, games and products you sell, and sell physical prints. The licence is per person; a team needs one licence per seat.</p>
+
+  <h2>What is never allowed</h2>
+  <p>Reselling, sharing or republishing the original files, even if modified lightly, and uploading them to other marketplaces or model libraries.</p>
+
+  <p>Not sure which one you need? <a href={href('contacts/')}>Ask me</a> and I will help you choose.</p>
+</LegalLayout>
+
+<style>
+  .tbl-wrap {
+    margin-bottom: 1.5rem;
+  }
+  .tbl th[scope='row'] {
+    color: var(--text);
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  .tbl td {
+    text-align: center;
+  }
+  .yes {
+    color: var(--ok);
+  }
+  .no {
+    color: #6c7480;
+  }
+  .tbl td :global(svg) {
+    vertical-align: middle;
+  }
+</style>

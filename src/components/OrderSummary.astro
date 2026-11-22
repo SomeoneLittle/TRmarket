@@ -1,0 +1,108 @@
+---
+interface Props {
+  title?: string;
+  promo?: boolean;
+}
+const { title = 'Order summary', promo = true } = Astro.props;
+---
+
+<aside class="summary panel" aria-labelledby="sum-title">
+  <h2 id="sum-title">{title}</h2>
+  <slot name="lines" />
+  {
+    promo && (
+      <form class="promo" data-promo-form novalidate>
+        <label for="promo">Promo code</label>
+        <div>
+          <input id="promo" name="promo" autocomplete="off" placeholder="Try TR10" />
+          <button class="btn ghost sm" type="submit">Apply</button>
+        </div>
+        <p class="pmsg" data-promo-msg role="status"></p>
+      </form>
+    )
+  }
+  <dl>
+    <div><dt>Subtotal</dt><dd data-subtotal>$0</dd></div>
+    <div data-discount-row hidden><dt>Promo TR10 (−10%)</dt><dd class="off" data-discount>−$0</dd></div>
+    <div class="total"><dt>Total</dt><dd data-total>$0</dd></div>
+  </dl>
+  <slot />
+</aside>
+
+<style>
+  .summary {
+    display: grid;
+    gap: 14px;
+    align-content: start;
+  }
+  h2 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+  .promo label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+  .promo div {
+    display: flex;
+    gap: 8px;
+  }
+  .promo input {
+    flex: 1;
+    min-width: 0;
+    min-height: 38px;
+    padding: 0 12px;
+    border: 1px solid #3a3f47;
+    border-radius: 8px;
+    background: var(--bg);
+  }
+  .promo input:focus {
+    outline: none;
+    border-color: var(--acc);
+  }
+  .pmsg {
+    min-height: 1.2em;
+    margin: 6px 0 0;
+    font-size: 0.85rem;
+  }
+  :global(.pmsg.ok) {
+    color: var(--ok);
+  }
+  :global(.pmsg.err) {
+    color: var(--sale);
+  }
+  dl {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+  }
+  dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  dt {
+    color: var(--mut);
+  }
+  dd {
+    margin: 0;
+    font-weight: 600;
+  }
+  .off {
+    color: var(--ok);
+  }
+  .total {
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 1.25rem;
+  }
+  .total dt {
+    color: var(--text);
+    font-weight: 700;
+  }
+  .total dd {
+    font-weight: 800;
+  }
+</style>

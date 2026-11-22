@@ -1,0 +1,132 @@
+---
+import { categoryName, productHref, type Product } from '../data/products';
+import Art from './Art.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  product: Product;
+  /** Compact lines are read-only and used in the checkout summary. */
+  compact?: boolean;
+}
+const { product: p, compact = false } = Astro.props;
+const free = p.price === 0;
+---
+
+<li class:list={['line', { compact }]} data-line={p.id} hidden>
+  <a class="thumb" href={productHref(p)} tabindex="-1" aria-hidden="true"><Art product={p} /></a>
+  <div class="info">
+    <a class="title" href={productHref(p)}>{p.title}</a>
+    <small>{categoryName(p.category)} · {p.formats.join(', ')}</small>
+    {
+      !compact && !free && (
+        <label class="lic">
+          <span class="sr">Licence for {p.title}</span>
+          <select data-lic-select>
+            <option value="personal">Personal licence</option>
+            <option value="commercial">Commercial licence</option>
+          </select>
+        </label>
+      )
+    }
+    {(compact || free) && <small class="licname" data-lic-name>{free ? 'Free licence' : ''}</small>}
+  </div>
+  <p class="price" data-line-price>{free ? 'Free' : `$${p.price}`}</p>
+  {
+    !compact && (
+      <button class="rm" type="button" data-remove aria-label={`Remove ${p.title} from cart`}>
+        <Icon name="trash" size={18} />
+      </button>
+    )
+  }
+</li>
+
+<style>
+  .line {
+    display: grid;
+    grid-template-columns: 84px 1fr auto;
+    grid-template-areas: 'thumb info price' 'thumb info rm';
+    gap: 4px 14px;
+    align-items: start;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    animation: in 0.35s var(--ease);
+  }
+  .line[hidden] {
+    display: none;
+  }
+  @keyframes in {
+    from {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+  }
+  .thumb {
+    grid-area: thumb;
+    display: block;
+    width: 84px;
+    height: 74px;
+    border-radius: 8px;
+    background: radial-gradient(ellipse at 50% 40%, #343942, #16181b 80%);
+    overflow: hidden;
+  }
+  .info {
+    grid-area: info;
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+  .title {
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .title:hover {
+    color: var(--acc-h);
+  }
+  small {
+    color: var(--mut);
+  }
+  .lic select {
+    justify-self: start;
+    min-height: 38px;
+    margin-top: 6px;
+    padding: 0 10px;
+    border: 1px solid #3a3f47;
+    border-radius: 8px;
+    background: var(--bg);
+  }
+  .price {
+    grid-area: price;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: right;
+  }
+  .rm {
+    grid-area: rm;
+    justify-self: end;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--mut);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .rm:hover {
+    background: var(--s3);
+    color: var(--sale);
+  }
+  .compact {
+    grid-template-columns: 56px 1fr auto;
+    grid-template-areas: 'thumb info price';
+    padding: 10px 0;
+    align-items: center;
+  }
+  .compact .thumb {
+    width: 56px;
+    height: 50px;
+  }
+</style>

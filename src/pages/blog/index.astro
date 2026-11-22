@@ -1,0 +1,110 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHead from '../../components/PageHead.astro';
+import PostCard from '../../components/PostCard.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import { posts } from '../../data/posts';
+import { href, products } from '../../data/products';
+
+const [featured, ...rest] = posts;
+const tags = ['All', 'Tutorials', 'Releases', 'Behind the scenes'];
+const picks = [...products].sort((a, b) => b.downloads - a.downloads).filter((p) => p.price > 0).slice(0, 4);
+---
+
+<Layout title="Blog" current="blog" description="Tutorials, release notes and behind-the-scenes stories about 3D models and modeling tools.">
+  <PageHead title="Blog" lead="Tutorials, release notes and the stories behind the models." crumbs={[{ label: 'Blog' }]} />
+
+  <div class="wrap">
+    <div class="chips" role="group" aria-label="Filter articles">
+      {tags.map((t, i) => <button class="chip" type="button" data-tag={t} aria-pressed={i === 0 ? 'true' : 'false'}>{t}</button>)}
+    </div>
+
+    <div class="feat" data-feat><PostCard post={featured} featured /></div>
+
+    <ul class="grid" data-posts>
+      {rest.map((p) => <li data-post data-tag={p.tag}><PostCard post={p} /></li>)}
+    </ul>
+    <p class="empty" data-none hidden>No articles in this category yet.</p>
+
+    <section class="sec" aria-labelledby="blog-shop">
+      <SectionHead id="blog-shop" title="From the shop" href={href('marketplace/')} label="Browse the catalog" />
+      <ul class="grid4">
+        {picks.map((p) => <li><ProductCard product={p} /></li>)}
+      </ul>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 20px;
+  }
+  .feat {
+    margin-bottom: 16px;
+    transition: opacity 0.25s;
+  }
+  .grid {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .grid > li {
+    display: flex;
+    animation: in 0.4s var(--ease) both;
+  }
+  .grid > li > :global(*) {
+    flex: 1;
+  }
+  @keyframes in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+  @media (min-width: 700px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1000px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+  }
+</style>
+
+<script>
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('.chip')];
+  const feat = document.querySelector<HTMLElement>('[data-feat]')!;
+  const posts = [...document.querySelectorAll<HTMLElement>('[data-post]')];
+  const none = document.querySelector<HTMLElement>('[data-none]')!;
+  const featTag = feat.querySelector<HTMLElement>('[data-tag]')!.dataset.tag;
+
+  chips.forEach((chip) =>
+    chip.addEventListener('click', () => {
+      const tag = chip.dataset.tag!;
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      feat.hidden = tag !== 'All' && tag !== featTag;
+      let n = feat.hidden ? 0 : 1;
+      posts.forEach((li, i) => {
+        const ok = tag === 'All' || li.dataset.tag === tag;
+        li.hidden = !ok;
+        if (ok) {
+          n++;
+          li.style.animationDelay = `${i * 50}ms`;
+          li.style.animation = 'none';
+          void li.offsetWidth;
+          li.style.animation = '';
+        }
+      });
+      none.hidden = n > 0;
+    }),
+  );
+</script>

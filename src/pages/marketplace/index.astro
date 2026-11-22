@@ -1,0 +1,634 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHead from '../../components/PageHead.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import Icon from '../../components/Icon.astro';
+import { categories, products, subcategories } from '../../data/products';
+
+const prices = [
+  { id: '', label: 'Any price' },
+  { id: 'free', label: 'Free' },
+  { id: 'u15', label: 'Under $15' },
+  { id: 'm25', label: '$15 – $25' },
+  { id: 'o25', label: 'Over $25' },
+];
+const formats = [
+  { id: 'stl', label: 'STL' },
+  { id: '3mf', label: '3MF' },
+  { id: 'fbx', label: 'FBX' },
+  { id: 'glb', label: 'GLB' },
+  { id: 'blend', label: 'BLEND' },
+  { id: 'blender', label: 'Blender add-on' },
+];
+const formatCount = (id: string) =>
+  products.filter((p) => p.formats.some((x) => (id === 'blender' ? x.toLowerCase().startsWith('blender') : x.toLowerCase() === id))).length;
+const sorts = [
+  { id: 'popular', label: 'Most popular' },
+  { id: 'new', label: 'Newest' },
+  { id: 'rated', label: 'Top rated' },
+  { id: 'price-asc', label: 'Price: low to high' },
+  { id: 'price-desc', label: 'Price: high to low' },
+];
+---
+
+<Layout title="Marketplace" current="marketplace" description="Browse 3D models for printing and games, and tools for 3D modeling and sculpting.">
+  <PageHead title="Marketplace" lead="Printable models, game-ready assets and tools. Filter by category, price and format." crumbs={[{ label: 'Marketplace' }]} />
+
+  <div class="wrap shell">
+    <div class="scrim" data-scrim hidden></div>
+    <aside class="side" id="filters" aria-label="Filters">
+      <div class="side-head">
+        <h2>Filters</h2>
+        <button class="x" type="button" data-close-filters aria-label="Close filters"><Icon name="close" size={20} /></button>
+      </div>
+
+      <fieldset>
+        <legend>Category</legend>
+        <label class="opt"><input type="radio" name="cat" value="" checked /> <span>All categories</span> <small>{products.length}</small></label>
+        {
+          categories.map((c) => (
+            <label class="opt"><input type="radio" name="cat" value={c.id} /> <span>{c.name}</span> <small>{c.count}</small></label>
+          ))
+        }
+      </fieldset>
+
+      {
+        categories.map((c) => (
+          <fieldset class="subs" data-subs={c.id} hidden>
+            <legend>Subcategory</legend>
+            <label class="opt"><input type="radio" name="sub" value="" checked /> <span>All</span></label>
+            {subcategories[c.id].map((s) => (
+              <label class="opt"><input type="radio" name="sub" value={s.id} /> <span>{s.name}</span></label>
+            ))}
+          </fieldset>
+        ))
+      }
+
+      <fieldset>
+        <legend>Price</legend>
+        {prices.map((p) => <label class="opt"><input type="radio" name="price" value={p.id} checked={p.id === ''} /> <span>{p.label}</span></label>)}
+      </fieldset>
+
+      <fieldset>
+        <legend>Format</legend>
+        {formats.map((f) => <label class="opt"><input type="checkbox" name="format" value={f.id} /> <span>{f.label}</span> <small>{formatCount(f.id)}</small></label>)}
+      </fieldset>
+
+      <fieldset>
+        <legend>More</legend>
+        <label class="opt"><input type="checkbox" name="sale" value="1" /> <span>On sale</span></label>
+        <label class="opt"><input type="checkbox" name="rated" value="1" /> <span>Rated 4.8 and up</span></label>
+      </fieldset>
+
+      <button class="btn ghost block" type="button" data-reset>Reset all filters</button>
+      <button class="btn block show" type="button" data-close-filters>Show results</button>
+    </aside>
+
+    <section class="main" aria-labelledby="results-title">
+      <h2 class="sr" id="results-title">Results</h2>
+      <div class="bar">
+        <button class="btn ghost sm ftoggle" type="button" data-open-filters aria-controls="filters"><Icon name="filter" size={17} /> Filters <span class="n" data-active-n hidden></span></button>
+        <form class="q" role="search" data-q-form>
+          <label class="sr" for="mp-q">Search within results</label>
+          <Icon name="search" size={18} />
+          <input id="mp-q" type="search" name="q" placeholder="Search the catalog" autocomplete="off" />
+        </form>
+        <label class="sort">
+          <span class="sr">Sort by</span>
+          <select name="sort" aria-label="Sort by">
+            {sorts.map((s) => <option value={s.id}>{s.label}</option>)}
+          </select>
+        </label>
+        <div class="view" role="group" aria-label="Layout">
+          <button type="button" data-layout="grid" aria-pressed="true" aria-label="Grid view"><Icon name="grid" size={18} /></button>
+          <button type="button" data-layout="list" aria-pressed="false" aria-label="List view"><Icon name="list" size={18} /></button>
+        </div>
+      </div>
+
+      <div class="meta">
+        <p class="count" aria-live="polite"><b data-shown>{products.length}</b> products</p>
+        <div class="chips" data-chips></div>
+      </div>
+
+      <div class="empty" data-empty hidden>
+        <h3>No products match your filters</h3>
+        <p>Try removing a filter or searching for something else.</p>
+        <button class="btn" type="button" data-reset>Reset all filters</button>
+      </div>
+
+      <ul class="grid4 results" data-grid>
+        {products.map((p) => <li data-cell><ProductCard product={p} /></li>)}
+      </ul>
+      <div class="more-wrap"><button class="btn ghost" type="button" data-more hidden>Show more</button></div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    margin-top: 12px;
+  }
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 190;
+    background: rgb(0 0 0 / 0.6);
+  }
+  .side {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 200;
+    width: min(340px, 90vw);
+    padding: 16px 18px 24px;
+    overflow-y: auto;
+    border-right: 1px solid var(--line);
+    background: var(--s1);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.35s var(--ease), visibility 0s 0.35s;
+  }
+  .side.open {
+    transform: none;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .side-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .side-head h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  .x {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+  }
+  .x:hover {
+    background: var(--s3);
+  }
+  fieldset {
+    margin: 0 0 18px;
+    padding: 0;
+    border: 0;
+  }
+  legend {
+    margin-bottom: 6px;
+    padding: 0;
+    color: var(--mut);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 0 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .opt:hover {
+    background: var(--s2);
+  }
+  .opt input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--acc);
+  }
+  .opt small {
+    margin-left: auto;
+    color: var(--mut);
+  }
+  .subs {
+    padding-left: 10px;
+    border-left: 2px solid var(--acc);
+    animation: drop 0.25s var(--ease);
+  }
+  @keyframes drop {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+  .side .btn {
+    margin-top: 8px;
+  }
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  .ftoggle .n {
+    padding: 0 7px;
+    border-radius: 99px;
+    background: var(--acc);
+    color: #111;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+  .q {
+    display: flex;
+    flex: 1 1 220px;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    border: 1px solid #3a3f47;
+    border-radius: 8px;
+    background: var(--s1);
+    color: var(--mut);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .q:focus-within {
+    border-color: var(--acc);
+    box-shadow: 0 0 0 3px rgb(255 122 26 / 0.2);
+  }
+  .q input {
+    flex: 1;
+    min-width: 0;
+    min-height: 42px;
+    border: 0;
+    background: none;
+    color: var(--text);
+  }
+  .q input:focus {
+    outline: none;
+  }
+  .sort select {
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid #3a3f47;
+    border-radius: 8px;
+    background: var(--s1);
+  }
+  .view {
+    display: flex;
+    padding: 3px;
+    border: 1px solid #3a3f47;
+    border-radius: 8px;
+    background: var(--s1);
+  }
+  .view button {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 38px;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: var(--mut);
+    cursor: pointer;
+  }
+  .view button[aria-pressed='true'] {
+    background: var(--s3);
+    color: var(--text);
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    margin: 14px 0;
+  }
+  .count {
+    margin: 0;
+    color: var(--mut);
+  }
+  .count b {
+    color: var(--text);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chips :global(button) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 8px 0 12px;
+    border: 1px solid #3a3f47;
+    border-radius: 99px;
+    background: var(--s2);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .chips :global(button:hover) {
+    border-color: var(--acc);
+    background: var(--s3);
+  }
+  .more-wrap {
+    display: grid;
+    place-items: center;
+    margin-top: 24px;
+  }
+  .results :global(.card.enter) {
+    animation: enter 0.45s var(--ease) both;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.98);
+    }
+  }
+  .results.list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .results.list :global(.card) {
+    flex-direction: row;
+  }
+  .results.list :global(.thumb) {
+    flex: none;
+    width: clamp(130px, 28%, 280px);
+    aspect-ratio: auto;
+  }
+  .results.list :global(.desc) {
+    display: block;
+  }
+  .results.list :global(.info) {
+    padding: 14px 18px;
+  }
+  @media (max-width: 599px) {
+    .results.list :global(.desc) {
+      display: none;
+    }
+  }
+  @media (min-width: 960px) {
+    .shell {
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 32px;
+      align-items: start;
+    }
+    .scrim {
+      display: none !important;
+    }
+    .side {
+      position: sticky;
+      inset: auto;
+      top: 82px;
+      z-index: 1;
+      width: auto;
+      max-height: calc(100vh - 100px);
+      padding: 4px 6px 4px 0;
+      border: 0;
+      background: none;
+      transform: none;
+      visibility: visible;
+    }
+    .side-head,
+    .side .show,
+    .ftoggle {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { toast } from '../../scripts/ui';
+
+  const grid = document.querySelector<HTMLElement>('[data-grid]')!;
+  const cells = [...grid.querySelectorAll<HTMLElement>('[data-cell]')];
+  const PAGE = 8;
+  const labels: Record<string, string> = {
+    print: '3D models for printing',
+    game: '3D models for games',
+    tool: 'Tools',
+    free: 'Free',
+    u15: 'Under $15',
+    m25: '$15 – $25',
+    o25: 'Over $25',
+  };
+
+  const $ = <T extends HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  const side = $('#filters');
+  const scrim = $('[data-scrim]');
+  const qInput = $<HTMLInputElement>('input[name="q"][id="mp-q"]');
+  const sortSel = $<HTMLSelectElement>('select[name="sort"]');
+  const shownEl = $('[data-shown]');
+  const emptyEl = $('[data-empty]');
+  const chipsEl = $('[data-chips]');
+  const moreBtn = $<HTMLButtonElement>('[data-more]');
+
+  interface State {
+    cat: string;
+    sub: string;
+    price: string;
+    formats: Set<string>;
+    sale: boolean;
+    rated: boolean;
+    q: string;
+    sort: string;
+    limit: number;
+  }
+  const state: State = { cat: '', sub: '', price: '', formats: new Set(), sale: false, rated: false, q: '', sort: 'popular', limit: PAGE };
+
+  // URL -> state
+  const params = new URLSearchParams(location.search);
+  state.cat = params.get('cat') ?? '';
+  state.sub = params.get('sub') ?? '';
+  state.price = params.get('price') ?? '';
+  (params.get('format') ?? '').split(',').filter(Boolean).forEach((f) => state.formats.add(f));
+  state.sale = params.get('sale') === '1';
+  state.rated = params.get('rated') === '1';
+  state.q = params.get('q') ?? '';
+  state.sort = params.get('sort') ?? 'popular';
+  if (params.get('layout') === 'list') grid.classList.add('list');
+
+  // state -> controls
+  function paintControls() {
+    document.querySelectorAll<HTMLInputElement>('input[name="cat"]').forEach((r) => (r.checked = r.value === state.cat));
+    document.querySelectorAll<HTMLInputElement>('input[name="sub"]').forEach((r) => (r.checked = r.value === state.sub));
+    document.querySelectorAll<HTMLInputElement>('input[name="price"]').forEach((r) => (r.checked = r.value === state.price));
+    document.querySelectorAll<HTMLInputElement>('input[name="format"]').forEach((c) => (c.checked = state.formats.has(c.value)));
+    $<HTMLInputElement>('input[name="sale"]').checked = state.sale;
+    $<HTMLInputElement>('input[name="rated"]').checked = state.rated;
+    qInput.value = state.q;
+    sortSel.value = state.sort;
+    document.querySelectorAll<HTMLElement>('[data-subs]').forEach((f) => (f.hidden = f.dataset.subs !== state.cat));
+    const list = grid.classList.contains('list');
+    document.querySelectorAll<HTMLElement>('[data-layout]').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.layout === 'list') === list)));
+  }
+
+  const num = (c: HTMLElement, k: string) => Number(c.dataset[k]);
+  const priceOk = (p: number) =>
+    !state.price || (state.price === 'free' && p === 0) || (state.price === 'u15' && p > 0 && p < 15) ||
+    (state.price === 'm25' && p >= 15 && p <= 25) || (state.price === 'o25' && p > 25);
+
+  function apply(resetLimit = true, animate = true) {
+    if (resetLimit) state.limit = PAGE;
+    const words = state.q.toLowerCase().split(/\s+/).filter(Boolean);
+    const rows = cells.map((cell) => {
+      const card = cell.querySelector<HTMLElement>('.card')!;
+      const formats = card.dataset.formats!.split('|');
+      const ok =
+        (!state.cat || card.dataset.cat === state.cat) &&
+        (!state.sub || card.dataset.sub === state.sub) &&
+        priceOk(num(card, 'price')) &&
+        (state.formats.size === 0 || [...state.formats].some((f) => formats.some((x) => (f === 'blender' ? x.startsWith('blender') : x === f)))) &&
+        (!state.sale || num(card, 'old') > 0) &&
+        (!state.rated || num(card, 'rating') >= 4.8) &&
+        words.every((w) => card.dataset.text!.includes(w));
+      return { cell, card, ok };
+    });
+    const key = (c: HTMLElement) => {
+      switch (state.sort) {
+        case 'new': return num(c, 'added');
+        case 'rated': return -num(c, 'rating') * 1e7 - num(c, 'dl');
+        case 'price-asc': return num(c, 'price');
+        case 'price-desc': return -num(c, 'price');
+        default: return -num(c, 'dl');
+      }
+    };
+    rows.sort((a, b) => key(a.card) - key(b.card));
+    const matches = rows.filter((r) => r.ok);
+    let shown = 0;
+    rows.forEach((r, i) => {
+      r.cell.style.order = String(i);
+      const visible = r.ok && matches.indexOf(r) < state.limit;
+      r.cell.hidden = !visible;
+      if (visible) {
+        if (animate) {
+          r.card.style.setProperty('--d', `${shown * 35}ms`);
+          r.card.classList.remove('enter');
+          void r.card.offsetWidth;
+          r.card.classList.add('enter');
+        }
+        shown++;
+      }
+    });
+    shownEl.textContent = String(matches.length);
+    emptyEl.hidden = matches.length > 0;
+    grid.hidden = matches.length === 0;
+    moreBtn.hidden = matches.length <= state.limit;
+    renderChips();
+    writeUrl();
+  }
+
+  function renderChips() {
+    const chips: { label: string; clear: () => void }[] = [];
+    if (state.cat) chips.push({ label: labels[state.cat], clear: () => ((state.cat = ''), (state.sub = '')) });
+    if (state.sub) chips.push({ label: $(`input[name="sub"][value="${state.sub}"]`).closest('label')!.textContent!.trim(), clear: () => (state.sub = '') });
+    if (state.price) chips.push({ label: labels[state.price], clear: () => (state.price = '') });
+    state.formats.forEach((f) => chips.push({ label: $(`input[name="format"][value="${f}"]`).closest('label')!.querySelector('span')!.textContent!, clear: () => state.formats.delete(f) }));
+    if (state.sale) chips.push({ label: 'On sale', clear: () => (state.sale = false) });
+    if (state.rated) chips.push({ label: 'Rated 4.8+', clear: () => (state.rated = false) });
+    if (state.q) chips.push({ label: `“${state.q}”`, clear: () => (state.q = '') });
+    chipsEl.replaceChildren(
+      ...chips.map((c) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = c.label;
+        const x = document.createElement('span');
+        x.setAttribute('aria-hidden', 'true');
+        x.textContent = '×';
+        b.append(x);
+        b.setAttribute('aria-label', `Remove filter: ${c.label}`);
+        b.addEventListener('click', () => {
+          c.clear();
+          paintControls();
+          apply();
+        });
+        return b;
+      }),
+    );
+    const n = $('[data-active-n]');
+    n.hidden = chips.length === 0;
+    n.textContent = String(chips.length);
+  }
+
+  function writeUrl() {
+    const p = new URLSearchParams();
+    if (state.cat) p.set('cat', state.cat);
+    if (state.sub) p.set('sub', state.sub);
+    if (state.price) p.set('price', state.price);
+    if (state.formats.size) p.set('format', [...state.formats].join(','));
+    if (state.sale) p.set('sale', '1');
+    if (state.rated) p.set('rated', '1');
+    if (state.q) p.set('q', state.q);
+    if (state.sort !== 'popular') p.set('sort', state.sort);
+    if (grid.classList.contains('list')) p.set('layout', 'list');
+    const qs = p.toString();
+    history.replaceState(null, '', location.pathname + (qs ? `?${qs}` : ''));
+  }
+
+  // Events
+  side.addEventListener('change', (e) => {
+    const t = e.target as HTMLInputElement;
+    if (t.name === 'cat') {
+      state.cat = t.value;
+      state.sub = '';
+    } else if (t.name === 'sub') state.sub = t.value;
+    else if (t.name === 'price') state.price = t.value;
+    else if (t.name === 'format') t.checked ? state.formats.add(t.value) : state.formats.delete(t.value);
+    else if (t.name === 'sale') state.sale = t.checked;
+    else if (t.name === 'rated') state.rated = t.checked;
+    paintControls();
+    apply();
+  });
+  sortSel.addEventListener('change', () => {
+    state.sort = sortSel.value;
+    apply();
+  });
+  $('[data-q-form]').addEventListener('submit', (e) => e.preventDefault());
+  qInput.addEventListener('input', () => {
+    state.q = qInput.value.trim();
+    apply();
+  });
+  document.querySelectorAll('[data-reset]').forEach((b) =>
+    b.addEventListener('click', () => {
+      Object.assign(state, { cat: '', sub: '', price: '', sale: false, rated: false, q: '', sort: 'popular' });
+      state.formats.clear();
+      paintControls();
+      apply();
+      closeFilters();
+      toast('Filters reset');
+    }),
+  );
+  moreBtn.addEventListener('click', () => {
+    state.limit += PAGE;
+    apply(false, false);
+  });
+  document.querySelectorAll<HTMLElement>('[data-layout]').forEach((b) =>
+    b.addEventListener('click', () => {
+      grid.classList.toggle('list', b.dataset.layout === 'list');
+      paintControls();
+      writeUrl();
+    }),
+  );
+
+  // Filter drawer on small screens
+  const openFilters = () => {
+    side.classList.add('open');
+    scrim.hidden = false;
+    side.querySelector<HTMLElement>('[data-close-filters]')?.focus();
+  };
+  function closeFilters() {
+    side.classList.remove('open');
+    scrim.hidden = true;
+  }
+  document.querySelector('[data-open-filters]')!.addEventListener('click', openFilters);
+  document.querySelectorAll('[data-close-filters]').forEach((b) => b.addEventListener('click', closeFilters));
+  scrim.addEventListener('click', closeFilters);
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && closeFilters());
+
+  paintControls();
+  apply(true, false);
+</script>

@@ -1,0 +1,116 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHead from '../../components/PageHead.astro';
+import ProductRow from '../../components/ProductRow.astro';
+import Icon from '../../components/Icon.astro';
+import { href, products } from '../../data/products';
+---
+
+<Layout title="Order complete" description="Thank you for your order.">
+  <PageHead title="Thank you for your order" crumbs={[{ label: 'Checkout', href: href('checkout/') }, { label: 'Order complete' }]} />
+  <div class="wrap">
+    <div class="done" data-done hidden>
+      <div class="ok"><Icon name="check" size={30} /></div>
+      <p class="lead">Order <b data-order-number></b> is confirmed. A receipt was sent to <b data-order-email></b> (demo).</p>
+      <p class="total">Total paid: <b data-order-total></b></p>
+
+      <h2>Your files</h2>
+      <ul class="rows">
+        {products.map((p) => <li data-id={p.id} hidden><ProductRow product={p} meta="Ready to download" /></li>)}
+      </ul>
+
+      <div class="cta">
+        <a class="btn" href={href('account/purchases/')}>Go to my downloads</a>
+        <a class="btn ghost" href={href('marketplace/')}>Keep browsing</a>
+      </div>
+      <p class="guest" data-guest hidden>
+        Want to keep access to your files on any device? <a href={href('account/')}>Create a free account</a>.
+      </p>
+    </div>
+
+    <div class="empty" data-none hidden>
+      <h2>No recent order</h2>
+      <p>Your latest order will appear here after checkout.</p>
+      <a class="btn" href={href('marketplace/')}>Browse the marketplace</a>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .done {
+    max-width: 44rem;
+    margin-top: 12px;
+  }
+  .ok {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgb(53 208 127 / 0.14);
+    color: var(--ok);
+    animation: pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0.4);
+      opacity: 0;
+    }
+  }
+  .lead {
+    margin: 16px 0 4px;
+    font-size: 1.1rem;
+  }
+  .total {
+    margin: 0 0 24px;
+    color: var(--mut);
+  }
+  h2 {
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+  }
+  .rows {
+    display: grid;
+    gap: 10px;
+    margin: 0 0 22px;
+    padding: 0;
+    list-style: none;
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .guest {
+    margin-top: 20px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--s1);
+    color: var(--mut);
+  }
+  .guest a {
+    color: var(--acc-h);
+  }
+</style>
+
+<script>
+  import { getUser } from '../../scripts/store';
+
+  let order: { number: string; total: number; ids: string[]; email: string } | null = null;
+  try {
+    order = JSON.parse(sessionStorage.getItem('trm.order') || 'null');
+  } catch {
+    order = null;
+  }
+  if (!order) {
+    document.querySelector<HTMLElement>('[data-none]')!.hidden = false;
+  } else {
+    document.querySelector<HTMLElement>('[data-done]')!.hidden = false;
+    document.querySelector('[data-order-number]')!.textContent = `#${order.number}`;
+    document.querySelector('[data-order-email]')!.textContent = order.email;
+    document.querySelector('[data-order-total]')!.textContent = order.total === 0 ? 'Free' : `$${order.total}`;
+    document.querySelectorAll<HTMLElement>('li[data-id]').forEach((li) => (li.hidden = !order!.ids.includes(li.dataset.id!)));
+    document.querySelector<HTMLElement>('[data-guest]')!.hidden = !!getUser();
+  }
+</script>

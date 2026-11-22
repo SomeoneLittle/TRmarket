@@ -1,0 +1,27 @@
+---
+import LegalLayout from '../components/LegalLayout.astro';
+import { href } from '../data/products';
+---
+
+<LegalLayout title="Terms of sale (offer)" current="terms" lead="The public offer that applies when you buy digital products from TRmarket.">
+  <h2>1. Parties</h2>
+  <p>The seller is the individual entrepreneur named in the site footer ("the Seller"). The buyer is any person who places an order on this website ("the Buyer").</p>
+
+  <h2>2. Products and delivery</h2>
+  <p>The Seller sells digital products: 3D models, assets and tools. After payment the files become available in the Buyer's account and are sent by email. No physical goods are shipped.</p>
+
+  <h2>3. Prices and payment</h2>
+  <p>Prices are shown in US dollars and include all taxes unless stated otherwise. The Seller may change prices at any time; the price at the time of the order applies. A promo code can be used once per order and cannot be combined with other offers.</p>
+
+  <h2>4. Licence</h2>
+  <p>Each product is licensed, not sold. The licence you choose (personal or commercial) defines how you may use the files. See the <a href={href('licenses/')}>licence terms</a> for details.</p>
+
+  <h2>5. Refunds</h2>
+  <p>Refunds are handled under the <a href={href('refunds/')}>refund policy</a>.</p>
+
+  <h2>6. Liability</h2>
+  <p>Products are provided as described. The Seller's liability is limited to the price paid for the product concerned. The Seller is not responsible for damage caused by improper use of the files, for example failed prints caused by printer settings.</p>
+
+  <h2>7. Disputes</h2>
+  <p>Please contact the Seller first through the <a href={href('contacts/')}>contact form</a>. Most issues are solved within a few days.</p>
+</LegalLayout>

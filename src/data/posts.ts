@@ -1,0 +1,139 @@
+export type PostTag = 'Tutorials' | 'Releases' | 'Behind the scenes';
+
+export type Block =
+  | { type: 'h2'; text: string }
+  | { type: 'p'; text: string }
+  | { type: 'ul'; items: string[] };
+
+export interface Post {
+  slug: string;
+  title: string;
+  excerpt: string;
+  tag: PostTag;
+  date: string;
+  readMin: number;
+  /** Product used as the cover and as the "mentioned" product. */
+  productId: string;
+  related: string[];
+  body: Block[];
+}
+
+export const posts: Post[] = [
+  {
+    slug: 'print-spiral-vases-without-supports',
+    title: 'How to print spiral vases without supports',
+    excerpt: 'Wall thickness, orientation and a few slicer settings that make thin vases print clean on the first try.',
+    tag: 'Tutorials',
+    date: '18 Nov 2026',
+    readMin: 6,
+    productId: 'aeon-vase-collection',
+    related: ['aeon-vase-collection', 'terra-planter-trio', 'gearbox-desk-organizer'],
+    body: [
+      { type: 'p', text: 'Spiral vase mode is the easiest way to get a smooth, watertight print, but only if the model was designed for it. Here is the checklist I use before I release any vase.' },
+      { type: 'h2', text: 'Start with the wall' },
+      { type: 'p', text: 'In vase mode the printer lays down a single continuous wall, so the wall thickness is simply your nozzle width. With a 0.4 mm nozzle, set the line width to 0.45 mm. Anything thinner than the nozzle will not extrude reliably.' },
+      { type: 'p', text: 'Keep overhangs under about 45 degrees. A gentle S-curve looks elegant and stays within what PLA can bridge without help.' },
+      { type: 'h2', text: 'Slicer settings that matter' },
+      { type: 'ul', items: ['Spiralize outer contour: on', 'Bottom layers: 3 solid layers, then spiral', 'Layer height: 0.2 mm for speed, 0.12 mm for fine detail', 'Cooling fan: 100% after the first layer', 'Seam: random, so the Z-hop is hidden in the wall'] },
+      { type: 'h2', text: 'Material choice' },
+      { type: 'p', text: 'Silk PLA hides layer lines beautifully, while PETG gives you water resistance. If the vase will hold real flowers, use PETG and a glass liner for safety.' },
+    ],
+  },
+  {
+    slug: 'quad-remesh-pro-2-0',
+    title: 'Quad Remesh Pro 2.0: faster, with edge-flow guides',
+    excerpt: 'The biggest update yet brings guide curves, symmetry locks and a 3x speed-up on dense meshes.',
+    tag: 'Releases',
+    date: '9 Nov 2026',
+    readMin: 4,
+    productId: 'quad-remesh-pro',
+    related: ['quad-remesh-pro', 'panelizer-presets', 'pivot-snapper'],
+    body: [
+      { type: 'p', text: 'Version 2.0 is out. It is a free update for everyone who owns the add-on, and the first version built entirely around feedback from your emails.' },
+      { type: 'h2', text: 'What is new' },
+      { type: 'ul', items: ['Edge-flow guide curves: draw a line, and the quads follow it', 'Symmetry locks for X, Y and Z', 'Up to 3x faster on meshes above one million polygons', 'Face-set preservation, so masks and groups survive the remesh', 'A new compact panel that fits in the sidebar'] },
+      { type: 'h2', text: 'Under the hood' },
+      { type: 'p', text: 'The solver was rewritten to work in chunks, which keeps Blender responsive while it runs. You can cancel at any time and the original mesh stays untouched.' },
+      { type: 'h2', text: 'What is next' },
+      { type: 'p', text: 'Next on the list are per-region density painting and a batch mode for remeshing a whole collection. If you have an idea, tell me through the contact form.' },
+    ],
+  },
+  {
+    slug: 'building-a-sci-fi-helmet-kit',
+    title: 'Behind the Sentinel Helmet Kit',
+    excerpt: 'From a rough sculpt to a game-ready asset: how a single helmet turned into a modular kit.',
+    tag: 'Behind the scenes',
+    date: '30 Oct 2026',
+    readMin: 7,
+    productId: 'sentinel-helmet-kit',
+    related: ['sentinel-helmet-kit', 'ancient-totem-props', 'mushroom-village-kit'],
+    body: [
+      { type: 'p', text: 'The Sentinel started as a ten-minute sculpt. The shape felt right, so I spent the next three weeks turning it into something you can actually ship in a game.' },
+      { type: 'h2', text: 'Sculpt first, plan second' },
+      { type: 'p', text: 'I blocked the form with the ClayStroke brushes, then decided where the seams would go. Good seams are the difference between a helmet that textures well and one that fights you.' },
+      { type: 'h2', text: 'Retopology and LODs' },
+      { type: 'p', text: 'The game mesh is about 12k triangles. LOD1 and LOD2 drop to 6k and 2.5k, and all three share one UV layout so the textures never swim when the LOD switches.' },
+      { type: 'h2', text: 'Texturing' },
+      { type: 'ul', items: ['Trim sheet for hard-surface details', 'Hand-painted wear masks', 'Three colour variants driven by one material instance'] },
+      { type: 'p', text: 'The result is a kit you can recolour in a minute and still look cohesive next to the rest of your scene.' },
+    ],
+  },
+  {
+    slug: 'sculpting-brush-basics',
+    title: 'Five brushes that do 80% of the work',
+    excerpt: 'You do not need hundreds of brushes. These five cover almost everything, and how to set them up.',
+    tag: 'Tutorials',
+    date: '21 Oct 2026',
+    readMin: 5,
+    productId: 'claystroke-brush-set',
+    related: ['claystroke-brush-set', 'quad-remesh-pro', 'pivot-snapper'],
+    body: [
+      { type: 'p', text: 'New sculptors collect brushes like trading cards. Experienced ones keep five or six and learn them deeply. Here is my short list.' },
+      { type: 'h2', text: 'The five' },
+      { type: 'ul', items: ['Soft clay: build volume quickly', 'Chisel: crisp planes and hard edges', 'Smooth: relax noise without losing form', 'Pinch: sharpen creases and folds', 'Skin: micro-detail pores and wrinkles'] },
+      { type: 'h2', text: 'Set them up once' },
+      { type: 'p', text: 'Bind each brush to a number key and set the strength so a full stroke never overshoots. Muscle memory beats menus every time.' },
+      { type: 'p', text: 'If you want a head start, the full ClayStroke set includes all five with tuned defaults for both Blender and ZBrush.' },
+    ],
+  },
+  {
+    slug: 'low-poly-forests-in-an-afternoon',
+    title: 'Low-poly forests in an afternoon',
+    excerpt: 'Use the free Pine Pack to dress a whole level, with wind, colour variation and a tiny performance budget.',
+    tag: 'Tutorials',
+    date: '12 Oct 2026',
+    readMin: 5,
+    productId: 'low-poly-pine-pack',
+    related: ['low-poly-pine-pack', 'mushroom-village-kit', 'ancient-totem-props'],
+    body: [
+      { type: 'p', text: 'A forest is mostly repetition, so the trick is making repetition invisible. Here is how I dress a level with twelve trees and no one notices.' },
+      { type: 'h2', text: 'Scatter with rules' },
+      { type: 'p', text: 'Scatter in clusters of three to seven, rotate randomly on the Z axis and scale between 80% and 120%. Never place two identical trees side by side.' },
+      { type: 'h2', text: 'Let the wind do the rest' },
+      { type: 'p', text: 'The pines carry a vertex colour in the red channel that drives sway. Feed it into your shader and the whole forest moves with just one material.' },
+      { type: 'h2', text: 'Performance' },
+      { type: 'p', text: 'Each pine is around 300 triangles, so a thousand of them is still under a third of a million. Use instancing and your frame time will barely notice.' },
+    ],
+  },
+  {
+    slug: 'how-i-test-every-file',
+    title: 'How I test every file before it ships',
+    excerpt: 'A look at the boring checklist that keeps refunds near zero, from slicers to game engines.',
+    tag: 'Behind the scenes',
+    date: '2 Oct 2026',
+    readMin: 4,
+    productId: 'gearbox-desk-organizer',
+    related: ['gearbox-desk-organizer', 'orbital-pawn-chess', 'panelizer-presets'],
+    body: [
+      { type: 'p', text: 'Every product on this site goes through the same checklist. It is not glamorous, but it is the reason the refund rate stays so low.' },
+      { type: 'h2', text: 'Models for printing' },
+      { type: 'ul', items: ['Run a manifold and wall-thickness check', 'Slice in two different slicers', 'Print in PLA and PETG on two different printers', 'Check fit and tolerances with real parts'] },
+      { type: 'h2', text: 'Models for games' },
+      { type: 'ul', items: ['Import into Blender, Unreal and Unity', 'Verify scale, pivots and naming', 'Check normals and texture seams at 4K'] },
+      { type: 'h2', text: 'Tools' },
+      { type: 'p', text: 'Add-ons are tested on the last two major versions of Blender, on Windows and macOS, with a clean profile and with a messy one.' },
+    ],
+  },
+];
+
+export const getPost = (slug: string) => posts.find((p) => p.slug === slug);

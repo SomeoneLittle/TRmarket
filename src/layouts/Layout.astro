@@ -1,0 +1,183 @@
+---
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { href, productHref, products } from '../data/products';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Id of the active main-navigation item. */
+  current?: string;
+}
+const { title, description = '3D models for printing and games, plus tools for modeling and sculpting.', current } = Astro.props;
+const fullTitle = title === 'TRmarket' ? title : `${title} — TRmarket`;
+const catalog = products.map((p) => ({
+  id: p.id,
+  title: p.title,
+  price: p.price,
+  oldPrice: p.oldPrice,
+  category: p.category,
+  kind: p.kind,
+  formats: p.formats,
+  rating: p.rating,
+  reviews: p.reviews,
+  downloads: p.downloads,
+  blurb: p.blurb,
+  href: productHref(p),
+}));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0e0f11" />
+    <meta name="trm-base" content={import.meta.env.BASE_URL} />
+    <title>{fullTitle}</title>
+    <link rel="icon" type="image/svg+xml" href={href('favicon.svg')} />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="m4-cyl" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#000" stop-opacity="0.55" />
+          <stop offset="0.22" stop-color="#000" stop-opacity="0.1" />
+          <stop offset="0.36" stop-color="#fff" stop-opacity="0.28" />
+          <stop offset="0.46" stop-color="#fff" stop-opacity="0" />
+          <stop offset="0.7" stop-color="#000" stop-opacity="0.12" />
+          <stop offset="1" stop-color="#000" stop-opacity="0.6" />
+        </linearGradient>
+      </defs>
+    </svg>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header current={current} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <div class="toast" role="status" aria-live="polite"></div>
+
+    <dialog class="quick" id="quick" aria-labelledby="q-title">
+      <div class="q-grid">
+        <div class="q-art" data-q-art aria-hidden="true"></div>
+        <div class="q-info">
+          <button class="q-x" type="button" data-q-close aria-label="Close quick view"><Icon name="close" size={20} /></button>
+          <p class="q-cat" data-q-cat></p>
+          <h2 id="q-title" data-q-title></h2>
+          <p class="q-rate"><Icon name="star" size={15} /> <span data-q-rating></span></p>
+          <p class="q-blurb" data-q-blurb></p>
+          <p class="q-price"><b data-q-price></b><s data-q-old></s></p>
+          <div class="q-actions">
+            <button class="btn" type="button" data-add data-q-add><Icon name="cart" size={18} /> <span data-q-add-label>Add to cart</span></button>
+            <a class="btn ghost" data-q-link href="#">View full page</a>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <script type="application/json" id="trm-products" set:html={JSON.stringify(catalog)} />
+    <script>
+      import '../scripts/site.ts';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .q-grid {
+    display: grid;
+  }
+  .q-art {
+    display: grid;
+    place-items: center;
+    min-height: 240px;
+    background: radial-gradient(ellipse 80% 70% at 50% 40%, #343942, #16181b 78%);
+  }
+  .q-art svg {
+    width: min(100%, 360px);
+    height: auto;
+    padding: 4%;
+  }
+  .q-info {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: 28px 24px 24px;
+  }
+  .q-x {
+    position: absolute;
+    inset: 10px 10px auto auto;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+  }
+  .q-x:hover {
+    background: var(--s3);
+  }
+  .q-cat {
+    margin: 0;
+    color: var(--mut);
+    font-size: 0.85rem;
+  }
+  .q-info h2 {
+    margin: 0;
+    padding-right: 40px;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .q-rate {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    color: var(--mut);
+  }
+  .q-rate svg {
+    color: #ffb020;
+    fill: #ffb020;
+  }
+  .q-blurb {
+    margin: 6px 0;
+    color: #c4c9d0;
+  }
+  .q-price {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 4px 0 12px;
+  }
+  .q-price b {
+    font-size: 1.8rem;
+  }
+  .q-price s {
+    color: var(--mut);
+  }
+  .q-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  @media (min-width: 700px) {
+    .q-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .q-art {
+      min-height: 400px;
+    }
+  }
+</style>

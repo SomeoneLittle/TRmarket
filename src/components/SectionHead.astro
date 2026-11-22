@@ -1,0 +1,45 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  id?: string;
+  href?: string;
+  label?: string;
+  live?: boolean;
+}
+const { title, id, href, label, live = false } = Astro.props;
+---
+
+<div class="sec-head">
+  <h2 class="t" id={id}>
+    {live && <span class="live" aria-hidden="true"></span>}{title}
+  </h2>
+  {
+    href && (
+      <a class="more" href={href}>
+        {label ?? 'View all'} <Icon name="arrow" size={16} />
+      </a>
+    )
+  }
+</div>
+
+<style>
+  .live {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: var(--ok);
+    animation: pulse 1.8s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgb(53 208 127 / 0.6);
+    }
+    100% {
+      box-shadow: 0 0 0 10px rgb(53 208 127 / 0);
+    }
+  }
+</style>

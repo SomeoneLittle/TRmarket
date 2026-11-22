@@ -1,0 +1,224 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHead from '../components/PageHead.astro';
+import Icon from '../components/Icon.astro';
+import { href } from '../data/products';
+
+const groups = [
+  {
+    id: 'orders',
+    title: 'Orders & payment',
+    items: [
+      { q: 'How do I get my files after paying?', a: 'Files appear in My purchases right after payment, and a receipt with a download link is sent to your email. You can download again at any time.' },
+      { q: 'Which payment methods do you accept?', a: 'Bank cards, bank transfer and stablecoins. Prices are in US dollars and include taxes.' },
+      { q: 'Can I use a promo code?', a: 'Yes. Enter it in the cart before checkout. One code can be used per order, and codes cannot be combined.' },
+    ],
+  },
+  {
+    id: 'licences',
+    title: 'Licences',
+    items: [
+      { q: 'What is the difference between Personal and Commercial?', a: 'Personal is for hobby and non-commercial use. Commercial lets you use the files in client work, games and products you sell. See the licences page for a full table.' },
+      { q: 'Can I sell prints made from your models?', a: 'Yes, with a Commercial licence. With a Personal licence you can print for yourself and as gifts, but not sell.' },
+      { q: 'Can I upgrade my licence later?', a: 'Yes. Write to me with your order number and I will send you a link to pay only the difference.' },
+    ],
+  },
+  {
+    id: 'files',
+    title: 'Files & compatibility',
+    items: [
+      { q: 'Which printers and slicers are supported?', a: 'Models are tested on FDM printers with a 0.4 mm nozzle and prepared in two different slicers. 3MF profiles are included for the most common printers.' },
+      { q: 'Which Blender versions do the add-ons support?', a: 'The last two major versions. The supported versions are listed on every product page.' },
+      { q: 'Do game assets work in Unity and Unreal?', a: 'Yes. They are tested in both engines and in Blender before release, and use a standard PBR texture workflow.' },
+    ],
+  },
+  {
+    id: 'account',
+    title: 'Account & refunds',
+    items: [
+      { q: 'Do I need an account to buy?', a: 'No, but an account keeps all your purchases, licence keys and favorites in one place.' },
+      { q: 'How do refunds work?', a: 'You have 30 days if the product does not work as described. Open the contact form and choose "Refund request".' },
+      { q: 'How do I delete my data?', a: 'Open Account → Settings and use the delete option, or write to me and I will do it within 30 days.' },
+    ],
+  },
+];
+---
+
+<Layout title="Help centre" description="Answers to common questions about orders, licences, files and refunds.">
+  <PageHead title="Help centre" lead="Quick answers to the most common questions." crumbs={[{ label: 'Help centre' }]}>
+    <form class="search" role="search" data-faq-search>
+      <Icon name="search" size={18} />
+      <label class="sr" for="faq-q">Search the help centre</label>
+      <input id="faq-q" type="search" placeholder="Search questions…" autocomplete="off" />
+    </form>
+  </PageHead>
+
+  <div class="wrap">
+    <div class="chips">
+      <button class="chip" type="button" data-group="all" aria-pressed="true">All</button>
+      {groups.map((g) => <button class="chip" type="button" data-group={g.id} aria-pressed="false">{g.title}</button>)}
+    </div>
+
+    <div class="faq">
+      {
+        groups.map((g) => (
+          <section data-section={g.id} aria-labelledby={`g-${g.id}`}>
+            <h2 id={`g-${g.id}`}>{g.title}</h2>
+            {g.items.map((it) => (
+              <details data-q={`${it.q} ${it.a}`.toLowerCase()}>
+                <summary>{it.q}<Icon name="chevron-down" size={18} /></summary>
+                <p>{it.a}</p>
+              </details>
+            ))}
+          </section>
+        ))
+      }
+      <p class="empty" data-none hidden>No answers found. <a href={href('contacts/')}>Ask me directly</a>.</p>
+    </div>
+
+    <div class="panel still">
+      <div>
+        <h2>Still need help?</h2>
+        <p>I reply to every message within one business day.</p>
+      </div>
+      <a class="btn" href={href('contacts/')}>Contact the author</a>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 520px;
+    margin-top: 16px;
+    padding: 0 14px;
+    border: 1px solid #3a3f47;
+    border-radius: 10px;
+    background: var(--s1);
+    color: var(--mut);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .search:focus-within {
+    border-color: var(--acc);
+    box-shadow: 0 0 0 3px rgb(255 122 26 / 0.2);
+  }
+  .search input {
+    flex: 1;
+    min-width: 0;
+    min-height: 46px;
+    border: 0;
+    background: none;
+  }
+  .search input:focus {
+    outline: none;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 20px;
+  }
+  .faq {
+    display: grid;
+    gap: 28px;
+    max-width: 52rem;
+  }
+  h2 {
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+  }
+  details {
+    border-bottom: 1px solid var(--line);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 56px;
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary:hover {
+    color: var(--acc-h);
+  }
+  summary :global(svg) {
+    flex: none;
+    color: var(--mut);
+    transition: transform 0.25s var(--ease);
+  }
+  details[open] summary :global(svg) {
+    transform: rotate(180deg);
+  }
+  details p {
+    margin: 0 0 16px;
+    color: #c4c9d0;
+    animation: open 0.3s var(--ease);
+  }
+  @keyframes open {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+  .empty a {
+    color: var(--acc-h);
+  }
+  .still {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: 52rem;
+    margin-top: 36px;
+  }
+  .still h2 {
+    margin: 0 0 2px;
+  }
+  .still p {
+    margin: 0;
+    color: var(--mut);
+  }
+</style>
+
+<script>
+  const input = document.querySelector<HTMLInputElement>('#faq-q')!;
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-group]')];
+  const sections = [...document.querySelectorAll<HTMLElement>('[data-section]')];
+  const none = document.querySelector<HTMLElement>('[data-none]')!;
+  let group = 'all';
+
+  const apply = () => {
+    const words = input.value.toLowerCase().split(/\s+/).filter(Boolean);
+    let total = 0;
+    sections.forEach((s) => {
+      let n = 0;
+      s.querySelectorAll<HTMLDetailsElement>('details').forEach((d) => {
+        const ok = words.every((w) => d.dataset.q!.includes(w));
+        d.hidden = !ok;
+        if (ok) n++;
+        if (words.length && ok) d.open = true;
+      });
+      s.hidden = (group !== 'all' && s.dataset.section !== group) || n === 0;
+      if (!s.hidden) total += n;
+    });
+    none.hidden = total > 0;
+  };
+  input.addEventListener('input', apply);
+  document.querySelector('[data-faq-search]')!.addEventListener('submit', (e) => e.preventDefault());
+  chips.forEach((c) =>
+    c.addEventListener('click', () => {
+      group = c.dataset.group!;
+      chips.forEach((x) => x.setAttribute('aria-pressed', String(x === c)));
+      apply();
+    }),
+  );
+</script>

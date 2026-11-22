@@ -1,0 +1,19 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  lead?: string;
+  crumbs: { label: string; href?: string }[];
+}
+const { title, lead, crumbs } = Astro.props;
+---
+
+<div class="wrap">
+  <Breadcrumbs items={crumbs} />
+  <header class="page-head">
+    <h1>{title}</h1>
+    {lead && <p>{lead}</p>}
+    <slot />
+  </header>
+</div>

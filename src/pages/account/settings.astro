@@ -1,0 +1,117 @@
+---
+import AccountLayout from '../../components/AccountLayout.astro';
+---
+
+<AccountLayout title="Settings" active="settings" lead="Update your profile and manage your data.">
+  <div class="stack">
+    <form class="panel" data-profile novalidate>
+      <h2>Profile</h2>
+      <div class="row2">
+        <div class="field"><label for="s-name">Name</label><input id="s-name" name="name" autocomplete="name" required minlength="2" /></div>
+        <div class="field"><label for="s-email">Email</label><input id="s-email" name="email" type="email" autocomplete="email" required /></div>
+      </div>
+      <label class="check"><input type="checkbox" name="news" checked /> <span>Send me one short email a week with new models and free drops.</span></label>
+      <button class="btn" type="submit">Save changes</button>
+    </form>
+
+    <form class="panel" data-password novalidate>
+      <h2>Password</h2>
+      <div class="row2">
+        <div class="field"><label for="p-old">Current password</label><input id="p-old" type="password" autocomplete="current-password" required minlength="6" /></div>
+        <div class="field"><label for="p-new">New password</label><input id="p-new" type="password" autocomplete="new-password" required minlength="6" /><span class="hint">At least 6 characters.</span></div>
+      </div>
+      <button class="btn ghost" type="submit">Update password</button>
+    </form>
+
+    <section class="panel danger">
+      <h2>Your data</h2>
+      <p>Everything in this demo is stored in your browser only. You can erase it at any time.</p>
+      <div class="actions">
+        <button class="btn ghost" type="button" data-signout>Sign out</button>
+        <button class="btn ghost warn" type="button" data-erase>Delete my demo data</button>
+      </div>
+    </section>
+  </div>
+</AccountLayout>
+
+<style>
+  .stack {
+    display: grid;
+    gap: 16px;
+    max-width: 760px;
+  }
+  h2 {
+    margin: 0 0 14px;
+    font-size: 1.15rem;
+  }
+  .row2 {
+    display: grid;
+    gap: 0 14px;
+  }
+  .check {
+    margin-bottom: 16px;
+  }
+  .danger p {
+    margin: 0 0 14px;
+    color: var(--mut);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .warn {
+    color: var(--sale);
+  }
+  .warn:hover {
+    box-shadow: inset 0 0 0 1px var(--sale);
+  }
+  @media (min-width: 640px) {
+    .row2 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { getUser, updateUser, url } from '../../scripts/store';
+  import { toast } from '../../scripts/ui';
+
+  const profile = document.querySelector<HTMLFormElement>('[data-profile]')!;
+  const user = getUser();
+  if (user) {
+    profile.querySelector<HTMLInputElement>('[name="name"]')!.value = user.name;
+    profile.querySelector<HTMLInputElement>('[name="email"]')!.value = user.email;
+  }
+  profile.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!profile.checkValidity()) return profile.reportValidity();
+    updateUser({
+      name: profile.querySelector<HTMLInputElement>('[name="name"]')!.value,
+      email: profile.querySelector<HTMLInputElement>('[name="email"]')!.value,
+    });
+    toast('Profile saved');
+  });
+
+  const pass = document.querySelector<HTMLFormElement>('[data-password]')!;
+  pass.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!pass.checkValidity()) return pass.reportValidity();
+    pass.reset();
+    toast('Password updated (demo)');
+  });
+
+  document.querySelector('[data-erase]')!.addEventListener('click', () => {
+    if (!confirm('Delete all demo data stored in this browser (cart, favorites, purchases, profile)?')) return;
+    try {
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith('trm.'))
+        .forEach((k) => localStorage.removeItem(k));
+      sessionStorage.clear();
+    } catch {
+      /* ignore */
+    }
+    toast('Your demo data was deleted');
+    setTimeout(() => (location.href = url('')), 700);
+  });
+</script>

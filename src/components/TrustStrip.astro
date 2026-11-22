@@ -1,0 +1,61 @@
+---
+import Icon from './Icon.astro';
+
+const trust = [
+  { icon: 'download', title: 'Instant download', text: 'Files in your account right after payment' },
+  { icon: 'shield', title: 'Commercial licence', text: 'Use models in client and store projects' },
+  { icon: 'refresh', title: 'Free updates', text: 'Every new version, for life' },
+  { icon: 'support', title: 'Author support', text: 'Direct replies within one business day' },
+] as const;
+---
+
+<ul class="trust">
+  {
+    trust.map((t) => (
+      <li>
+        <Icon name={t.icon} size={26} />
+        <span><b>{t.title}</b><small>{t.text}</small></span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .trust {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--line);
+    list-style: none;
+    overflow: hidden;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--s1);
+    color: var(--acc-h);
+  }
+  span {
+    display: grid;
+    color: var(--text);
+  }
+  small {
+    display: none;
+    color: var(--mut);
+  }
+  @media (min-width: 640px) {
+    .trust {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    small {
+      display: block;
+      font-size: 0.78rem;
+    }
+  }
+</style>

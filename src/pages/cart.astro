@@ -1,0 +1,106 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHead from '../components/PageHead.astro';
+import CartLine from '../components/CartLine.astro';
+import OrderSummary from '../components/OrderSummary.astro';
+import ProductCard from '../components/ProductCard.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Icon from '../components/Icon.astro';
+import { href, products } from '../data/products';
+
+const picks = [...products].sort((a, b) => b.rating - a.rating).filter((p) => p.price > 0).slice(0, 4);
+---
+
+<Layout title="Cart" description="Review the items in your cart.">
+  <div data-cart-root>
+    <PageHead title="Your cart" crumbs={[{ label: 'Cart' }]}>
+      <p class="count" data-count>0 items</p>
+    </PageHead>
+
+    <div class="wrap">
+      <div class="empty" data-empty hidden>
+        <h2>Your cart is empty</h2>
+        <p>Add a few models or tools and they will show up here.</p>
+        <a class="btn" href={href('marketplace/')}>Browse the marketplace</a>
+      </div>
+
+      <div class="layout" data-filled hidden>
+        <section aria-label="Items in your cart">
+          <ul class="lines">
+            {products.map((p) => <CartLine product={p} />)}
+          </ul>
+          <a class="more" href={href('marketplace/')}>← Continue shopping</a>
+        </section>
+
+        <OrderSummary>
+          <a class="btn block" href={href('checkout/')} data-needs-items>Checkout <Icon name="arrow" size={18} /></a>
+          <ul class="notes">
+            <li><Icon name="lock" size={15} /> Demo checkout, no payment is taken</li>
+            <li><Icon name="download" size={15} /> Instant download after payment</li>
+            <li><Icon name="refresh" size={15} /> 30-day refunds</li>
+          </ul>
+        </OrderSummary>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="sec" aria-labelledby="picks">
+      <SectionHead id="picks" title="Top-rated picks" href={href('marketplace/') + '?sort=rated'} label="See more" />
+      <ul class="grid4">
+        {picks.map((p) => <li><ProductCard product={p} /></li>)}
+      </ul>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .count {
+    color: var(--mut);
+  }
+  .layout {
+    display: grid;
+    gap: 24px;
+    margin-top: 8px;
+  }
+  .lines {
+    display: grid;
+    margin: 0 0 14px;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+  .notes {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    color: var(--mut);
+    font-size: 0.88rem;
+    list-style: none;
+  }
+  .notes li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .notes :global(svg) {
+    color: var(--ok);
+  }
+  @media (min-width: 900px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 40px;
+      align-items: start;
+    }
+    .layout :global(.summary) {
+      position: sticky;
+      top: 86px;
+    }
+  }
+</style>
+
+<script>
+  import { mountCart } from '../scripts/cart';
+  mountCart(document.querySelector<HTMLElement>('[data-cart-root]')!);
+</script>

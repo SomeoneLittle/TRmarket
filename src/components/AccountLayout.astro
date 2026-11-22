@@ -1,0 +1,160 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHead from './PageHead.astro';
+import Icon, { type IconName } from './Icon.astro';
+import { href } from '../data/products';
+
+interface Props {
+  title: string;
+  active: 'overview' | 'purchases' | 'favorites' | 'settings';
+  lead?: string;
+  /** When true (default) the page needs a signed-in user. */
+  gate?: boolean;
+  /** Hide the account menu for visitors who are not signed in. */
+  guestNav?: boolean;
+}
+const { title, active, lead, gate = true, guestNav = true } = Astro.props;
+
+const links: { id: Props['active']; label: string; href: string; icon: IconName; count?: string }[] = [
+  { id: 'overview', label: 'Overview', href: href('account/'), icon: 'user' },
+  { id: 'purchases', label: 'My purchases', href: href('account/purchases/'), icon: 'package', count: 'owned' },
+  { id: 'favorites', label: 'Favorites', href: href('account/favorites/'), icon: 'heart', count: 'fav' },
+  { id: 'settings', label: 'Settings', href: href('account/settings/'), icon: 'settings' },
+];
+---
+
+<Layout title={title} description="Manage your TRmarket account, purchases and favorites.">
+  <PageHead title={title} lead={lead} crumbs={[{ label: 'Account', href: href('account/') }, { label: title }]} />
+  <div class="wrap shell" data-gate={gate ? '' : undefined} data-guest-nav={guestNav ? 'on' : 'off'}>
+    <nav class="anav" aria-label="Account">
+      <ul>
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} aria-current={l.id === active ? 'page' : undefined}>
+                <Icon name={l.icon} size={18} /> {l.label}
+                {l.count && <small data-nav-count={l.count}></small>}
+              </a>
+            </li>
+          ))
+        }
+        <li><button type="button" data-signout><Icon name="logout" size={18} /> Sign out</button></li>
+      </ul>
+    </nav>
+
+    <div class="content" data-content>
+      <slot />
+    </div>
+
+    <div class="empty denied" data-denied hidden>
+      <h2>Sign in to continue</h2>
+      <p>This page is available for signed-in customers.</p>
+      <a class="btn" href={href('account/')} data-signin-link>Sign in or create an account</a>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    margin-top: 8px;
+  }
+  .anav ul {
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    padding: 4px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--s1);
+    list-style: none;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .anav a,
+  .anav button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--mut);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .anav a:hover,
+  .anav button:hover {
+    background: var(--s3);
+    color: var(--text);
+  }
+  .anav a[aria-current] {
+    background: var(--s3);
+    color: var(--text);
+    box-shadow: inset 3px 0 0 var(--acc);
+  }
+  .anav small {
+    margin-left: auto;
+    padding: 0 8px;
+    border-radius: 99px;
+    background: var(--bg);
+    color: var(--mut);
+    font-size: 0.78rem;
+  }
+  .anav small:empty {
+    display: none;
+  }
+  .shell.guest .anav {
+    display: none;
+  }
+  @media (min-width: 900px) {
+    .shell.guest {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .shell {
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 32px;
+      align-items: start;
+    }
+    .anav {
+      position: sticky;
+      top: 86px;
+    }
+    .anav ul {
+      flex-direction: column;
+      overflow: visible;
+    }
+    .denied {
+      grid-column: 2;
+    }
+  }
+</style>
+
+<script>
+  import { getFav, getOwned, getUser, url } from '../scripts/store';
+
+  const shell = document.querySelector<HTMLElement>('.shell')!;
+  const gated = shell.hasAttribute('data-gate');
+  const user = getUser();
+  if (gated && !user) {
+    shell.querySelector<HTMLElement>('[data-content]')!.hidden = true;
+    shell.querySelector<HTMLElement>('[data-denied]')!.hidden = false;
+    shell.querySelector<HTMLAnchorElement>('[data-signin-link]')!.href = `${url('account/')}?next=${encodeURIComponent(location.pathname)}`;
+  }
+  if (!user && shell.dataset.guestNav === 'off') shell.classList.add('guest');
+  const paint = () => {
+    document.querySelectorAll<HTMLElement>('[data-nav-count]').forEach((el) => {
+      const n = el.dataset.navCount === 'owned' ? getOwned().length : getFav().length;
+      el.textContent = n ? String(n) : '';
+    });
+  };
+  paint();
+  window.addEventListener('trm:change', paint);
+</script>

@@ -1,0 +1,366 @@
+---
+import { marketHref, productHref, products } from '../../data/products';
+import Art from '../Art.astro';
+import Icon from '../Icon.astro';
+
+const byId = (id: string) => products.find((p) => p.id === id)!;
+const slides = [
+  {
+    p: byId('sentinel-helmet-kit'),
+    kicker: 'Deal of the week',
+    title: 'Sentinel Helmet Kit',
+    text: 'Game-ready sci-fi helmet with 4K PBR textures, 3 LODs and clean quad topology.',
+    cta: 'Shop the deal',
+    bg: 'linear-gradient(120deg, #1b1612 0%, #14110e 55%, #0f0d0b 100%)',
+  },
+  {
+    p: byId('claystroke-brush-set'),
+    kicker: 'Best-rated tool',
+    title: '48 sculpting brushes, one download',
+    text: 'Soft clay, chisel cuts, skin pores and fabric folds. Works in Blender and ZBrush.',
+    cta: 'See the brush set',
+    bg: 'linear-gradient(120deg, #131a1c 0%, #101618 55%, #0d1113 100%)',
+  },
+  {
+    p: byId('low-poly-pine-pack'),
+    kicker: 'Free download',
+    title: 'Low-Poly Pine Pack',
+    text: 'Twelve stylized pines with wind-ready vertex colors. Free for commercial use.',
+    cta: 'Download free',
+    bg: 'linear-gradient(120deg, #131a14 0%, #10150f 55%, #0d110d 100%)',
+  },
+];
+const tiles = [
+  { p: byId('terra-planter-trio'), title: 'Free this week', text: '3 models and tools at $0', cta: 'Grab them', href: marketHref({ price: 'free' }) },
+  { p: byId('quad-remesh-pro'), title: 'Tools −25%', text: 'Add-ons and presets', cta: 'Browse tools', href: marketHref({ cat: 'tool' }) },
+];
+---
+
+<section class="hero wrap" aria-roledescription="carousel" aria-label="Featured offers">
+  <h1 class="sr">TRmarket: 3D models and modeling tools</h1>
+  <div class="grid">
+    <div class="slider">
+      <div class="track">
+        {
+          slides.map((s, i) => (
+            <article class:list={['slide', { active: i === 0 }]} style={`background:${s.bg}`} aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}`}>
+              <div class="txt">
+                <p class="kick" style="--i:0">{s.kicker}</p>
+                <h2 style="--i:1">{s.title}</h2>
+                <p class="lead" style="--i:2">{s.text}</p>
+                <p class="cta" style="--i:3">
+                  <a class="btn" href={productHref(s.p)}>{s.cta} <Icon name="arrow" size={18} /></a>
+                  <span class="from">{s.p.price === 0 ? 'Free' : `$${s.p.price}`}{s.p.oldPrice && <s>${s.p.oldPrice}</s>}</span>
+                </p>
+              </div>
+              <div class="vis" aria-hidden="true">
+                <Art product={s.p} />
+              </div>
+            </article>
+          ))
+        }
+      </div>
+      <button class="nav prev" type="button" aria-label="Previous slide"><Icon name="chevron-left" size={22} /></button>
+      <button class="nav next" type="button" aria-label="Next slide"><Icon name="chevron-right" size={22} /></button>
+      <div class="dots">
+        {slides.map((_, i) => <button type="button" class="dot" aria-label={`Go to slide ${i + 1}`} aria-current={i === 0 ? 'true' : 'false'}><i></i></button>)}
+      </div>
+    </div>
+
+    <div class="side">
+      {
+        tiles.map((t) => (
+          <a class="tile zoom" href={t.href}>
+            <span class="tt">
+              <b>{t.title}</b>
+              <span>{t.text}</span>
+              <em>{t.cta} <Icon name="arrow" size={15} /></em>
+            </span>
+            <span class="tv" aria-hidden="true"><Art product={t.p} /></span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: 16px;
+  }
+  .grid {
+    display: grid;
+    gap: 12px;
+  }
+  .slider {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+  .track {
+    display: flex;
+    transition: transform 0.7s cubic-bezier(0.65, 0, 0.2, 1);
+  }
+  .slide {
+    position: relative;
+    flex: 0 0 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    min-height: 420px;
+    padding: 28px 24px 56px;
+    overflow: hidden;
+  }
+  .txt {
+    position: relative;
+    z-index: 1;
+    max-width: 30rem;
+  }
+  .kick {
+    display: inline-block;
+    margin: 0 0 10px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    background: rgb(255 122 26 / 0.16);
+    color: var(--acc-h);
+    font-size: 0.8rem;
+    font-weight: 650;
+  }
+  h2 {
+    margin: 0;
+    font-size: clamp(1.9rem, 4.2vw, 3.1rem);
+    font-weight: 750;
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+  }
+  .lead {
+    margin: 12px 0 20px;
+    color: #c4c9d0;
+    font-size: 1.02rem;
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    margin: 0;
+  }
+  .from {
+    font-size: 1.4rem;
+    font-weight: 750;
+  }
+  .from s {
+    margin-left: 8px;
+    color: var(--mut);
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  .vis {
+    position: absolute;
+    inset: auto -4% -6% auto;
+    width: min(58%, 440px);
+    aspect-ratio: 1;
+    opacity: 0.55;
+    transform: translateX(24px);
+    transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) 0.1s, opacity 0.7s;
+  }
+  .slide.active .vis {
+    transform: none;
+  }
+  .slide .txt > * {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .slide.active .txt > * {
+    animation: up 0.6s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+    animation-delay: calc(var(--i) * 90ms + 250ms);
+  }
+  @keyframes up {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .nav {
+    position: absolute;
+    top: 50%;
+    display: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-top: -22px;
+    border: 1px solid #3a3f47;
+    border-radius: 50%;
+    background: rgb(14 15 17 / 0.7);
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .nav:hover {
+    background: var(--s3);
+  }
+  .nav:active {
+    transform: scale(0.92);
+  }
+  .prev {
+    left: 14px;
+  }
+  .next {
+    right: 14px;
+  }
+  .dots {
+    position: absolute;
+    inset: auto 0 14px 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+  .dot {
+    display: grid;
+    align-items: center;
+    width: 48px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .dot i {
+    position: relative;
+    display: block;
+    height: 4px;
+    border-radius: 2px;
+    background: #3a3f47;
+    overflow: hidden;
+  }
+  .dot i::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--acc);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .dot[aria-current='true'] i::after {
+    animation: fill 6s linear forwards;
+  }
+  .slider:hover .dot[aria-current='true'] i::after,
+  .slider:focus-within .dot[aria-current='true'] i::after {
+    animation-play-state: paused;
+  }
+  @keyframes fill {
+    to {
+      transform: scaleX(1);
+    }
+  }
+  .side {
+    display: grid;
+    gap: 12px;
+  }
+  .tile {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 140px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--s2), var(--s1));
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .tile:hover {
+    border-color: var(--acc);
+  }
+  .tt {
+    display: grid;
+    gap: 3px;
+  }
+  .tt b {
+    font-size: 1.25rem;
+  }
+  .tt span {
+    color: var(--mut);
+  }
+  .tt em {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    color: var(--acc-h);
+    font-style: normal;
+    font-weight: 650;
+  }
+  .tt em :global(svg) {
+    transition: transform 0.2s;
+  }
+  .tile:hover .tt em :global(svg) {
+    transform: translateX(4px);
+  }
+  .tv {
+    width: 120px;
+    height: 120px;
+    flex: none;
+  }
+  @media (min-width: 700px) {
+    .nav {
+      display: grid;
+    }
+    .slide {
+      padding: 36px 64px 56px;
+      min-height: 460px;
+    }
+    .vis {
+      opacity: 1;
+    }
+  }
+  @media (min-width: 1000px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr) 340px;
+    }
+    .slide {
+      min-height: 100%;
+    }
+    .side {
+      grid-template-rows: 1fr 1fr;
+    }
+  }
+  @media (max-width: 699px) {
+    .vis {
+      width: 70%;
+      opacity: 0.4;
+    }
+  }
+</style>
+
+<script>
+  const slider = document.querySelector<HTMLElement>('.slider');
+  if (slider) {
+    const track = slider.querySelector<HTMLElement>('.track')!;
+    const slides = [...slider.querySelectorAll<HTMLElement>('.slide')];
+    const dots = [...slider.querySelectorAll<HTMLElement>('.dot')];
+    let index = 0;
+
+    const go = (n: number) => {
+      index = (n + slides.length) % slides.length;
+      track.style.transform = `translateX(-${index * 100}%)`;
+      slides.forEach((s, k) => {
+        s.classList.toggle('active', k === index);
+        s.toggleAttribute('inert', k !== index);
+      });
+      dots.forEach((d, k) => d.setAttribute('aria-current', String(k === index)));
+    };
+    slides.forEach((s, k) => s.toggleAttribute('inert', k !== 0));
+
+    slider.querySelector('.prev')!.addEventListener('click', () => go(index - 1));
+    slider.querySelector('.next')!.addEventListener('click', () => go(index + 1));
+    dots.forEach((d, k) => d.addEventListener('click', () => go(k)));
+    // The active dot's progress bar drives autoplay: when it finishes, move on.
+    slider.addEventListener('animationend', (e) => {
+      if ((e as AnimationEvent).animationName.endsWith('fill')) go(index + 1);
+    });
+  }
+</script>

@@ -1,0 +1,73 @@
+---
+import { categoryName, formatAdded, formatPrice, productHref, type Product } from '../data/products';
+import Art from './Art.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  product: Product;
+  /** Text under the title; defaults to the category and how long ago it was added. */
+  meta?: string;
+}
+const { product: p, meta } = Astro.props;
+---
+
+<a class="row zoom" href={productHref(p)} data-id={p.id}>
+  <span class="rthumb"><Art product={p} /></span>
+  <span class="rinfo">
+    <b>{p.title}</b>
+    <small>{meta ?? `${categoryName(p.category)} · ${formatAdded(p.addedHours)}`}</small>
+  </span>
+  <span class="rprice">{formatPrice(p.price)}</span>
+  <span class="rgo" aria-hidden="true"><Icon name="chevron-right" size={18} /></span>
+</a>
+
+<style>
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 100%;
+    padding: 10px 14px 10px 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--s1);
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .row:hover {
+    border-color: #444a53;
+    background: var(--s2);
+  }
+  .rthumb {
+    flex: none;
+    width: 92px;
+    height: 80px;
+    border-radius: 8px;
+    background: radial-gradient(ellipse at 50% 40%, #343942, #16181b 80%);
+    overflow: hidden;
+  }
+  .rinfo {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+  }
+  .rinfo b {
+    font-weight: 600;
+  }
+  small {
+    color: var(--mut);
+  }
+  .rprice {
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+  .rgo {
+    color: var(--mut);
+    transition: transform 0.2s, color 0.2s;
+  }
+  .row:hover .rgo {
+    color: var(--acc-h);
+    transform: translateX(4px);
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+import AccountLayout from '../../components/AccountLayout.astro';
+import PurchaseRow from '../../components/PurchaseRow.astro';
+import { href, products } from '../../data/products';
+---
+
+<AccountLayout title="My purchases" active="purchases" lead="Everything you have bought. Download files again whenever you need them.">
+  <div data-purchases>
+    <div class="empty" data-empty hidden>
+      <h2>No purchases yet</h2>
+      <p>Models and tools you buy or download for free will appear here.</p>
+      <a class="btn" href={href('marketplace/')}>Browse the marketplace</a>
+    </div>
+    <div data-filled hidden>
+      <p class="count"><b data-own-count>0</b> products in your library</p>
+      <ul class="list">
+        {products.map((p) => <PurchaseRow product={p} />)}
+      </ul>
+    </div>
+  </div>
+</AccountLayout>
+
+<style>
+  .count {
+    margin: 0 0 12px;
+    color: var(--mut);
+  }
+  .count b {
+    color: var(--text);
+  }
+  .list {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>
+
+<script>
+  import { mountPurchases } from '../../scripts/lists';
+  mountPurchases(document.querySelector<HTMLElement>('[data-purchases]')!);
+</script>

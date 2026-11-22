@@ -1,0 +1,97 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHead from './PageHead.astro';
+import { href } from '../data/products';
+
+interface Props {
+  title: string;
+  lead: string;
+  updated?: string;
+  current: 'privacy' | 'terms' | 'licenses' | 'refunds';
+}
+const { title, lead, updated = '1 November 2026', current } = Astro.props;
+
+const docs = [
+  { id: 'privacy', label: 'Privacy policy', href: href('privacy/') },
+  { id: 'terms', label: 'Terms of sale (offer)', href: href('terms/') },
+  { id: 'licenses', label: 'Licences', href: href('licenses/') },
+  { id: 'refunds', label: 'Refunds & returns', href: href('refunds/') },
+];
+---
+
+<Layout title={title} description={lead}>
+  <PageHead title={title} lead={lead} crumbs={[{ label: title }]}>
+    <p class="upd">Last updated: {updated}</p>
+  </PageHead>
+  <div class="wrap layout">
+    <nav class="docs" aria-label="Legal documents">
+      <h2>Legal</h2>
+      <ul>
+        {docs.map((d) => <li><a href={d.href} aria-current={d.id === current ? 'page' : undefined}>{d.label}</a></li>)}
+        <li><a href={href('contacts/')}>Contact us</a></li>
+      </ul>
+    </nav>
+    <article class="prose">
+      <slot />
+    </article>
+  </div>
+</Layout>
+
+<style>
+  .upd {
+    font-size: 0.9rem !important;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    margin-top: 12px;
+  }
+  .docs h2 {
+    margin: 0 0 8px;
+    color: var(--mut);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .docs ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .docs a {
+    display: block;
+    padding: 9px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--s1);
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .docs a:hover {
+    border-color: #4a5058;
+    background: var(--s2);
+  }
+  .docs a[aria-current] {
+    border-color: var(--acc);
+    background: rgb(255 122 26 / 0.1);
+    color: var(--acc-h);
+  }
+  @media (min-width: 900px) {
+    .layout {
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 56px;
+      align-items: start;
+    }
+    .docs {
+      position: sticky;
+      top: 90px;
+    }
+    .docs ul {
+      flex-direction: column;
+    }
+  }
+</style>

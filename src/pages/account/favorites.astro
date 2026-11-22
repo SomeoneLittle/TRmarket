@@ -1,0 +1,51 @@
+---
+import AccountLayout from '../../components/AccountLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { href, marketHref, products } from '../../data/products';
+---
+
+<AccountLayout title="Favorites" active="favorites" gate={false} lead="Models and tools you saved for later.">
+  <div data-favorites>
+    <div class="empty" data-empty hidden>
+      <h2>No favorites yet</h2>
+      <p>Tap the heart on any product to save it here.</p>
+      <a class="btn" href={href('marketplace/')}>Browse the marketplace</a>
+    </div>
+    <div data-filled hidden>
+      <p class="count"><b data-fav-total>0</b> saved · worth <b data-fav-worth>$0</b></p>
+      <ul class="grid4 g3">
+        {products.map((p) => <li data-fav-item={p.id} hidden><ProductCard product={p} /></li>)}
+      </ul>
+      <p class="more"><a href={marketHref({ sort: 'popular' })}>Find more to love →</a></p>
+    </div>
+  </div>
+</AccountLayout>
+
+<style>
+  .count {
+    margin: 0 0 12px;
+    color: var(--mut);
+  }
+  .count b {
+    color: var(--text);
+  }
+  .g3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .more {
+    margin-top: 20px;
+  }
+  .more a {
+    color: var(--acc-h);
+  }
+  @media (min-width: 700px) {
+    .g3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>
+
+<script>
+  import { mountFavorites } from '../../scripts/lists';
+  mountFavorites(document.querySelector<HTMLElement>('[data-favorites]')!);
+</script>

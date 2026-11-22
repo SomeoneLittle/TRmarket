@@ -1,0 +1,34 @@
+---
+interface Props {
+  rating: number;
+  /** Optional text after the stars, e.g. "4.9 (312)". */
+  label?: string;
+  size?: string;
+}
+const { rating, label, size = '0.9rem' } = Astro.props;
+---
+
+<span class="rating" style={`--p:${(rating / 5) * 100}%;--fs:${size}`}>
+  <span class="stars" aria-hidden="true">★★★★★</span>
+  <span class="sr">Rated {rating} out of 5</span>
+  {label && <span class="n">{label}</span>}
+</span>
+
+<style>
+  .rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--mut);
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  .stars {
+    background: linear-gradient(90deg, #ffb020 var(--p), #474c54 var(--p));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: var(--fs);
+    letter-spacing: 1px;
+  }
+</style>

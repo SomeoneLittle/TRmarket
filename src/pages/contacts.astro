@@ -1,0 +1,191 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHead from '../components/PageHead.astro';
+import Icon from '../components/Icon.astro';
+import { company, socials } from '../data/site';
+import { href } from '../data/products';
+
+const topics = ['Question about a product', 'Licence question', 'Refund request', 'Bug report', 'Custom work', 'Other'];
+---
+
+<Layout title="Contacts" description="Get in touch with the author of TRmarket.">
+  <PageHead title="Contacts" lead="One person runs this shop, so you always talk to the author. I reply within one business day." crumbs={[{ label: 'Contacts' }]} />
+
+  <div class="wrap layout">
+    <div>
+      <form class="panel" data-contact novalidate>
+        <h2>Send a message</h2>
+        <div class="row2">
+          <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" required minlength="2" /></div>
+          <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" autocomplete="email" required /></div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="c-topic">Topic</label>
+            <select id="c-topic" name="topic" required>
+              {topics.map((t) => <option value={t}>{t}</option>)}
+            </select>
+          </div>
+          <div class="field"><label for="c-order">Order number <small>(optional)</small></label><input id="c-order" name="order" placeholder="TR-123456" /></div>
+        </div>
+        <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" required minlength="10"></textarea><span class="hint">At least 10 characters.</span></div>
+        <label class="check"><input type="checkbox" name="consent" required /> <span>I agree to the processing of my data under the <a href={href('privacy/')}>privacy policy</a>.</span></label>
+        <button class="btn" type="submit">Send message</button>
+      </form>
+
+      <div class="panel sent" data-sent hidden role="status">
+        <div class="ok"><Icon name="check" size={28} /></div>
+        <h2>Message sent (demo)</h2>
+        <p>Thanks, <b data-sent-name></b>. In a live shop I would reply to <b data-sent-email></b> within one business day.</p>
+        <div class="actions">
+          <a class="btn" href={href('marketplace/')}>Back to the catalog</a>
+          <button class="btn ghost" type="button" data-again>Send another</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="info">
+      <ul>
+        <li><Icon name="mail" size={22} /><span><b>Email</b><a href={`mailto:${company.email}`}>{company.email}</a></span></li>
+        <li><Icon name="clock" size={22} /><span><b>Response time</b>Within one business day, Mon–Fri</span></li>
+        <li><Icon name="support" size={22} /><span><b>Quick answers</b><a href={href('help/')}>Help centre and FAQ</a></span></li>
+      </ul>
+      <div class="panel details">
+        <h2>Business details</h2>
+        <p>{company.legal}<br />{company.reg}<br />{company.tax}<br />{company.address}</p>
+      </div>
+      <ul class="soc" aria-label="Social networks">
+        {socials.map((s) => <li><a class="chip" href={s.href}>{s.label}</a></li>)}
+      </ul>
+    </aside>
+  </div>
+</Layout>
+
+<style>
+  .layout {
+    display: grid;
+    gap: 28px;
+    margin-top: 12px;
+  }
+  h2 {
+    margin: 0 0 14px;
+    font-size: 1.2rem;
+  }
+  .row2 {
+    display: grid;
+    gap: 0 14px;
+  }
+  .check a {
+    color: var(--acc-h);
+  }
+  .check {
+    margin-bottom: 16px;
+  }
+  .sent {
+    text-align: center;
+    padding: 36px 24px;
+  }
+  .ok {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: rgb(53 208 127 / 0.14);
+    color: var(--ok);
+    animation: pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0.4);
+      opacity: 0;
+    }
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .info {
+    display: grid;
+    gap: 18px;
+    align-content: start;
+  }
+  .info > ul:first-child {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .info li {
+    display: flex;
+    gap: 14px;
+    color: var(--acc-h);
+  }
+  .info li span {
+    display: grid;
+    color: var(--mut);
+  }
+  .info li b {
+    color: var(--text);
+  }
+  .info li a {
+    color: var(--acc-h);
+  }
+  .details p {
+    margin: 0;
+    color: var(--mut);
+  }
+  .soc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 640px) {
+    .row2 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 900px) {
+    .layout {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 48px;
+      align-items: start;
+    }
+  }
+</style>
+
+<script>
+  import { toast } from '../scripts/ui';
+
+  const form = document.querySelector<HTMLFormElement>('[data-contact]')!;
+  const sent = document.querySelector<HTMLElement>('[data-sent]')!;
+  const topic = new URLSearchParams(location.search).get('topic');
+  if (topic) form.querySelector<HTMLSelectElement>('[name="topic"]')!.value = topic;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      toast('Please complete the highlighted fields');
+      return;
+    }
+    sent.querySelector('[data-sent-name]')!.textContent = form.querySelector<HTMLInputElement>('[name="name"]')!.value;
+    sent.querySelector('[data-sent-email]')!.textContent = form.querySelector<HTMLInputElement>('[name="email"]')!.value;
+    form.hidden = true;
+    sent.hidden = false;
+    sent.scrollIntoView({ block: 'center' });
+  });
+  document.querySelector('[data-again]')!.addEventListener('click', () => {
+    form.reset();
+    form.hidden = false;
+    sent.hidden = true;
+  });
+</script>

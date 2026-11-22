@@ -1,0 +1,115 @@
+---
+import { categoryName, productHref, type Product } from '../data/products';
+import Art from './Art.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  product: Product;
+}
+const { product: p } = Astro.props;
+---
+
+<li class="purchase" data-own={p.id} hidden>
+  <a class="thumb" href={productHref(p)} tabindex="-1" aria-hidden="true"><Art product={p} /></a>
+  <div class="info">
+    <h3><a href={productHref(p)}>{p.title}</a></h3>
+    <p class="meta">{categoryName(p.category)} · {p.formats.join(', ')}</p>
+    <p class="meta">Purchased <b data-own-date></b> · <span data-own-lic></span> licence</p>
+    <p class="key"><Icon name="key" size={15} /> <code data-own-key></code>
+      <button type="button" data-copy-key aria-label={`Copy licence key for ${p.title}`}>Copy</button>
+    </p>
+  </div>
+  <div class="actions">
+    <button class="btn" type="button" data-download data-title={p.title}><Icon name="download" size={17} /> Download</button>
+    <a class="btn ghost" href={productHref(p)}>View product</a>
+  </div>
+</li>
+
+<style>
+  .purchase {
+    display: grid;
+    gap: 12px 16px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--s1);
+    animation: in 0.35s var(--ease);
+  }
+  @keyframes in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  .thumb {
+    display: block;
+    height: 130px;
+    border-radius: 8px;
+    background: radial-gradient(ellipse at 50% 40%, #343942, #16181b 80%);
+    overflow: hidden;
+  }
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  h3 a {
+    text-decoration: none;
+  }
+  h3 a:hover {
+    color: var(--acc-h);
+  }
+  .meta {
+    margin: 2px 0 0;
+    color: var(--mut);
+    font-size: 0.9rem;
+  }
+  .meta b {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .key {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 0;
+    color: var(--mut);
+  }
+  code {
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 0.88rem;
+  }
+  .key button {
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid #3a3f47;
+    border-radius: 6px;
+    background: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .key button:hover {
+    border-color: var(--acc);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-content: start;
+  }
+  @media (min-width: 720px) {
+    .purchase {
+      grid-template-columns: 150px 1fr auto;
+      align-items: center;
+    }
+    .thumb {
+      height: 110px;
+    }
+    .actions {
+      flex-direction: column;
+    }
+  }
+</style>

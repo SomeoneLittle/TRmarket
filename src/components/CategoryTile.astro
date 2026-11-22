@@ -1,0 +1,88 @@
+---
+import { categories, marketHref, type Category, type Product } from '../data/products';
+import Art from './Art.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  id: Category;
+  sample: Product;
+}
+const { id, sample } = Astro.props;
+const c = categories.find((x) => x.id === id)!;
+---
+
+<a class="cat zoom" href={marketHref({ cat: id })}>
+  <span class="cart" aria-hidden="true"><Art product={sample} /></span>
+  <span class="ctext">
+    <b>{c.name}</b>
+    <small>{c.count} products · {c.blurb}</small>
+    <span class="go">Browse <Icon name="arrow" size={16} /></span>
+  </span>
+</a>
+
+<style>
+  .cat {
+    position: relative;
+    display: block;
+    height: 100%;
+    min-height: 220px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: radial-gradient(ellipse 70% 80% at 72% 40%, #30353c, #15171a 75%);
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .cat:hover {
+    border-color: var(--acc);
+  }
+  .cart {
+    position: absolute;
+    inset: 8px 4% 8px auto;
+    width: 46%;
+  }
+  .ctext {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 2px;
+    max-width: 52%;
+    padding: 22px;
+  }
+  .ctext b {
+    font-size: 1.2rem;
+    line-height: 1.2;
+  }
+  small {
+    color: var(--mut);
+  }
+  .go {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    color: var(--acc-h);
+    font-weight: 650;
+    transform: translateX(-8px);
+    opacity: 0.6;
+    transition: transform 0.25s, opacity 0.25s;
+  }
+  .cat:hover .go {
+    transform: none;
+    opacity: 1;
+  }
+  @media (min-width: 640px) {
+    .cat {
+      min-height: 260px;
+    }
+    .ctext {
+      max-width: 100%;
+      padding: 20px;
+    }
+    .cart {
+      inset: auto 0 0 auto;
+      width: 70%;
+      height: 62%;
+    }
+  }
+</style>

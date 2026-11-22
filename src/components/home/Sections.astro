@@ -1,0 +1,84 @@
+---
+import { categories, freeProducts, freshProducts, href, marketHref, products } from '../../data/products';
+import CategoryTile from '../CategoryTile.astro';
+import FreeCard from '../FreeCard.astro';
+import ProductCard from '../ProductCard.astro';
+import ProductRow from '../ProductRow.astro';
+import SectionHead from '../SectionHead.astro';
+import TrustStrip from '../TrustStrip.astro';
+
+const popular = [...products].sort((a, b) => b.downloads - a.downloads).filter((p) => p.price > 0).slice(0, 8);
+const sample = {
+  print: products.find((p) => p.id === 'aeon-vase-collection')!,
+  game: products.find((p) => p.id === 'sentinel-helmet-kit')!,
+  tool: products.find((p) => p.id === 'claystroke-brush-set')!,
+};
+---
+
+<div class="wrap strip" data-reveal><TrustStrip /></div>
+
+<section class="sec wrap" id="free" aria-labelledby="home-free" data-reveal>
+  <SectionHead id="home-free" title="Free models & tools" href={marketHref({ price: 'free' })} label="See all free" />
+  <ul class="list3">
+    {freeProducts.map((p) => <li><FreeCard product={p} /></li>)}
+  </ul>
+</section>
+
+<section class="sec wrap" aria-labelledby="home-cats" data-reveal>
+  <SectionHead id="home-cats" title="Shop by category" href={href('marketplace/')} label="Full catalog" />
+  <ul class="list3">
+    {categories.map((c) => <li><CategoryTile id={c.id} sample={sample[c.id]} /></li>)}
+  </ul>
+</section>
+
+<section class="sec wrap" aria-labelledby="home-pop">
+  <div data-reveal><SectionHead id="home-pop" title="Popular products" href={marketHref({ sort: 'popular' })} /></div>
+  <ul class="grid4">
+    {
+      popular.map((p, i) => (
+        <li data-reveal style={`transition-delay:${(i % 4) * 70}ms`}>
+          <ProductCard product={p} />
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<section class="sec wrap" aria-labelledby="home-new" data-reveal>
+  <SectionHead id="home-new" title="Added today" live href={marketHref({ sort: 'new' })} label="All new arrivals" />
+  <ul class="list3 rows">
+    {freshProducts.map((p) => <li><ProductRow product={p} /></li>)}
+  </ul>
+</section>
+
+<style>
+  .strip {
+    margin-top: 16px;
+  }
+  .list3 {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .list3 > li {
+    display: flex;
+  }
+  .list3 > li > :global(*) {
+    flex: 1;
+  }
+  @media (min-width: 640px) {
+    .list3:not(.rows) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .rows {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1000px) {
+    .rows {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
