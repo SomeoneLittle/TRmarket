@@ -1,5 +1,7 @@
 ---
-import { categories, marketHref, type Category, type Product } from '../data/products';
+import { marketHref } from '../lib/url';
+import { type Category, type Product } from '../lib/types';
+import { getCategories } from '../lib/data';
 import Art from './Art.astro';
 import Icon from './Icon.astro';
 
@@ -8,7 +10,7 @@ interface Props {
   sample: Product;
 }
 const { id, sample } = Astro.props;
-const c = categories.find((x) => x.id === id)!;
+const c = (await getCategories()).find((x) => x.id === id)!;
 ---
 
 <a class="cat zoom" href={marketHref({ cat: id })}>

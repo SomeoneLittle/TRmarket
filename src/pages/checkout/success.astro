@@ -3,7 +3,9 @@ import Layout from '../../layouts/Layout.astro';
 import PageHead from '../../components/PageHead.astro';
 import ProductRow from '../../components/ProductRow.astro';
 import Icon from '../../components/Icon.astro';
-import { href, products } from '../../data/products';
+import { href } from '../../lib/url';
+import { getProducts } from '../../lib/data';
+const products = await getProducts();
 ---
 
 <Layout title="Order complete" description="Thank you for your order.">

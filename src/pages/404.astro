@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ProductCard from '../components/ProductCard.astro';
-import { href, products } from '../data/products';
+import { href } from '../lib/url';
+import { getPopularProducts } from '..//lib/data';
 
-const picks = [...products].sort((a, b) => b.downloads - a.downloads).slice(0, 4);
+const picks = await getPopularProducts(4, { includeFree: true });
 ---
 
 <Layout title="Page not found" description="This page does not exist.">

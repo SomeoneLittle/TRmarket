@@ -1,24 +1,6 @@
-export type PostTag = 'Tutorials' | 'Releases' | 'Behind the scenes';
+import type { Post } from '../../types';
 
-export type Block =
-  | { type: 'h2'; text: string }
-  | { type: 'p'; text: string }
-  | { type: 'ul'; items: string[] };
-
-export interface Post {
-  slug: string;
-  title: string;
-  excerpt: string;
-  tag: PostTag;
-  date: string;
-  readMin: number;
-  /** Product used as the cover and as the "mentioned" product. */
-  productId: string;
-  related: string[];
-  body: Block[];
-}
-
-export const posts: Post[] = [
+export const fakePosts: Post[] = [
   {
     slug: 'print-spiral-vases-without-supports',
     title: 'How to print spiral vases without supports',
@@ -135,5 +117,3 @@ export const posts: Post[] = [
     ],
   },
 ];
-
-export const getPost = (slug: string) => posts.find((p) => p.slug === slug);

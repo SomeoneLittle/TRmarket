@@ -1,7 +1,9 @@
 ---
 import AccountLayout from '../../components/AccountLayout.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import { href, marketHref, products } from '../../data/products';
+import { href, marketHref } from '../../lib/url';
+import { getProducts } from '../../lib/data';
+const products = await getProducts();
 ---
 
 <AccountLayout title="Favorites" active="favorites" gate={false} lead="Models and tools you saved for later.">

@@ -4,17 +4,27 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
-import { href, productHref, products } from '../data/products';
+import { href, productHref } from '../lib/url';
+import { getProducts } from '../lib/data';
+import { site, seoMeta } from '../lib/seo';
 
 interface Props {
   title: string;
   description?: string;
   /** Id of the active main-navigation item. */
   current?: string;
+  /** Absolute or site-relative path to the social preview image (1200x630). */
+  image?: string;
+  /** Overrides the canonical path. Defaults to the current URL. */
+  canonical?: string;
+  /** Set on pages that must not be indexed (cart, checkout, account). */
+  noindex?: boolean;
+  ogType?: 'website' | 'article' | 'product';
 }
-const { title, description = '3D models for printing and games, plus tools for modeling and sculpting.', current } = Astro.props;
+const { title, description = site.description, current, image = site.ogImage, canonical, noindex = false, ogType = 'website' } = Astro.props;
 const fullTitle = title === 'TRmarket' ? title : `${title} — TRmarket`;
-const catalog = products.map((p) => ({
+const meta = seoMeta(Astro, { title: fullTitle, description, image, canonical });
+const catalog = (await getProducts()).map((p) => ({
   id: p.id,
   title: p.title,
   price: p.price,
@@ -37,6 +47,18 @@ const catalog = products.map((p) => ({
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0e0f11" />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+    <link rel="canonical" href={meta.canonical} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={meta.canonical} />
+    <meta property="og:image" content={meta.image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={meta.image} />
     <meta name="trm-base" content={import.meta.env.BASE_URL} />
     <title>{fullTitle}</title>
     <link rel="icon" type="image/svg+xml" href={href('favicon.svg')} />

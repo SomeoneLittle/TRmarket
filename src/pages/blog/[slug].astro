@@ -6,10 +6,12 @@ import Icon from '../../components/Icon.astro';
 import PostCard from '../../components/PostCard.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import SectionHead from '../../components/SectionHead.astro';
-import { posts, type Post } from '../../data/posts';
-import { getProduct, href } from '../../data/products';
+import { type Post } from '../../lib/types';
+import { getPosts, getPostBySlug, getProductBySlug, getProductsBySlugs } from '../../lib/data';
+import { href } from '../../lib/url';
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const posts = await getPosts();
   return posts.map((post, i) => ({
     params: { slug: post.slug },
     props: { post, prev: posts[i + 1], next: posts[i - 1] },
@@ -22,9 +24,9 @@ interface Props {
   next?: Post;
 }
 const { post, prev, next } = Astro.props;
-const product = getProduct(post.productId)!;
-const mentioned = post.related.map((id) => getProduct(id)!).filter(Boolean);
-const more = posts.filter((p) => p.slug !== post.slug).slice(0, 3);
+const product = (await getProductBySlug(post.productId))!;
+const mentioned = await getProductsBySlugs(post.related);
+const more = (await getPosts()).filter((p) => p.slug !== post.slug).slice(0, 3);
 const slug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 const toc = post.body.filter((b) => b.type === 'h2').map((b) => ({ id: slug((b as { text: string }).text), text: (b as { text: string }).text }));
 ---

@@ -4,12 +4,13 @@ import PageHead from '../../components/PageHead.astro';
 import PostCard from '../../components/PostCard.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import SectionHead from '../../components/SectionHead.astro';
-import { posts } from '../../data/posts';
-import { href, products } from '../../data/products';
+import { getPopularProducts, getPosts } from '../../lib/data';
+import { href } from '../../lib/url';
 
+const posts = await getPosts();
 const [featured, ...rest] = posts;
 const tags = ['All', 'Tutorials', 'Releases', 'Behind the scenes'];
-const picks = [...products].sort((a, b) => b.downloads - a.downloads).filter((p) => p.price > 0).slice(0, 4);
+const picks = await getPopularProducts(4);
 ---
 
 <Layout title="Blog" current="blog" description="Tutorials, release notes and behind-the-scenes stories about 3D models and modeling tools.">

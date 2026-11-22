@@ -3,7 +3,14 @@ import Layout from '../../layouts/Layout.astro';
 import PageHead from '../../components/PageHead.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import Icon from '../../components/Icon.astro';
-import { categories, products, subcategories } from '../../data/products';
+import { getCategories, getProducts, getSubcategories } from '../../lib/data';
+
+const [products, categories] = await Promise.all([getProducts(), getCategories()]);
+const subcategories = {
+  print: await getSubcategories('print'),
+  game: await getSubcategories('game'),
+  tool: await getSubcategories('tool'),
+};
 
 const prices = [
   { id: '', label: 'Any price' },

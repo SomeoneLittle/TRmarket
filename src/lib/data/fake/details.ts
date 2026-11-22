@@ -1,22 +1,5 @@
-import { seeded } from './lathe';
-import type { Product } from './products';
-
-export interface Review {
-  name: string;
-  rating: number;
-  date: string;
-  text: string;
-}
-
-export interface Details {
-  long: string[];
-  features: string[];
-  files: { name: string; size: string; kind: string }[];
-  reviews: Review[];
-  distribution: number[]; // share of 5,4,3,2,1 star reviews, in percent
-  updated: string;
-  version: string;
-}
+import { seeded } from '../../lathe';
+import type { Details, Product } from '../../types';
 
 const names = ['Alex M.', 'Priya S.', 'Jonas K.', 'Mia T.', 'Diego R.', 'Hana O.', 'Lucas B.', 'Sofia V.'];
 const reviewText = {
@@ -40,7 +23,7 @@ const reviewText = {
   ],
 };
 
-export function getDetails(p: Product): Details {
+export function fakeDetails(p: Product): Details {
   const rnd = seeded(p.id);
   const kindWord = p.category === 'print' ? 'printable' : p.category === 'game' ? 'game-ready' : 'production-ready';
 

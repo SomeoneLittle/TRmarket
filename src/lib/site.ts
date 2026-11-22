@@ -1,4 +1,4 @@
-import { href, marketHref } from './products';
+import { href, marketHref } from './url';
 
 export const mainNav = [
   { label: 'Marketplace', href: href('marketplace/'), id: 'marketplace' },

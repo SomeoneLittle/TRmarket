@@ -1,6 +1,7 @@
 ---
-import { getProduct, href } from '../data/products';
-import type { Post } from '../data/posts';
+import { href } from '../lib/url';
+import { getProductBySlug } from '../lib/data';
+import { type Post } from '../lib/types';
 import Art from './Art.astro';
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
   featured?: boolean;
 }
 const { post, featured = false } = Astro.props;
-const product = getProduct(post.productId)!;
+const product = (await getProductBySlug(post.productId))!;
 const link = href(`blog/${post.slug}/`);
 ---
 

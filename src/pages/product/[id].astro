@@ -6,23 +6,25 @@ import Icon from '../../components/Icon.astro';
 import Stars from '../../components/Stars.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import SectionHead from '../../components/SectionHead.astro';
-import { getDetails } from '../../data/details';
-import { categoryName, formatCount, href, marketHref, productSub, products, subcategories, type Product } from '../../data/products';
+import { getProductDetails, getProducts, getRelatedProducts, getSubcategories } from '../../lib/data';
+import { categoryName, formatCount } from '../../lib/format';
+import { href, marketHref } from '../../lib/url';
+import { type Product } from '../../lib/types';
 
-export function getStaticPaths() {
-  return products.map((product) => ({ params: { id: product.id }, props: { product } }));
+export async function getStaticPaths() {
+  return (await getProducts()).map((product) => ({ params: { id: product.id }, props: { product } }));
 }
 
 interface Props {
   product: Product;
 }
 const { product: p } = Astro.props;
-const d = getDetails(p);
+const d = await getProductDetails(p);
 const free = p.price === 0;
 const off = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
 const model = p.category !== 'tool';
-const sub = subcategories[p.category].find((s) => s.id === productSub(p));
-const related = [...products.filter((x) => x.id !== p.id && x.category === p.category), ...products.filter((x) => x.id !== p.id && x.category !== p.category)].slice(0, 4);
+const sub = (await getSubcategories(p.category)).find((s) => s.id === p.sub);
+const related = await getRelatedProducts(p, 4);
 const views = [
   { id: 'render', label: 'Render' },
   { id: 'clay', label: 'Clay' },

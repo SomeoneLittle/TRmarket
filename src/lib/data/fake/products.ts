@@ -1,46 +1,10 @@
-export type Category = 'print' | 'game' | 'tool';
+import type { Product } from '../../types';
 
-/** Lathe profiles: 14 radii (0..1) from the bottom of an object to its top. */
-export const PROFILES = {
-  vase: [0.35, 0.5, 0.62, 0.7, 0.72, 0.66, 0.5, 0.36, 0.28, 0.26, 0.3, 0.4, 0.5, 0.55],
-  pawn: [0.6, 0.58, 0.42, 0.3, 0.24, 0.2, 0.22, 0.34, 0.4, 0.36, 0.3, 0.22, 0.12, 0.02],
-  planter: [0.45, 0.55, 0.65, 0.72, 0.78, 0.8, 0.8, 0.78, 0.74, 0.7, 0.68, 0.68, 0.7, 0.72],
-  organizer: [0.7, 0.7, 0.62, 0.7, 0.7, 0.62, 0.7, 0.7, 0.62, 0.7, 0.7, 0.62, 0.7, 0.7],
-  helmet: [0.5, 0.62, 0.7, 0.74, 0.76, 0.76, 0.74, 0.7, 0.62, 0.5, 0.36, 0.22, 0.1, 0.02],
-  pine: [0.12, 0.12, 0.55, 0.42, 0.3, 0.5, 0.38, 0.26, 0.42, 0.3, 0.18, 0.3, 0.16, 0.02],
-  mushroom: [0.3, 0.28, 0.24, 0.22, 0.22, 0.24, 0.5, 0.74, 0.84, 0.82, 0.7, 0.5, 0.28, 0.04],
-  totem: [0.5, 0.5, 0.4, 0.4, 0.52, 0.5, 0.4, 0.4, 0.52, 0.5, 0.4, 0.4, 0.46, 0.3],
-  brush: [0.18, 0.22, 0.26, 0.3, 0.32, 0.34, 0.3, 0.4, 0.4, 0.34, 0.28, 0.18, 0.08, 0.01],
-  gem: [0.02, 0.18, 0.34, 0.5, 0.64, 0.76, 0.8, 0.72, 0.58, 0.42, 0.28, 0.16, 0.07, 0.01],
-  panel: [0.8, 0.8, 0.66, 0.66, 0.54, 0.54, 0.42, 0.42, 0.3, 0.3, 0.2, 0.2, 0.1, 0.1],
-  spool: [0.7, 0.7, 0.7, 0.3, 0.26, 0.26, 0.26, 0.26, 0.26, 0.3, 0.7, 0.7, 0.7, 0.66],
-} as const;
-
-export type ProfileName = keyof typeof PROFILES;
-
-export interface Product {
-  id: string;
-  title: string;
-  category: Category;
-  kind: string;
-  blurb: string;
-  price: number;
-  oldPrice?: number;
-  rating: number;
-  reviews: number;
-  downloads: number;
-  /** Hours since the product was added. */
-  addedHours: number;
-  formats: string[];
-  spec: string;
-  profile: ProfileName;
-  /** Index into each mockup's own accent palette (0..3). */
-  tone: 0 | 1 | 2 | 3;
-}
-
-export const products: Product[] = [
+/** Placeholder catalog. Stage 2 replaces the reader in ../index.ts with Sanity. */
+export const fakeProducts: Product[] = [
   {
     id: 'aeon-vase-collection',
+    sub: 'decor',
     title: 'Aeon Vase Collection',
     category: 'print',
     kind: 'Printable set',
@@ -57,6 +21,7 @@ export const products: Product[] = [
   },
   {
     id: 'orbital-pawn-chess',
+    sub: 'tabletop',
     title: 'Orbital Chess Set',
     category: 'print',
     kind: 'Printable set',
@@ -74,6 +39,7 @@ export const products: Product[] = [
   },
   {
     id: 'terra-planter-trio',
+    sub: 'planters',
     title: 'Terra Planter Trio',
     category: 'print',
     kind: 'Free model',
@@ -90,6 +56,7 @@ export const products: Product[] = [
   },
   {
     id: 'gearbox-desk-organizer',
+    sub: 'organizers',
     title: 'Gearbox Desk Organizer',
     category: 'print',
     kind: 'Printable set',
@@ -106,6 +73,7 @@ export const products: Product[] = [
   },
   {
     id: 'sentinel-helmet-kit',
+    sub: 'armor',
     title: 'Sentinel Helmet Kit',
     category: 'game',
     kind: 'Game-ready asset',
@@ -123,6 +91,7 @@ export const products: Product[] = [
   },
   {
     id: 'low-poly-pine-pack',
+    sub: 'nature',
     title: 'Low-Poly Pine Pack',
     category: 'game',
     kind: 'Free asset',
@@ -139,6 +108,7 @@ export const products: Product[] = [
   },
   {
     id: 'mushroom-village-kit',
+    sub: 'environment',
     title: 'Mushroom Village Kit',
     category: 'game',
     kind: 'Game-ready asset',
@@ -155,6 +125,7 @@ export const products: Product[] = [
   },
   {
     id: 'ancient-totem-props',
+    sub: 'props',
     title: 'Ancient Totem Props',
     category: 'game',
     kind: 'Game-ready asset',
@@ -171,6 +142,7 @@ export const products: Product[] = [
   },
   {
     id: 'claystroke-brush-set',
+    sub: 'brushes',
     title: 'ClayStroke Brush Set',
     category: 'tool',
     kind: 'Sculpting brushes',
@@ -187,6 +159,7 @@ export const products: Product[] = [
   },
   {
     id: 'quad-remesh-pro',
+    sub: 'addons',
     title: 'Quad Remesh Pro',
     category: 'tool',
     kind: 'Blender add-on',
@@ -204,6 +177,7 @@ export const products: Product[] = [
   },
   {
     id: 'panelizer-presets',
+    sub: 'presets',
     title: 'Panelizer Presets',
     category: 'tool',
     kind: 'Hard-surface presets',
@@ -220,6 +194,7 @@ export const products: Product[] = [
   },
   {
     id: 'pivot-snapper',
+    sub: 'scripts',
     title: 'Pivot Snapper',
     category: 'tool',
     kind: 'Free script',
@@ -235,96 +210,3 @@ export const products: Product[] = [
     tone: 0,
   },
 ];
-
-export const categories: {
-  id: Category;
-  name: string;
-  blurb: string;
-  count: number;
-}[] = [
-  {
-    id: 'print',
-    name: '3D models for printing',
-    blurb: 'Tested, tolerance-checked, ready to slice.',
-    count: products.filter((p) => p.category === 'print').length,
-  },
-  {
-    id: 'game',
-    name: '3D models for games',
-    blurb: 'Clean topology, PBR textures and LODs.',
-    count: products.filter((p) => p.category === 'game').length,
-  },
-  {
-    id: 'tool',
-    name: 'Tools',
-    blurb: 'Add-ons, brushes, scripts and presets.',
-    count: products.filter((p) => p.category === 'tool').length,
-  },
-];
-
-export const freeProducts = products.filter((p) => p.price === 0);
-export const popularProducts = [...products]
-  .filter((p) => p.price > 0)
-  .sort((a, b) => b.downloads - a.downloads)
-  .slice(0, 6);
-export const freshProducts = [...products]
-  .filter((p) => p.addedHours <= 30)
-  .sort((a, b) => a.addedHours - b.addedHours);
-
-export const formatPrice = (price: number) => (price === 0 ? 'Free' : `$${price}`);
-
-export const formatCount = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n));
-
-export const formatAdded = (hours: number) =>
-  hours < 24 ? `${hours} h ago` : hours < 48 ? 'Yesterday' : `${Math.round(hours / 24)} days ago`;
-
-export const categoryName = (c: Category) =>
-  c === 'print' ? 'Print' : c === 'game' ? 'Game' : 'Tool';
-
-/** Builds an absolute path that respects the configured base path. */
-export const href = (path = '') =>
-  `${import.meta.env.BASE_URL.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
-
-export const subcategories: Record<Category, { id: string; name: string }[]> = {
-  print: [
-    { id: 'decor', name: 'Home & decor' },
-    { id: 'tabletop', name: 'Tabletop & chess' },
-    { id: 'organizers', name: 'Organizers' },
-    { id: 'planters', name: 'Planters & vases' },
-  ],
-  game: [
-    { id: 'armor', name: 'Characters & armor' },
-    { id: 'environment', name: 'Environment kits' },
-    { id: 'props', name: 'Props' },
-    { id: 'nature', name: 'Trees & nature' },
-  ],
-  tool: [
-    { id: 'brushes', name: 'Sculpting brushes' },
-    { id: 'addons', name: 'Blender add-ons' },
-    { id: 'presets', name: 'Hard-surface presets' },
-    { id: 'scripts', name: 'Scripts' },
-  ],
-};
-
-const subOf: Record<string, string> = {
-  'aeon-vase-collection': 'decor',
-  'orbital-pawn-chess': 'tabletop',
-  'terra-planter-trio': 'planters',
-  'gearbox-desk-organizer': 'organizers',
-  'sentinel-helmet-kit': 'armor',
-  'low-poly-pine-pack': 'nature',
-  'mushroom-village-kit': 'environment',
-  'ancient-totem-props': 'props',
-  'claystroke-brush-set': 'brushes',
-  'quad-remesh-pro': 'addons',
-  'panelizer-presets': 'presets',
-  'pivot-snapper': 'scripts',
-};
-
-export const productSub = (p: Product) => subOf[p.id];
-export const productHref = (p: Product) => href(`product/${p.id}/`);
-export const getProduct = (id: string) => products.find((p) => p.id === id);
-export const marketHref = (query: Record<string, string> = {}) => {
-  const q = new URLSearchParams(query).toString();
-  return href('marketplace/') + (q ? `?${q}` : '');
-};

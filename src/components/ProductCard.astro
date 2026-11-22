@@ -1,5 +1,7 @@
 ---
-import { categoryName, formatCount, formatPrice, productHref, productSub, type Product } from '../data/products';
+import { categoryName, formatCount, formatPrice } from '../lib/format';
+import { productHref } from '../lib/url';
+import { type Product } from '../lib/types';
 import Art from './Art.astro';
 import Icon from './Icon.astro';
 import Stars from './Stars.astro';
@@ -19,7 +21,7 @@ const fresh = p.addedHours <= 30;
   class="card"
   data-id={p.id}
   data-cat={p.category}
-  data-sub={productSub(p)}
+  data-sub={p.sub}
   data-price={p.price}
   data-old={p.oldPrice ?? 0}
   data-rating={p.rating}

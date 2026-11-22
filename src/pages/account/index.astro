@@ -4,9 +4,11 @@ import ProductRow from '../../components/ProductRow.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import SectionHead from '../../components/SectionHead.astro';
 import Icon from '../../components/Icon.astro';
-import { href, products } from '../../data/products';
+import { href } from '../../lib/url';
+import { getPopularProducts, getProducts } from '../../lib/data';
+const products = await getProducts();
 
-const picks = [...products].sort((a, b) => b.downloads - a.downloads).filter((p) => p.price > 0).slice(0, 3);
+const picks = await getPopularProducts(3);
 ---
 
 <AccountLayout title="My account" active="overview" gate={false} guestNav={false}>
