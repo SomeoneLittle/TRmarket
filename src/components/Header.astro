@@ -71,7 +71,7 @@ const mega = [
         }
       </ul>
       <form class="search" id="site-search" role="search" action={href('marketplace/')} method="get" aria-hidden="true">
-        <div class="field">
+        <div class="sfield">
           <Icon name="search" size={20} />
           <label class="sr" for="site-q">Search the catalog</label>
           <input id="site-q" name="q" type="search" placeholder="Search 3D models, brushes, add-ons…" autocomplete="off" tabindex="-1" />
@@ -250,7 +250,9 @@ const mega = [
   }
   .col li a:hover {
     color: #fff;
-    transform: translateX(4px);
+    text-decoration: underline;
+    text-decoration-color: var(--acc);
+    text-underline-offset: 4px;
   }
   .promo {
     display: flex;
@@ -407,14 +409,13 @@ const mega = [
     clip-path: inset(0 -400px -600px 0);
     transition-delay: 0s;
   }
-  .field {
+  .sfield {
     display: flex;
     flex: 1;
     align-items: center;
     gap: 10px;
     min-width: 0;
-    height: 100%;
-    min-height: 46px;
+    height: 46px;
     padding: 0 6px 0 14px;
     border: 1px solid #3a3f47;
     border-radius: 10px;
@@ -422,11 +423,11 @@ const mega = [
     color: var(--mut);
     transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .field:focus-within {
+  .sfield:focus-within {
     border-color: var(--acc);
     box-shadow: 0 0 0 3px rgb(255 122 26 / 0.2);
   }
-  .field input {
+  .sfield input {
     flex: 1;
     min-width: 0;
     min-height: 40px;
@@ -435,10 +436,10 @@ const mega = [
     color: var(--text);
     font-size: 1rem;
   }
-  .field input:focus {
+  .sfield input:focus {
     outline: none;
   }
-  .field input::placeholder {
+  .sfield input::placeholder {
     color: #8b929c;
   }
   .go {

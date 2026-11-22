@@ -13,6 +13,9 @@ import {
   type Lic,
 } from './store';
 import { toast } from './ui';
+import { enhanceSelects } from './select';
+
+enhanceSelects();
 
 // --- Counters, favorites and the account link ---------------------------------------------------
 function sync() {

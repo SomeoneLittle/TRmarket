@@ -485,3 +485,130 @@ h2.t {
     transition: none !important;
   }
 }
+
+/* Custom dropdown (replaces native selects, see scripts/select.ts) */
+.dd {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+.dd-native {
+  position: absolute !important;
+  inset: auto 0 0 0;
+  width: 100%;
+  height: 1px;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+}
+.dd-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 46px;
+  padding: 0 12px 0 14px;
+  border: 1px solid #3a3f47;
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.dd-btn:hover {
+  border-color: #5a616c;
+}
+.dd-btn svg {
+  flex: none;
+  color: var(--mut);
+  transition: transform 0.2s var(--ease);
+}
+.dd.open .dd-btn {
+  border-color: var(--acc);
+  box-shadow: 0 0 0 3px rgb(255 122 26 / 0.2);
+}
+.dd.open .dd-btn svg {
+  transform: rotate(180deg);
+}
+.dd-val {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dd-val.placeholder {
+  color: var(--mut);
+}
+.dd.sm .dd-btn {
+  min-height: 38px;
+  margin-top: 6px;
+  font-size: 0.9rem;
+}
+.dd-list {
+  position: absolute;
+  inset: calc(100% + 6px) 0 auto 0;
+  z-index: 120;
+  min-width: max-content;
+  max-height: 280px;
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--s2);
+  box-shadow: 0 20px 40px -12px rgb(0 0 0 / 0.85);
+  list-style: none;
+  animation: dd-in 0.2s var(--ease);
+}
+.dd.up .dd-list {
+  inset: auto 0 calc(100% + 6px) 0;
+  animation-name: dd-in-up;
+}
+@keyframes dd-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes dd-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.dd-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dd-list li svg {
+  color: var(--acc);
+  opacity: 0;
+}
+.dd-list li.active {
+  background: var(--s3);
+}
+.dd-list li[aria-selected='true'] {
+  color: var(--acc-h);
+  font-weight: 600;
+}
+.dd-list li[aria-selected='true'] svg {
+  opacity: 1;
+}
+.dd-list li[aria-disabled='true'] {
+  opacity: 0.4;
+  cursor: default;
+}
+.dd-btn:focus-visible {
+  outline: 2px solid var(--acc-h);
+  outline-offset: 2px;
+}

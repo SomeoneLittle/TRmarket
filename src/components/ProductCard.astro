@@ -14,6 +14,7 @@ const off = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
 const fresh = p.addedHours <= 30;
 ---
 
+<div class="cardwrap">
 <article
   class="card"
   data-id={p.id}
@@ -62,9 +63,17 @@ const fresh = p.addedHours <= 30;
     </div>
   </div>
 </article>
+</div>
 
 <style>
+  /* The wrapper never moves, so hovering near the edge cannot make the card flicker. */
+  .cardwrap {
+    display: flex;
+    height: 100%;
+  }
   .card {
+    flex: 1;
+    min-width: 0;
     container-type: inline-size;
     display: flex;
     flex-direction: column;
@@ -75,7 +84,7 @@ const fresh = p.addedHours <= 30;
     overflow: hidden;
     transition: border-color 0.2s, transform 0.25s var(--ease), box-shadow 0.25s;
   }
-  .card:hover,
+  .cardwrap:hover .card,
   .card:focus-within {
     border-color: #444a53;
     transform: translateY(-3px);
@@ -141,7 +150,7 @@ const fresh = p.addedHours <= 30;
     cursor: pointer;
     transition: opacity 0.2s, background 0.15s, color 0.15s, transform 0.2s var(--ease);
   }
-  .card:hover .fav,
+  .cardwrap:hover .fav,
   .card:focus-within .fav,
   .fav[aria-pressed='true'] {
     opacity: 1;
@@ -183,7 +192,7 @@ const fresh = p.addedHours <= 30;
     transform: translate(-50%, 10px);
     transition: opacity 0.2s, transform 0.28s var(--ease), background 0.15s;
   }
-  .card:hover .quick,
+  .cardwrap:hover .quick,
   .card:focus-within .quick {
     opacity: 1;
     transform: translate(-50%, 0);

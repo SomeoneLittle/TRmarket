@@ -172,11 +172,11 @@ const picks = [...products].sort((a, b) => b.downloads - a.downloads).filter((p)
     border-radius: 12px;
     background: var(--s1);
     text-decoration: none;
-    transition: border-color 0.2s, transform 0.25s var(--ease);
+    transition: border-color 0.2s, background 0.2s;
   }
   .stats a:hover {
     border-color: var(--acc);
-    transform: translateY(-2px);
+    background: var(--s2);
   }
   .stats b {
     font-size: 1.9rem;

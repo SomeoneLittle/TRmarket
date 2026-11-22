@@ -29,12 +29,12 @@ const { product: p } = Astro.props;
     border-radius: 12px;
     background: var(--s1);
     overflow: hidden;
-    transition: border-color 0.2s, background 0.2s, transform 0.25s;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.25s;
   }
   .free:hover {
     border-color: #444a53;
     background: var(--s2);
-    transform: translateX(3px);
+    box-shadow: 0 10px 24px -16px rgb(0 0 0 / 0.9);
   }
   .fthumb {
     flex: none;
