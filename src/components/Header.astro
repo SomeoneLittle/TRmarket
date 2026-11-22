@@ -1,6 +1,7 @@
 ---
-import { mainNav } from '../data/site';
-import { href, marketHref, subcategories } from '../data/products';
+import { mainNav } from '../lib/site';
+import { href, marketHref } from '../lib/url';
+import { getSubcategories } from '../lib/data';
 import Icon from './Icon.astro';
 
 interface Props {
@@ -13,6 +14,7 @@ const mega = [
   { id: 'game', title: '3D models for games' },
   { id: 'tool', title: 'Tools' },
 ] as const;
+const subs = Object.fromEntries(await Promise.all(mega.map(async (c) => [c.id, await getSubcategories(c.id)])));
 ---
 
 <div class="util">
@@ -30,8 +32,8 @@ const mega = [
   <div class="wrap in">
     <a class="logo" href={href()} aria-label="TRmarket, home">
       <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M16 3 27 9.5v13L16 29 5 22.5v-13z" fill="#ff7a1a"></path>
-        <path d="M5 9.5 16 16l11-6.5M16 16v13" fill="none" stroke="#0e0f11" stroke-width="2"></path>
+        <path d="M16 3 27 9.5v13L16 29 5 22.5v-13z" style="fill:var(--acc)"></path>
+        <path d="M5 9.5 16 16l11-6.5M16 16v13" fill="none" style="stroke:var(--bg)" stroke-width="2"></path>
       </svg>
       TR<span>market</span>
     </a>
@@ -45,7 +47,7 @@ const mega = [
               <div class="col">
                 <h2><a href={marketHref({ cat: c.id })}>{c.title}</a></h2>
                 <ul>
-                  {subcategories[c.id].map((s) => (
+                  {subs[c.id].map((s) => (
                     <li>
                       <a href={marketHref({ cat: c.id, sub: s.id })}>{s.name}</a>
                     </li>
@@ -104,7 +106,7 @@ const mega = [
 <style>
   .util {
     border-bottom: 1px solid var(--line);
-    background: #0a0b0c;
+    background: var(--bg-deep);
     font-size: 0.78rem;
     color: var(--mut);
   }
@@ -183,17 +185,17 @@ const mega = [
     padding: 0 16px;
     border-radius: 0;
     background: var(--acc);
-    color: #111;
+    color: var(--on-acc);
     font-weight: 650;
     text-decoration: none;
     white-space: nowrap;
-    transition: background 0.15s;
+    transition: background var(--dur-fast);
   }
   .catbtn:hover {
     background: var(--acc-h);
   }
   .catbtn :global(svg:last-child) {
-    transition: transform 0.2s;
+    transition: transform var(--dur-base);
   }
   .catwrap:hover .catbtn :global(svg:last-child),
   .catwrap:focus-within .catbtn :global(svg:last-child) {
@@ -215,7 +217,7 @@ const mega = [
     visibility: hidden;
     opacity: 0;
     transform: translateY(-8px);
-    transition: opacity 0.2s, transform 0.25s var(--ease), visibility 0s 0.25s;
+    transition: opacity var(--dur-base), transform 0.25s var(--ease), visibility 0s 0.25s;
   }
   .catwrap:hover .mega,
   .catwrap:focus-within .mega {
@@ -244,12 +246,12 @@ const mega = [
   .col li a {
     display: block;
     padding: 5px 0;
-    color: #d0d4da;
+    color: var(--text-soft);
     text-decoration: none;
-    transition: color 0.15s, transform 0.2s;
+    transition: color var(--dur-fast), transform var(--dur-base);
   }
   .col li a:hover {
-    color: #fff;
+    color: var(--white);
     text-decoration: underline;
     text-decoration-color: var(--acc);
     text-underline-offset: 4px;
@@ -260,16 +262,16 @@ const mega = [
     justify-content: flex-end;
     gap: 4px;
     padding: 18px;
-    border: 1px solid #5a3a1e;
-    border-radius: 10px;
-    background: linear-gradient(160deg, #3a2412, #1d1209);
+    border: 1px solid var(--warm-line);
+    border-radius: var(--r-lg);
+    background: linear-gradient(160deg, var(--warm-3), var(--warm-4));
     text-decoration: none;
   }
   .promo b {
     font-size: 1.2rem;
   }
   .promo span {
-    color: #d8c3ae;
+    color: var(--warm-text);
     font-size: 0.85rem;
   }
   .promo em {
@@ -302,18 +304,18 @@ const mega = [
     gap: 6px;
     min-height: 46px;
     padding: 0 14px;
-    color: #cfd3d9;
+    color: var(--text-soft);
     font-weight: 550;
     text-decoration: none;
     white-space: nowrap;
-    transition: color 0.15s, background 0.15s;
+    transition: color var(--dur-fast), background var(--dur-fast);
   }
   .links a:hover {
     background: var(--s3);
-    color: #fff;
+    color: var(--white);
   }
   .links a[aria-current] {
-    color: #fff;
+    color: var(--white);
     box-shadow: inset 0 -2px 0 var(--acc);
   }
 
@@ -336,13 +338,13 @@ const mega = [
     min-height: 48px;
     padding: 4px 8px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--r-md);
     background: none;
     color: var(--mut);
     font-size: 0.72rem;
     text-decoration: none;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: background var(--dur-fast), color var(--dur-fast);
   }
   .acts span {
     position: absolute;
@@ -365,9 +367,9 @@ const mega = [
     min-width: 18px;
     height: 18px;
     padding: 0 4px;
-    border-radius: 9px;
+    border-radius: var(--r-lg);
     background: var(--acc);
-    color: #111;
+    color: var(--on-acc);
     font-size: 0.7rem;
   }
 
@@ -377,15 +379,15 @@ const mega = [
     min-height: 46px;
     margin-right: 6px;
     background: var(--acc);
-    color: #111;
+    color: var(--on-acc);
   }
   .acts .sbtn:hover {
     background: var(--acc-h);
-    color: #111;
+    color: var(--on-acc);
   }
   .acts .sbtn[aria-expanded='true'] {
-    background: #d9650f;
-    color: #111;
+    background: var(--acc-d);
+    color: var(--on-acc);
   }
   .nav {
     position: relative;
@@ -417,15 +419,15 @@ const mega = [
     min-width: 0;
     height: 46px;
     padding: 0 6px 0 14px;
-    border: 1px solid #3a3f47;
-    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-lg);
     background: var(--bg);
     color: var(--mut);
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
   }
   .sfield:focus-within {
     border-color: var(--acc);
-    box-shadow: 0 0 0 3px rgb(255 122 26 / 0.2);
+    box-shadow: 0 0 0 3px rgb(var(--acc-rgb) / 0.2);
   }
   .sfield input {
     flex: 1;
@@ -440,19 +442,19 @@ const mega = [
     outline: none;
   }
   .sfield input::placeholder {
-    color: #8b929c;
+    color: var(--dim);
   }
   .go {
     display: none;
     min-height: 34px;
     padding: 0 16px;
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--r-md);
     background: var(--acc);
-    color: #111;
+    color: var(--on-acc);
     font-weight: 650;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background var(--dur-fast);
   }
   .go:hover {
     background: var(--acc-h);
@@ -464,7 +466,7 @@ const mega = [
     width: 36px;
     height: 36px;
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--r-md);
     background: none;
     color: var(--mut);
     cursor: pointer;
@@ -480,7 +482,7 @@ const mega = [
     margin: 0;
     padding: 6px;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: var(--r-lg);
     background: var(--s2);
     box-shadow: 0 20px 40px -12px rgb(0 0 0 / 0.8);
     list-style: none;
@@ -489,7 +491,7 @@ const mega = [
     display: grid;
     gap: 1px;
     padding: 9px 12px;
-    border-radius: 7px;
+    border-radius: var(--r-md);
     text-decoration: none;
   }
   .suggest :global(a:hover),

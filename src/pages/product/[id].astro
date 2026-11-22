@@ -6,23 +6,25 @@ import Icon from '../../components/Icon.astro';
 import Stars from '../../components/Stars.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import SectionHead from '../../components/SectionHead.astro';
-import { getDetails } from '../../data/details';
-import { categoryName, formatCount, href, marketHref, productSub, products, subcategories, type Product } from '../../data/products';
+import { getProductDetails, getProducts, getRelatedProducts, getSubcategories } from '../../lib/data';
+import { categoryName, formatCount } from '../../lib/format';
+import { href, marketHref } from '../../lib/url';
+import { type Product } from '../../lib/types';
 
-export function getStaticPaths() {
-  return products.map((product) => ({ params: { id: product.id }, props: { product } }));
+export async function getStaticPaths() {
+  return (await getProducts()).map((product) => ({ params: { id: product.id }, props: { product } }));
 }
 
 interface Props {
   product: Product;
 }
 const { product: p } = Astro.props;
-const d = getDetails(p);
+const d = await getProductDetails(p);
 const free = p.price === 0;
 const off = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
 const model = p.category !== 'tool';
-const sub = subcategories[p.category].find((s) => s.id === productSub(p));
-const related = [...products.filter((x) => x.id !== p.id && x.category === p.category), ...products.filter((x) => x.id !== p.id && x.category !== p.category)].slice(0, 4);
+const sub = (await getSubcategories(p.category)).find((s) => s.id === p.sub);
+const related = await getRelatedProducts(p, 4);
 const views = [
   { id: 'render', label: 'Render' },
   { id: 'clay', label: 'Clay' },
@@ -232,10 +234,10 @@ const labels = ['5', '4', '3', '2', '1'];
     position: relative;
     aspect-ratio: 1 / 0.9;
     border: 1px solid var(--line);
-    border-radius: 16px;
+    border-radius: var(--r-3xl);
     background:
       radial-gradient(ellipse 60% 40% at 50% 92%, rgb(255 255 255 / 0.06), transparent 70%),
-      radial-gradient(ellipse 85% 80% at 50% 38%, #343942, #121417 80%);
+      radial-gradient(ellipse 85% 80% at 50% 38%, var(--art-hi), var(--art-lo) 80%);
     overflow: hidden;
   }
   .stage :global(.art) {
@@ -251,17 +253,17 @@ const labels = ['5', '4', '3', '2', '1'];
     position: absolute;
     inset: 14px auto auto 14px;
     padding: 3px 10px;
-    border-radius: 6px;
+    border-radius: var(--r-sm);
     font-size: 0.8rem;
     font-weight: 700;
   }
   .sale {
     background: var(--sale);
-    color: #1c0507;
+    color: var(--on-sale);
   }
   .free {
-    background: #eceef1;
-    color: #111;
+    background: var(--text);
+    color: var(--on-acc);
   }
   .seg {
     position: relative;
@@ -271,14 +273,14 @@ const labels = ['5', '4', '3', '2', '1'];
     margin: 14px auto 0;
     padding: 4px;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: var(--r-lg);
     background: var(--s1);
   }
   .knob {
     position: absolute;
     inset: 4px auto 4px 4px;
     width: calc((100% - 8px) / var(--n));
-    border-radius: 7px;
+    border-radius: var(--r-md);
     background: var(--s3);
     transform: translateX(calc(var(--i, 0) * 100%));
     transition: transform 0.35s var(--ease);
@@ -337,7 +339,7 @@ const labels = ['5', '4', '3', '2', '1'];
     margin-top: 18px;
     padding: 18px;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: var(--r-2xl);
     background: var(--s1);
   }
   .price {
@@ -356,7 +358,7 @@ const labels = ['5', '4', '3', '2', '1'];
   }
   .price em {
     padding: 2px 9px;
-    border-radius: 6px;
+    border-radius: var(--r-sm);
     background: rgb(255 90 95 / 0.16);
     color: var(--sale);
     font-style: normal;
@@ -400,10 +402,10 @@ const labels = ['5', '4', '3', '2', '1'];
     gap: 2px 8px;
     height: 100%;
     padding: 12px 14px;
-    border: 1px solid #3a3f47;
-    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-lg);
     background: var(--bg);
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color var(--dur-base), background var(--dur-base);
   }
   .opt small {
     grid-column: 1;
@@ -418,11 +420,11 @@ const labels = ['5', '4', '3', '2', '1'];
     font-size: 1.1rem;
   }
   .lic label:hover .opt {
-    border-color: #5a616c;
+    border-color: var(--line-focus);
   }
   .lic input:checked + .opt {
     border-color: var(--acc);
-    background: rgb(255 122 26 / 0.08);
+    background: rgb(var(--acc-rgb) / 0.08);
     box-shadow: 0 0 0 1px var(--acc);
   }
   .lic input:focus-visible + .opt {
@@ -453,7 +455,7 @@ const labels = ['5', '4', '3', '2', '1'];
     background: none;
     color: var(--mut);
     cursor: pointer;
-    transition: color 0.15s;
+    transition: color var(--dur-fast);
   }
   .mini button:hover,
   .mini button[aria-pressed='true'] {
@@ -471,7 +473,7 @@ const labels = ['5', '4', '3', '2', '1'];
     margin: 18px 0 0;
     padding: 14px 16px;
     border: 1px solid rgb(53 208 127 / 0.4);
-    border-radius: 12px;
+    border-radius: var(--r-xl);
     background: rgb(53 208 127 / 0.08);
     color: var(--ok);
   }
@@ -534,7 +536,7 @@ const labels = ['5', '4', '3', '2', '1'];
     color: var(--mut);
     font-weight: 650;
     cursor: pointer;
-    transition: color 0.15s, border-color 0.2s, background 0.15s;
+    transition: color var(--dur-fast), border-color var(--dur-base), background var(--dur-fast);
   }
   .tablist button:hover {
     color: var(--text);
@@ -585,7 +587,7 @@ const labels = ['5', '4', '3', '2', '1'];
   .sum {
     padding: 18px;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--r-xl);
     background: var(--s1);
     align-self: start;
   }
@@ -613,7 +615,7 @@ const labels = ['5', '4', '3', '2', '1'];
   .bars i {
     height: 6px;
     border-radius: 3px;
-    background: linear-gradient(90deg, #ffb020 var(--w), #343a42 var(--w));
+    background: linear-gradient(90deg, var(--star) var(--w), var(--track) var(--w));
   }
   .reviews {
     display: grid;
@@ -638,7 +640,7 @@ const labels = ['5', '4', '3', '2', '1'];
   }
   .reviews p {
     margin: 6px 0 0;
-    color: #cdd2d9;
+    color: var(--text-soft);
   }
   .review-form h2 {
     margin: 0 0 12px;
@@ -656,7 +658,7 @@ const labels = ['5', '4', '3', '2', '1'];
     background: rgb(22 24 27 / 0.96);
     backdrop-filter: blur(10px);
     transform: translateY(100%);
-    transition: transform 0.3s var(--ease);
+    transition: transform var(--dur-slow) var(--ease);
   }
   .sticky.show {
     transform: none;

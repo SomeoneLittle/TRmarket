@@ -3,7 +3,14 @@ import Layout from '../../layouts/Layout.astro';
 import PageHead from '../../components/PageHead.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import Icon from '../../components/Icon.astro';
-import { categories, products, subcategories } from '../../data/products';
+import { getCategories, getProducts, getSubcategories } from '../../lib/data';
+
+const [products, categories] = await Promise.all([getProducts(), getCategories()]);
+const subcategories = {
+  print: await getSubcategories('print'),
+  game: await getSubcategories('game'),
+  tool: await getSubcategories('tool'),
+};
 
 const prices = [
   { id: '', label: 'Any price' },
@@ -198,9 +205,9 @@ const sorts = [
     gap: 10px;
     min-height: 40px;
     padding: 0 8px;
-    border-radius: 8px;
+    border-radius: var(--r-md);
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background var(--dur-fast);
   }
   .opt:hover {
     background: var(--s2);
@@ -237,9 +244,9 @@ const sorts = [
   }
   .ftoggle .n {
     padding: 0 7px;
-    border-radius: 99px;
+    border-radius: var(--r-pill);
     background: var(--acc);
-    color: #111;
+    color: var(--on-acc);
     font-size: 0.78rem;
     font-weight: 700;
   }
@@ -249,15 +256,15 @@ const sorts = [
     align-items: center;
     gap: 8px;
     padding: 0 12px;
-    border: 1px solid #3a3f47;
-    border-radius: 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md);
     background: var(--s1);
     color: var(--mut);
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
   }
   .q:focus-within {
     border-color: var(--acc);
-    box-shadow: 0 0 0 3px rgb(255 122 26 / 0.2);
+    box-shadow: 0 0 0 3px rgb(var(--acc-rgb) / 0.2);
   }
   .q input {
     flex: 1;
@@ -276,15 +283,15 @@ const sorts = [
   .sort select {
     min-height: 44px;
     padding: 0 12px;
-    border: 1px solid #3a3f47;
-    border-radius: 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md);
     background: var(--s1);
   }
   .view {
     display: flex;
     padding: 3px;
-    border: 1px solid #3a3f47;
-    border-radius: 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md);
     background: var(--s1);
   }
   .view button {
@@ -293,7 +300,7 @@ const sorts = [
     width: 40px;
     height: 38px;
     border: 0;
-    border-radius: 6px;
+    border-radius: var(--r-sm);
     background: none;
     color: var(--mut);
     cursor: pointer;
@@ -327,11 +334,11 @@ const sorts = [
     gap: 6px;
     min-height: 34px;
     padding: 0 8px 0 12px;
-    border: 1px solid #3a3f47;
-    border-radius: 99px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-pill);
     background: var(--s2);
     cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
+    transition: border-color var(--dur-fast), background var(--dur-fast);
   }
   .chips :global(button:hover) {
     border-color: var(--acc);

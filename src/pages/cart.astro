@@ -6,12 +6,14 @@ import OrderSummary from '../components/OrderSummary.astro';
 import ProductCard from '../components/ProductCard.astro';
 import SectionHead from '../components/SectionHead.astro';
 import Icon from '../components/Icon.astro';
-import { href, products } from '../data/products';
+import { href } from '../lib/url';
+import { getProducts, getTopRatedProducts } from '../lib/data';
+const products = await getProducts();
 
-const picks = [...products].sort((a, b) => b.rating - a.rating).filter((p) => p.price > 0).slice(0, 4);
+const picks = await getTopRatedProducts(4);
 ---
 
-<Layout title="Cart" description="Review the items in your cart.">
+<Layout title="Cart" description="Review the items in your cart." noindex>
   <div data-cart-root>
     <PageHead title="Your cart" crumbs={[{ label: 'Cart' }]}>
       <p class="count" data-count>0 items</p>

@@ -1,6 +1,6 @@
 ---
-import { company, footerColumns, socials } from '../data/site';
-import { href } from '../data/products';
+import { company, footerColumns, socials } from '../lib/site';
+import { href } from '../lib/url';
 import Icon from './Icon.astro';
 ---
 
@@ -53,7 +53,7 @@ import Icon from './Icon.astro';
   }
   .sub {
     border-bottom: 1px solid var(--line);
-    background: linear-gradient(90deg, #2a1a0d, #17130f 70%);
+    background: linear-gradient(90deg, var(--warm-1), var(--warm-2) 70%);
   }
   .sub-in {
     display: grid;
@@ -68,7 +68,7 @@ import Icon from './Icon.astro';
   }
   .sub p {
     margin: 4px 0 0;
-    color: #cdb8a3;
+    color: var(--warm-text);
   }
   form {
     display: flex;
@@ -79,8 +79,8 @@ import Icon from './Icon.astro';
     min-width: 0;
     min-height: 46px;
     padding: 0 14px;
-    border: 1px solid #4a4038;
-    border-radius: 8px;
+    border: 1px solid var(--warm-line-soft);
+    border-radius: var(--r-md);
     background: rgb(0 0 0 / 0.35);
     color: var(--text);
     font: inherit;
@@ -127,7 +127,7 @@ import Icon from './Icon.astro';
     padding: 4px 0;
     color: var(--mut);
     text-decoration: none;
-    transition: color 0.15s;
+    transition: color var(--dur-fast);
   }
   nav a:hover {
     color: var(--text);
@@ -144,10 +144,10 @@ import Icon from './Icon.astro';
     align-items: center;
     min-height: 40px;
     padding: 0 14px;
-    border: 1px solid #3a3f47;
-    border-radius: 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md);
     text-decoration: none;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background var(--dur-fast), border-color var(--dur-fast);
   }
   .soc a:hover {
     background: var(--s3);

@@ -1,9 +1,11 @@
 ---
-import { marketHref, productHref, products } from '../../data/products';
+import { marketHref, productHref } from '../../lib/url';
+import { getProducts } from '../../lib/data';
 import Art from '../Art.astro';
 import Icon from '../Icon.astro';
 
-const byId = (id: string) => products.find((p) => p.id === id)!;
+const all = await getProducts();
+const byId = (id: string) => all.find((p) => p.id === id)!;
 const slides = [
   {
     p: byId('sentinel-helmet-kit'),

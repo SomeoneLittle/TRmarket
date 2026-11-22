@@ -1,20 +1,22 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
 import ProductCard from '../components/ProductCard.astro';
-import { href, products } from '../data/products';
+import { href } from '../lib/url';
+import { getPopularProducts } from '../lib/data';
 
-const picks = [...products].sort((a, b) => b.downloads - a.downloads).slice(0, 4);
+const picks = await getPopularProducts(4, { includeFree: true });
 ---
 
-<Layout title="Page not found" description="This page does not exist.">
+<Layout title="Page not found" description="This page does not exist." noindex>
   <div class="wrap">
     <div class="nf">
       <p class="code">404</p>
       <h1>This page got lost in the mesh</h1>
       <p>The page you are looking for does not exist or has moved. Try the catalog or head back home.</p>
       <div class="actions">
-        <a class="btn" href={href()}>Go home</a>
-        <a class="btn ghost" href={href('marketplace/')}>Browse the marketplace</a>
+        <Button href={href()}>Go home</Button>
+        <Button variant="ghost" href={href('marketplace/')}>Browse the marketplace</Button>
       </div>
     </div>
     <h2 class="t">Popular right now</h2>

@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import PageHead from '../components/PageHead.astro';
 import Icon from '../components/Icon.astro';
-import { href } from '../data/products';
+import { href } from '../lib/url';
 
 const groups = [
   {
@@ -94,15 +94,15 @@ const groups = [
     max-width: 520px;
     margin-top: 16px;
     padding: 0 14px;
-    border: 1px solid #3a3f47;
-    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-lg);
     background: var(--s1);
     color: var(--mut);
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
   }
   .search:focus-within {
     border-color: var(--acc);
-    box-shadow: 0 0 0 3px rgb(255 122 26 / 0.2);
+    box-shadow: 0 0 0 3px rgb(var(--acc-rgb) / 0.2);
   }
   .search input {
     flex: 1;
@@ -141,7 +141,7 @@ const groups = [
     font-weight: 600;
     list-style: none;
     cursor: pointer;
-    transition: color 0.15s;
+    transition: color var(--dur-fast);
   }
   summary::-webkit-details-marker {
     display: none;
@@ -159,7 +159,7 @@ const groups = [
   }
   details p {
     margin: 0 0 16px;
-    color: #c4c9d0;
+    color: var(--text-soft);
     animation: open 0.3s var(--ease);
   }
   @keyframes open {

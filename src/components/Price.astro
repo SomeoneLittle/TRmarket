@@ -1,0 +1,31 @@
+---
+import { formatPrice } from '../lib/format';
+
+interface Props {
+  price: number;
+  oldPrice?: number;
+}
+const { price, oldPrice } = Astro.props;
+---
+
+<p class="price">
+  <b>{formatPrice(price)}</b>
+  {oldPrice && <s>${oldPrice}</s>}
+</p>
+
+<style>
+  .price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 0;
+  }
+  .price b {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .price s {
+    color: var(--mut);
+    font-size: var(--fs-sm);
+  }
+</style>

@@ -1,5 +1,7 @@
 ---
-import { categories, marketHref, type Category, type Product } from '../data/products';
+import { marketHref } from '../lib/url';
+import { type Category, type Product } from '../lib/types';
+import { getCategories } from '../lib/data';
 import Art from './Art.astro';
 import Icon from './Icon.astro';
 
@@ -8,7 +10,7 @@ interface Props {
   sample: Product;
 }
 const { id, sample } = Astro.props;
-const c = categories.find((x) => x.id === id)!;
+const c = (await getCategories()).find((x) => x.id === id)!;
 ---
 
 <a class="cat zoom" href={marketHref({ cat: id })}>
@@ -27,11 +29,11 @@ const c = categories.find((x) => x.id === id)!;
     height: 100%;
     min-height: 220px;
     border: 1px solid var(--line);
-    border-radius: 14px;
-    background: radial-gradient(ellipse 70% 80% at 72% 40%, #30353c, #15171a 75%);
+    border-radius: var(--r-2xl);
+    background: radial-gradient(ellipse 70% 80% at 72% 40%, var(--art-hi), var(--art-lo) 75%);
     text-decoration: none;
     overflow: hidden;
-    transition: border-color 0.2s;
+    transition: border-color var(--dur-base);
   }
   .cat:hover {
     border-color: var(--acc);

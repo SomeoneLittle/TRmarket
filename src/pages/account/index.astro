@@ -4,9 +4,11 @@ import ProductRow from '../../components/ProductRow.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import SectionHead from '../../components/SectionHead.astro';
 import Icon from '../../components/Icon.astro';
-import { href, products } from '../../data/products';
+import { href } from '../../lib/url';
+import { getPopularProducts, getProducts } from '../../lib/data';
+const products = await getProducts();
 
-const picks = [...products].sort((a, b) => b.downloads - a.downloads).filter((p) => p.price > 0).slice(0, 3);
+const picks = await getPopularProducts(3);
 ---
 
 <AccountLayout title="My account" active="overview" gate={false} guestNav={false}>
@@ -86,18 +88,18 @@ const picks = [...products].sort((a, b) => b.downloads - a.downloads).filter((p)
     margin-bottom: 20px;
     padding: 4px;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: var(--r-lg);
     background: var(--bg);
   }
   .tabs button {
     min-height: 42px;
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--r-md);
     background: none;
     color: var(--mut);
     font-weight: 650;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: background var(--dur-fast), color var(--dur-fast);
   }
   .tabs button[aria-selected='true'] {
     background: var(--s3);
@@ -169,10 +171,10 @@ const picks = [...products].sort((a, b) => b.downloads - a.downloads).filter((p)
     gap: 2px;
     padding: 16px;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--r-xl);
     background: var(--s1);
     text-decoration: none;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color var(--dur-base), background var(--dur-base);
   }
   .stats a:hover {
     border-color: var(--acc);

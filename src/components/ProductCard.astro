@@ -1,6 +1,10 @@
 ---
-import { categoryName, formatCount, formatPrice, productHref, productSub, type Product } from '../data/products';
+import { categoryName, formatCount } from '../lib/format';
+import { productHref } from '../lib/url';
+import { type Product } from '../lib/types';
 import Art from './Art.astro';
+import Badge from './Badge.astro';
+import Price from './Price.astro';
 import Icon from './Icon.astro';
 import Stars from './Stars.astro';
 
@@ -19,7 +23,7 @@ const fresh = p.addedHours <= 30;
   class="card"
   data-id={p.id}
   data-cat={p.category}
-  data-sub={productSub(p)}
+  data-sub={p.sub}
   data-price={p.price}
   data-old={p.oldPrice ?? 0}
   data-rating={p.rating}
@@ -31,9 +35,9 @@ const fresh = p.addedHours <= 30;
   <div class="thumb zoom">
     <a class="art-link" href={link} tabindex="-1" aria-hidden="true"><Art product={p} label="" /></a>
     <div class="badges">
-      {fresh && <span class="b new">New</span>}
-      {off > 0 && <span class="b sale">−{off}%</span>}
-      {free && <span class="b free">Free</span>}
+      {fresh && <Badge tone="new">New</Badge>}
+      {off > 0 && <Badge tone="sale">−{off}%</Badge>}
+      {free && <Badge tone="free">Free</Badge>}
     </div>
     <button class="fav" type="button" data-fav data-id={p.id} aria-pressed="false" aria-label={`Add ${p.title} to favorites`}>
       <Icon name="heart" size={18} />
@@ -52,10 +56,7 @@ const fresh = p.addedHours <= 30;
       <span class="dl"><Icon name="download" size={14} /> {formatCount(p.downloads)}</span>
     </div>
     <div class="buy">
-      <p class="price">
-        <b>{formatPrice(p.price)}</b>
-        {p.oldPrice && <s>${p.oldPrice}</s>}
-      </p>
+      <Price price={p.price} oldPrice={p.oldPrice} />
       <button class="add" type="button" data-add data-id={p.id}>
         <Icon name={free ? 'download' : 'cart'} size={16} />
         <span class="long">{free ? 'Get free' : 'Add to cart'}</span><span class="short" aria-hidden="true">{free ? 'Get' : 'Add'}</span><span class="sr">: {p.title}</span>
@@ -79,14 +80,14 @@ const fresh = p.addedHours <= 30;
     flex-direction: column;
     height: 100%;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: var(--r-lg);
     background: var(--s1);
     overflow: hidden;
-    transition: border-color 0.2s, transform 0.25s var(--ease), box-shadow 0.25s;
+    transition: border-color var(--dur-base), transform 0.25s var(--ease), box-shadow 0.25s;
   }
   .cardwrap:hover .card,
   .card:focus-within {
-    border-color: #444a53;
+    border-color: var(--line-hover);
     transform: translateY(-3px);
     box-shadow: 0 14px 30px -14px rgb(0 0 0 / 0.8);
   }
@@ -99,7 +100,7 @@ const fresh = p.addedHours <= 30;
     overflow: hidden;
     background:
       linear-gradient(180deg, transparent 62%, rgb(0 0 0 / 0.35)),
-      radial-gradient(ellipse 80% 70% at 50% 38%, #343942, #16181b 75%);
+      radial-gradient(ellipse 80% 70% at 50% 38%, var(--art-hi), var(--s1) 75%);
   }
   .art-link {
     display: block;
@@ -115,25 +116,6 @@ const fresh = p.addedHours <= 30;
     gap: 6px;
     pointer-events: none;
   }
-  .b {
-    padding: 2px 7px;
-    border-radius: 4px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    line-height: 1.5;
-  }
-  .new {
-    background: var(--ok);
-    color: #06150c;
-  }
-  .sale {
-    background: var(--sale);
-    color: #1c0507;
-  }
-  .free {
-    background: #eceef1;
-    color: #111;
-  }
   .fav {
     position: absolute;
     inset: 8px 8px auto auto;
@@ -148,7 +130,7 @@ const fresh = p.addedHours <= 30;
     color: var(--text);
     opacity: 0;
     cursor: pointer;
-    transition: opacity 0.2s, background 0.15s, color 0.15s, transform 0.2s var(--ease);
+    transition: opacity var(--dur-base), background var(--dur-fast), color var(--dur-fast), transform var(--dur-base) var(--ease);
   }
   .cardwrap:hover .fav,
   .card:focus-within .fav,
@@ -180,7 +162,7 @@ const fresh = p.addedHours <= 30;
     min-height: 38px;
     padding: 0 16px;
     border: 1px solid rgb(255 255 255 / 0.16);
-    border-radius: 99px;
+    border-radius: var(--r-pill);
     background: rgb(14 15 17 / 0.82);
     backdrop-filter: blur(6px);
     color: var(--text);
@@ -190,7 +172,7 @@ const fresh = p.addedHours <= 30;
     cursor: pointer;
     opacity: 0;
     transform: translate(-50%, 10px);
-    transition: opacity 0.2s, transform 0.28s var(--ease), background 0.15s;
+    transition: opacity var(--dur-base), transform 0.28s var(--ease), background var(--dur-fast);
   }
   .cardwrap:hover .quick,
   .card:focus-within .quick {
@@ -240,7 +222,7 @@ const fresh = p.addedHours <= 30;
   .desc {
     display: none;
     margin: 2px 0 4px;
-    color: #b9c0c9;
+    color: var(--text-soft);
   }
   .rate {
     display: flex;
@@ -265,20 +247,6 @@ const fresh = p.addedHours <= 30;
     margin-top: auto;
     padding-top: 10px;
   }
-  .price {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    margin: 0;
-  }
-  .price b {
-    font-size: 1.15rem;
-    font-weight: 700;
-  }
-  .price s {
-    color: var(--mut);
-    font-size: 0.85rem;
-  }
   .add {
     display: inline-flex;
     flex: none;
@@ -288,18 +256,18 @@ const fresh = p.addedHours <= 30;
     min-height: 40px;
     padding: 0 14px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--r-md);
     background: var(--acc);
-    color: #111;
+    color: var(--on-acc);
     font-size: 0.88rem;
     font-weight: 650;
     white-space: nowrap;
     cursor: pointer;
-    transition: background 0.15s, transform 0.15s, box-shadow 0.2s;
+    transition: background var(--dur-fast), transform var(--dur-fast), box-shadow var(--dur-base);
   }
   .add:hover {
     background: var(--acc-h);
-    box-shadow: 0 6px 16px -6px rgb(255 122 26 / 0.6);
+    box-shadow: 0 6px 16px -6px rgb(var(--acc-rgb) / 0.6);
   }
   .add:active {
     transform: scale(0.96);

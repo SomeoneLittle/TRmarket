@@ -3,10 +3,12 @@ import Layout from '../../layouts/Layout.astro';
 import PageHead from '../../components/PageHead.astro';
 import ProductRow from '../../components/ProductRow.astro';
 import Icon from '../../components/Icon.astro';
-import { href, products } from '../../data/products';
+import { href } from '../../lib/url';
+import { getProducts } from '../../lib/data';
+const products = await getProducts();
 ---
 
-<Layout title="Order complete" description="Thank you for your order.">
+<Layout title="Order complete" description="Thank you for your order." noindex>
   <PageHead title="Thank you for your order" crumbs={[{ label: 'Checkout', href: href('checkout/') }, { label: 'Order complete' }]} />
   <div class="wrap">
     <div class="done" data-done hidden>
@@ -85,7 +87,7 @@ import { href, products } from '../../data/products';
     margin-top: 20px;
     padding: 14px 16px;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: var(--r-lg);
     background: var(--s1);
     color: var(--mut);
   }

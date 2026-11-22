@@ -1,5 +1,6 @@
 ---
-import { categories, freeProducts, freshProducts, href, marketHref, products } from '../../data/products';
+import { href, marketHref } from '../../lib/url';
+import { getCategories, getFreeProducts, getFreshProducts, getPopularProducts, getProductBySlug } from '../../lib/data';
 import CategoryTile from '../CategoryTile.astro';
 import FreeCard from '../FreeCard.astro';
 import ProductCard from '../ProductCard.astro';
@@ -7,11 +8,11 @@ import ProductRow from '../ProductRow.astro';
 import SectionHead from '../SectionHead.astro';
 import TrustStrip from '../TrustStrip.astro';
 
-const popular = [...products].sort((a, b) => b.downloads - a.downloads).filter((p) => p.price > 0).slice(0, 8);
+const [categories, freeProducts, freshProducts, popular] = await Promise.all([getCategories(), getFreeProducts(), getFreshProducts(), getPopularProducts(8)]);
 const sample = {
-  print: products.find((p) => p.id === 'aeon-vase-collection')!,
-  game: products.find((p) => p.id === 'sentinel-helmet-kit')!,
-  tool: products.find((p) => p.id === 'claystroke-brush-set')!,
+  print: (await getProductBySlug('aeon-vase-collection'))!,
+  game: (await getProductBySlug('sentinel-helmet-kit'))!,
+  tool: (await getProductBySlug('claystroke-brush-set'))!,
 };
 ---
 

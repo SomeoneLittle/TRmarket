@@ -1,6 +1,7 @@
 ---
-import { getProduct, href } from '../data/products';
-import type { Post } from '../data/posts';
+import { href } from '../lib/url';
+import { getProductBySlug } from '../lib/data';
+import { type Post } from '../lib/types';
 import Art from './Art.astro';
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
   featured?: boolean;
 }
 const { post, featured = false } = Astro.props;
-const product = getProduct(post.productId)!;
+const product = (await getProductBySlug(post.productId))!;
 const link = href(`blog/${post.slug}/`);
 ---
 
@@ -28,19 +29,19 @@ const link = href(`blog/${post.slug}/`);
     flex-direction: column;
     height: 100%;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--r-xl);
     background: var(--s1);
     overflow: hidden;
-    transition: border-color 0.2s, box-shadow 0.25s;
+    transition: border-color var(--dur-base), box-shadow 0.25s;
   }
   .post:hover {
-    border-color: #444a53;
+    border-color: var(--line-hover);
     box-shadow: 0 14px 30px -16px rgb(0 0 0 / 0.9);
   }
   .cover {
     display: block;
     aspect-ratio: 16 / 9;
-    background: radial-gradient(ellipse 70% 80% at 50% 40%, #343942, #16181b 80%);
+    background: radial-gradient(ellipse 70% 80% at 50% 40%, var(--art-hi), var(--s1) 80%);
     overflow: hidden;
   }
   .cover :global(.art) {
@@ -64,8 +65,8 @@ const link = href(`blog/${post.slug}/`);
   }
   .tag {
     padding: 2px 9px;
-    border-radius: 99px;
-    background: rgb(255 122 26 / 0.14);
+    border-radius: var(--r-pill);
+    background: rgb(var(--acc-rgb) / 0.14);
     color: var(--acc-h);
     font-weight: 650;
   }
@@ -91,7 +92,7 @@ const link = href(`blog/${post.slug}/`);
   }
   .ex {
     margin: 0;
-    color: #bcc2ca;
+    color: var(--text-soft);
   }
   .read {
     position: relative;

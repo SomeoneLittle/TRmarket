@@ -1,5 +1,7 @@
 ---
-import { categoryName, productHref, type Product } from '../data/products';
+import { categoryName } from '../lib/format';
+import { productHref } from '../lib/url';
+import { type Product } from '../lib/types';
 import Art from './Art.astro';
 import Icon from './Icon.astro';
 
@@ -31,7 +33,7 @@ const { product: p } = Astro.props;
     gap: 12px 16px;
     padding: 14px;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--r-xl);
     background: var(--s1);
     animation: in 0.35s var(--ease);
   }
@@ -44,8 +46,8 @@ const { product: p } = Astro.props;
   .thumb {
     display: block;
     height: 130px;
-    border-radius: 8px;
-    background: radial-gradient(ellipse at 50% 40%, #343942, #16181b 80%);
+    border-radius: var(--r-md);
+    background: radial-gradient(ellipse at 50% 40%, var(--art-hi), var(--s1) 80%);
     overflow: hidden;
   }
   h3 {
@@ -77,7 +79,7 @@ const { product: p } = Astro.props;
   }
   code {
     padding: 3px 8px;
-    border-radius: 6px;
+    border-radius: var(--r-sm);
     background: var(--bg);
     color: var(--text);
     font-size: 0.88rem;
@@ -85,11 +87,11 @@ const { product: p } = Astro.props;
   .key button {
     min-height: 32px;
     padding: 0 10px;
-    border: 1px solid #3a3f47;
-    border-radius: 6px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-sm);
     background: none;
     cursor: pointer;
-    transition: border-color 0.15s;
+    transition: border-color var(--dur-fast);
   }
   .key button:hover {
     border-color: var(--acc);
