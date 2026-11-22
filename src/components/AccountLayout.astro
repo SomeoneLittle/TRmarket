@@ -23,7 +23,7 @@ const links: { id: Props['active']; label: string; href: string; icon: IconName;
 ];
 ---
 
-<Layout title={title} description="Manage your TRmarket account, purchases and favorites.">
+<Layout title={title} description="Manage your TRmarket account, purchases and favorites." noindex>
   <PageHead title={title} lead={lead} crumbs={[{ label: 'Account', href: href('account/') }, { label: title }]} />
   <div class="wrap shell" data-gate={gate ? '' : undefined} data-guest-nav={guestNav ? 'on' : 'off'}>
     <nav class="anav" aria-label="Account">

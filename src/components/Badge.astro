@@ -1,0 +1,30 @@
+---
+interface Props {
+  tone?: 'new' | 'sale' | 'free';
+}
+const { tone = 'new' } = Astro.props;
+---
+
+<span class:list={['badge', tone]}><slot /></span>
+
+<style>
+  .badge {
+    padding: 2px 7px;
+    border-radius: var(--r-xs);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .new {
+    background: var(--ok);
+    color: var(--on-ok);
+  }
+  .sale {
+    background: var(--sale);
+    color: var(--on-sale);
+  }
+  .free {
+    background: var(--text);
+    color: var(--on-acc);
+  }
+</style>

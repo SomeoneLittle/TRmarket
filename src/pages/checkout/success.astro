@@ -8,7 +8,7 @@ import { getProducts } from '../../lib/data';
 const products = await getProducts();
 ---
 
-<Layout title="Order complete" description="Thank you for your order.">
+<Layout title="Order complete" description="Thank you for your order." noindex>
   <PageHead title="Thank you for your order" crumbs={[{ label: 'Checkout', href: href('checkout/') }, { label: 'Order complete' }]} />
   <div class="wrap">
     <div class="done" data-done hidden>

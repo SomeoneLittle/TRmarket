@@ -1,0 +1,26 @@
+---
+/** Renders a link when `href` is set, otherwise a button. Styles live in global.css (.btn). */
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'ghost';
+  size?: 'md' | 'sm';
+  block?: boolean;
+  type?: 'button' | 'submit';
+  class?: string;
+  [attr: string]: unknown;
+}
+const { href, variant = 'primary', size = 'md', block = false, type = 'button', class: extra, ...rest } = Astro.props;
+const classes = ['btn', variant === 'ghost' && 'ghost', size === 'sm' && 'sm', block && 'block', extra];
+---
+
+{
+  href ? (
+    <a class:list={classes} href={href} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button class:list={classes} type={type} {...rest}>
+      <slot />
+    </button>
+  )
+}

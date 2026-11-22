@@ -13,7 +13,7 @@ const products = await getProducts();
 const picks = await getTopRatedProducts(4);
 ---
 
-<Layout title="Cart" description="Review the items in your cart.">
+<Layout title="Cart" description="Review the items in your cart." noindex>
   <div data-cart-root>
     <PageHead title="Your cart" crumbs={[{ label: 'Cart' }]}>
       <p class="count" data-count>0 items</p>
