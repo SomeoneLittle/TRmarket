@@ -50,8 +50,8 @@ const catalog = products.map((p) => ({
         <linearGradient id="m4-cyl" x1="0" x2="1" y1="0" y2="0">
           <stop offset="0" stop-color="#000" stop-opacity="0.55" />
           <stop offset="0.22" stop-color="#000" stop-opacity="0.1" />
-          <stop offset="0.36" stop-color="#fff" stop-opacity="0.28" />
-          <stop offset="0.46" stop-color="#fff" stop-opacity="0" />
+          <stop offset="0.36" stop-color="var(--white)" stop-opacity="0.28" />
+          <stop offset="0.46" stop-color="var(--white)" stop-opacity="0" />
           <stop offset="0.7" stop-color="#000" stop-opacity="0.12" />
           <stop offset="1" stop-color="#000" stop-opacity="0.6" />
         </linearGradient>
@@ -99,7 +99,7 @@ const catalog = products.map((p) => ({
     display: grid;
     place-items: center;
     min-height: 240px;
-    background: radial-gradient(ellipse 80% 70% at 50% 40%, #343942, #16181b 78%);
+    background: radial-gradient(ellipse 80% 70% at 50% 40%, var(--art-hi), var(--s1) 78%);
   }
   .q-art svg {
     width: min(100%, 360px);
@@ -148,12 +148,12 @@ const catalog = products.map((p) => ({
     color: var(--mut);
   }
   .q-rate svg {
-    color: #ffb020;
-    fill: #ffb020;
+    color: var(--star);
+    fill: var(--star);
   }
   .q-blurb {
     margin: 6px 0;
-    color: #c4c9d0;
+    color: var(--text-soft);
   }
   .q-price {
     display: flex;

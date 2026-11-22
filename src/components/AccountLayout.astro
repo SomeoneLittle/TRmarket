@@ -67,7 +67,7 @@ const links: { id: Props['active']; label: string; href: string; icon: IconName;
     margin: 0;
     padding: 4px;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--r-xl);
     background: var(--s1);
     list-style: none;
     overflow-x: auto;
@@ -81,14 +81,14 @@ const links: { id: Props['active']; label: string; href: string; icon: IconName;
     min-height: 44px;
     padding: 0 14px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--r-md);
     background: none;
     color: var(--mut);
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: background var(--dur-fast), color var(--dur-fast);
   }
   .anav a:hover,
   .anav button:hover {
@@ -103,7 +103,7 @@ const links: { id: Props['active']; label: string; href: string; icon: IconName;
   .anav small {
     margin-left: auto;
     padding: 0 8px;
-    border-radius: 99px;
+    border-radius: var(--r-pill);
     background: var(--bg);
     color: var(--mut);
     font-size: 0.78rem;

@@ -117,8 +117,8 @@ const toc = post.body.filter((b) => b.type === 'h2').map((b) => ({ id: slug((b a
   }
   .tag {
     padding: 2px 10px;
-    border-radius: 99px;
-    background: rgb(255 122 26 / 0.14);
+    border-radius: var(--r-pill);
+    background: rgb(var(--acc-rgb) / 0.14);
     color: var(--acc-h);
     font-weight: 650;
     text-decoration: none;
@@ -132,14 +132,14 @@ const toc = post.body.filter((b) => b.type === 'h2').map((b) => ({ id: slug((b a
   }
   .lead {
     margin: 12px 0 0;
-    color: #bcc2ca;
+    color: var(--text-soft);
     font-size: 1.15rem;
   }
   .cover {
     aspect-ratio: 16 / 7;
     border: 1px solid var(--line);
-    border-radius: 16px;
-    background: radial-gradient(ellipse 60% 80% at 50% 40%, #343942, #121417 80%);
+    border-radius: var(--r-3xl);
+    background: radial-gradient(ellipse 60% 80% at 50% 40%, var(--art-hi), var(--art-lo) 80%);
     overflow: hidden;
   }
   .cover :global(.art) {
@@ -185,7 +185,7 @@ const toc = post.body.filter((b) => b.type === 'h2').map((b) => ({ id: slug((b a
     border-left: 2px solid transparent;
     color: var(--mut);
     text-decoration: none;
-    transition: color 0.15s, border-color 0.2s;
+    transition: color var(--dur-fast), border-color var(--dur-base);
   }
   .toc a:hover {
     color: var(--text);
@@ -216,10 +216,10 @@ const toc = post.body.filter((b) => b.type === 'h2').map((b) => ({ id: slug((b a
     gap: 2px;
     padding: 16px 18px;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--r-xl);
     background: var(--s1);
     text-decoration: none;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color var(--dur-base), background var(--dur-base);
   }
   .pn a:hover {
     border-color: var(--acc);

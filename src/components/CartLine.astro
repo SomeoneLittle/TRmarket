@@ -65,8 +65,8 @@ const free = p.price === 0;
     display: block;
     width: 84px;
     height: 74px;
-    border-radius: 8px;
-    background: radial-gradient(ellipse at 50% 40%, #343942, #16181b 80%);
+    border-radius: var(--r-md);
+    background: radial-gradient(ellipse at 50% 40%, var(--art-hi), var(--s1) 80%);
     overflow: hidden;
   }
   .info {
@@ -90,8 +90,8 @@ const free = p.price === 0;
     min-height: 38px;
     margin-top: 6px;
     padding: 0 10px;
-    border: 1px solid #3a3f47;
-    border-radius: 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md);
     background: var(--bg);
   }
   .price {
@@ -109,11 +109,11 @@ const free = p.price === 0;
     width: 44px;
     height: 44px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--r-md);
     background: none;
     color: var(--mut);
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: background var(--dur-fast), color var(--dur-fast);
   }
   .rm:hover {
     background: var(--s3);

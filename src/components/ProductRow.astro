@@ -29,21 +29,21 @@ const { product: p, meta } = Astro.props;
     height: 100%;
     padding: 10px 14px 10px 10px;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--r-xl);
     background: var(--s1);
     text-decoration: none;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color var(--dur-base), background var(--dur-base);
   }
   .row:hover {
-    border-color: #444a53;
+    border-color: var(--line-hover);
     background: var(--s2);
   }
   .rthumb {
     flex: none;
     width: 92px;
     height: 80px;
-    border-radius: 8px;
-    background: radial-gradient(ellipse at 50% 40%, #343942, #16181b 80%);
+    border-radius: var(--r-md);
+    background: radial-gradient(ellipse at 50% 40%, var(--art-hi), var(--s1) 80%);
     overflow: hidden;
   }
   .rinfo {
@@ -64,7 +64,7 @@ const { product: p, meta } = Astro.props;
   }
   .rgo {
     color: var(--mut);
-    transition: transform 0.2s, color 0.2s;
+    transition: transform var(--dur-base), color var(--dur-base);
   }
   .row:hover .rgo {
     color: var(--acc-h);

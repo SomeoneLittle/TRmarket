@@ -26,13 +26,13 @@ const { product: p } = Astro.props;
     height: 100%;
     padding: 10px;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--r-xl);
     background: var(--s1);
     overflow: hidden;
-    transition: border-color 0.2s, background 0.2s, box-shadow 0.25s;
+    transition: border-color var(--dur-base), background var(--dur-base), box-shadow 0.25s;
   }
   .free:hover {
-    border-color: #444a53;
+    border-color: var(--line-hover);
     background: var(--s2);
     box-shadow: 0 10px 24px -16px rgb(0 0 0 / 0.9);
   }
@@ -40,8 +40,8 @@ const { product: p } = Astro.props;
     flex: none;
     width: 92px;
     height: 80px;
-    border-radius: 8px;
-    background: radial-gradient(ellipse at 50% 40%, #343942, #16181b 80%);
+    border-radius: var(--r-md);
+    background: radial-gradient(ellipse at 50% 40%, var(--art-hi), var(--s1) 80%);
     overflow: hidden;
   }
   .finfo {
